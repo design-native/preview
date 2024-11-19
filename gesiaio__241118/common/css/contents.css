@@ -1,0 +1,327 @@
+
+  
+  /* common */
+  /* Text */
+  * {font-weight: 400;}
+  h1{ font-size: 4rem; line-height:5.4rem;}
+  h2{ font-size: 3rem; line-height: 4.2rem;}
+  h3{ font-size: 2.2rem; line-height: 2.8rem;}
+  h4{ font-size: 1.6rem; line-height: 2rem;}
+  h5{ font-size: 1.4rem; line-height: 1.6rem;}
+  h6{ font-size: 1rem; line-height: 1.6rem;}
+  p{ font-size: 1rem; line-height: 1.8rem;}
+  
+  
+  b, .title {font-weight: 700;}
+  a, span,
+  a h4,
+  a h5{font-weight: inherit;font-family: inherit;}
+  
+  
+  .textBox{
+    z-index: 2;
+  }
+
+
+  .wrap.type-flex{
+    display: flex;
+  }
+  .wrap.type-flex.direc-row{
+    flex-direction: row;
+    align-items: center;
+  
+  }
+  .wrap.type-flex.direc-row.size-50p{
+    gap: 60px;
+  }
+  .wrap.type-flex.direc-row.size-50p > *{
+    flex: 1;
+  }
+  .wrap.size-center{
+    gap: 30px;
+  }
+  .wrap.size-center > *{
+    width: 100%;
+  }
+  .wrap.type-flex.direc-col{
+    flex-direction: column;
+  }
+  
+  
+  /* icon */
+  
+  .icon.ic-arrowR{
+    /* mask-image: url(../resources/icon-arrowR.png);
+    background-color: var(--color-primaryPink); */
+    background-image: url(../resources/icon-arrowR.png);
+
+  }
+  
+  .icon.ic-arrowB{
+    /* mask-image: url(../resources/icon-arrowR.png);
+    background-color: var(--color-primaryPink); */
+    background-image: url(../resources/icon-arrowB.png);
+
+  }
+  
+  
+
+/* script */
+.fp-table, .fp-tableCell{
+  /* height: fit-content !important; */
+}
+
+/* [class*=flow_banner] {overflow: hidden;display: flex;width: 100%; position: relative;}
+[class*=flow_banner] .list {display: flex;}
+[class*=flow_banner].flowY,
+[class*=flow_banner].flowY .list {flex-direction: column;}
+[class*=flow_banner] .list > li {white-space: nowrap;padding: 20px;margin: 0 20px;}
+[class*=flow_banner] .list > li img {height: 60px;} */
+
+
+.flow_banner1{
+  width: 100%;
+}
+.box-flow-wrap{position:relative;height:140px;box-sizing:border-box;overflow:hidden;
+width: 100%;}
+.box-flow{position:absolute;}
+.box-flow > li{
+  float:left;margin-left:20px;width:140px;height:100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.box-flow > li a{display:block;width:100%;height:100%;}
+
+
+  .moreFrame .moreBtn + .moreBox{
+    display: none;
+  }
+  .moreFrame.ON .moreBtn + .moreBox{
+    display: block;
+  }
+
+
+
+/* custom */
+body {
+  background-color: #fefefe;
+  color: #333;
+}
+
+
+
+.sec-intro{	
+  z-index: 5;
+  /* background: linear-gradient(-45deg, #555, #222,#000);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite; */
+}
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+.sec-intro .titleBox{
+  padding: 0 20px;
+  text-align: center;
+  z-index: 5;
+
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  
+}
+header,
+.sec-intro .titleBox,
+.secItem:not(.active) {
+  transition: 2s opacity;
+
+}
+
+body.loading header,
+body.loading .sec-intro .titleBox,
+body.loading .secItem:not(.active){
+  opacity: 0;
+} 
+.sec-intro .titleBox .logo {
+  background-image: url(../resources/gio-logo.png);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 50%;
+  margin: 0 auto;
+  min-width: 200px;
+  height: 20vh;
+}
+
+
+
+#visualizer{
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -55%);
+  /* width: 100%; */
+  height: auto;
+  right: 0;
+}
+
+
+
+
+.sec-intro .titleBox {
+  max-width: 1100px;
+}
+.sec-intro .titleBox h3 {}
+
+.secItem[class*="sec-point"] > .fp-tableCell{
+  padding: 200px 30px 80px;
+}
+.secItem[class*="sec-point"] .titleBox{
+  text-align: center;
+}
+.secItem[class*="sec-point"] .titleBox > * {
+  margin: 0 auto 30px;
+}
+.secItem[class*="sec-point"] .titleBox .logo{
+  background-image: url(../resources/logo-symbol.png);
+  width: 200px;
+  height: 200px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: top center;
+
+  transition: 1s ease-out;
+}
+
+.secItem[class*="sec-point"]:not(.active) .titleBox .logo{
+  background-position: top 100% center;
+  transform: scale(.8);
+  opacity: 0;
+}
+
+.secItem[class*="sec-point"] .contentBox {
+  gap: 40px;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  margin-top: 30px;
+}
+.secItem[class*="sec-point"] .contentBox li{
+  flex: 1;
+}
+.secItem[class*="sec-point"] .contentBox li h5 {
+  opacity: .6;
+  margin-top: 6px;
+}
+.secItem[class*="sec-point"] .contentBox .iconBox{
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+}
+.secItem[class*="sec-point"] .contentBox .iconBox .icon{
+  background-size: 50% auto;
+}
+.ic-point1{background-image: url(../resources/icon-point1.png);}
+.ic-point2{background-image: url(../resources/icon-point2.png);}
+.ic-point3{background-image: url(../resources/icon-point3.png);}
+
+
+.secItem:not(footer),
+.secItem:not(footer) .fp-tableCell {
+  min-height: 500px;
+}
+.secItem[class*="sec-detail"] > .fp-tableCell{
+  padding: 30px;
+}
+.secItem[class*="sec-detail"] > .fp-tableCell > .wrap{
+  border-radius: 20px;
+  background-color: #222;
+  width: 100%;
+  height: 100%;
+  padding: 60px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  gap: 30px;
+}
+
+.secItem[class*="sec-detail"] .titleBox  >* {
+}
+.secItem[class*="sec-detail"] .titleBox .desc {
+  border-radius: 12px;
+  background-color: #333;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  margin-top: 10px;
+}
+.secItem[class*="sec-detail"] .contentBox {
+  width: 25%;
+}
+.secItem[class*="sec-detail"] .contentBox ul li{
+  position: absolute;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  min-width: 240px;
+}
+.secItem[class*="sec-detail"] .contentBox ul li h5{
+  opacity: .6;
+  margin-top: 6px;
+}
+.secItem[class*="sec-detail"] .contentBox ul li.lefttop{  
+  position: relative;
+  
+  padding: unset;
+  border: unset;
+  border-left: 2px solid #fff;
+  padding-left: 20px;
+  border-radius: 0;
+}
+.secItem[class*="sec-detail"] .contentBox ul li.righttop{  right: 0;   top: 0;}
+.secItem[class*="sec-detail"] .contentBox ul li.rightbottom{  right: 0;   bottom: 0;}
+.secItem[class*="sec-detail"] .contentBox ul li.leftbottom{  left: 0;   bottom: 0;}
+.secItem[class*="sec-detail"]  > .fp-tableCell{
+  transition: all .7s ease-in-out;
+
+}
+
+.secItem[class*="sec-detail"] .titleBox:nth-child(1) > *:nth-child(n+2){
+  margin-top: 6px;
+}
+.canvasBox {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  gap: 40px;
+
+}
+.canvasBox .canvasWrap canvas{
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.canvasBox .canvasWrap {
+  order: 2;
+    flex: 1;
+    width: 100%;
+    align-content: center;
+}

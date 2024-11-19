@@ -1,0 +1,247 @@
+
+/* animate */
+.debugWrap ,
+.debugger {
+    transition: all ease-in-out .5s;
+
+}
+
+/* response */
+@media only screen and (min-width:1601px) {
+    html{
+        font-size: 13px;
+
+    }
+}
+
+@media only screen and (max-width:1800px) {
+    .swiperIntro .videoBox video{
+        height: 100%;
+        width: auto;
+    }
+}
+@media only screen and (max-width:1200px) {
+
+
+    html {
+        font-size: 12px;
+    }
+
+    
+
+}
+
+
+@media only screen and (min-width:901px) {
+
+    
+    .secItem[class*="sec-detail"]:not(.active){
+        z-index:  -1;
+    
+    }
+    .secItem[class*="sec-detail"]:not(.active):not(.sec-detail4)  > .fp-tableCell{
+  
+        transform: translateY(100%);
+        opacity: 0.5;
+        filter: blur(5px);
+    }
+  
+    .secItem[class*="sec-point"].active + .secItem[class*="sec-detail1"]:not(.active)  > .fp-tableCell{
+        
+        transform: translateY(-260px);
+        opacity: 0.5;
+        filter: blur(5px);
+    }
+
+    
+    .secItem[class*="sec-detail"] > .fp-tableCell{
+        padding-top: 100px;
+        max-height: calc((var(--vh, 1vh)* 100)) !important;
+        display: block;
+    }
+}
+
+@media only screen and (max-width:900px) {
+
+    html {
+        font-size: 11px;
+    }
+
+    h1 {
+        font-size: 2.6rem;
+        line-height: 3.2rem;
+    }
+    h2 {
+        font-size: 2.2rem;
+        line-height: 2.6rem;
+    }
+    h3 {
+        font-size: 1.8rem;
+        line-height: 2.2rem;
+    }
+
+}
+
+
+@media (orientation: landscape )  {
+    @media only screen and (min-width:900px) {
+        .canvasBox canvas{
+            max-width: 80vh;
+        }
+        /* .secItem.sec-detail2 .canvasBox canvas{
+            max-width: 65vh;
+
+        } */
+    }
+
+    
+}
+@media (orientation: portrait )  {
+
+    .canvasBox canvas{
+        max-width: 75vh;
+    }
+
+    @media only screen and (min-width:900px) {
+        .fp-tableCell{
+            height: calc(var(--vh, 1vh)* 100) !important;
+        }
+
+    }
+    @media only screen and (max-width:900px) {
+        
+        .canvasBox .canvasWrap {
+            min-height: 80vw;
+        }
+        
+        .secItem[class*="sec-detail"] > .fp-tableCell> .wrap{
+            gap: 0;
+        }
+    }
+    
+}
+
+
+
+@media only screen and (max-width:900px) {
+    .secItem .fp-tableCell > .wrap{
+        padding: 68px 20px 20px;
+    }
+    .btnLang {
+        
+        position: absolute;
+        top: 18px;
+        right: 60px;
+    }
+    .btnMenu{
+        display: block
+    }
+    header .category{
+        display: none;
+    }
+
+    header > .wrap{
+        padding: 20px;
+    }
+    header .logo {
+        height: 28px;
+        width: 200px;
+    }
+
+    .secItem[class*="sec-point"] .contentBox{
+        flex-direction: column;
+    }
+
+    .secItem[class*="sec-detail"] > .fp-tableCell> .wrap {
+        padding: 20px;
+        height: fit-content;
+    }
+    .secItem[class*="sec-detail"] .contentBox ul{
+        padding: 12px;
+        gap: 10px;
+        flex-direction: column;
+    }
+    body.fp-viewing-extended header .category .cateItem:nth-child(1), body.fp-viewing-notarization header .category .cateItem:nth-child(2), body.fp-viewing-channel header .category .cateItem:nth-child(3), body.fp-viewing-recovery header .category .cateItem:nth-child(4){
+        border:unset;
+        border-bottom: 2px solid var(--color-primary);
+        padding:0 0 12px ;
+        border-radius: unset;
+    }
+    .canvasBox{
+        position: relative;
+        flex-direction: column;
+        right: unset;
+        top: unset;
+        text-align: center;
+        width: 100%;
+        flex: 1;
+        align-content: center;
+        min-height: 300px;
+        height: fit-content;
+    }
+    .secItem[class*="sec-point"] > .fp-tableCell{
+        padding-top: 100px;
+    }
+    
+    .secItem[class*="sec-detail"],
+    .secItem[class*="sec-detail"] > .fp-tableCell
+    {
+        height: fit-content !important;    
+    }
+    .secItem[class*="sec-intro"] > .fp-tableCell > .wrap{
+        padding: 40px 0 20px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .secItem[class*="sec-intro"] .canvasWrap{
+        flex: 1;
+        height: unset;
+        align-content: center;
+
+    }
+    #visualizer,
+    .sec-intro .titleBox{
+        position: unset;
+        transform: unset;
+        height: unset;
+    }
+    #visualizer{
+        width: 100%;
+    }
+    .secItem[class*="sec-detail"] > .fp-tableCell{
+        padding: 0 20px 12px;
+    }
+    .secItem[class*="sec-detail"] .contentBox{
+        width: 100%;
+    }
+    .secItem[class*="sec-detail"] .contentBox ul{
+        margin-top: 20px;
+        padding: 0;
+    }
+    .secItem[class*="sec-detail"] .contentBox ul li{
+        position: unset;
+        margin-top: 8px;
+        padding: 12px;
+        width: 100%;
+        text-align: left;
+    }
+    .secItem[class*="sec-detail"] .titleBox .desc{
+        margin-top: 20px;
+    }
+}
+
+
+
+@media only screen and (max-width:600px) {
+    html{
+        font-size: 10px;
+    }
+
+    
+    header .logo {
+        height: 26px;
+    }
+
+
+}

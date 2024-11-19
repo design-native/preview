@@ -1,0 +1,157 @@
+header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 99;
+
+    backdrop-filter: blur(5px);
+    background-color: rgba(255,255,255, .2);
+    border-bottom: 1px solid rgba(255,255,255, .5);
+}
+header > .wrap {
+    justify-content: space-between;
+    padding: 30px;
+    align-items: center;
+
+}
+
+
+
+header .logo {
+    height: 32px;
+    width: 200px;
+    background-position: center left;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-image: url(../resources/gio-logo.png?update=240911);
+}
+header .category {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+header .category .cateItem{
+    position: relative;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    gap: 6px;
+
+}
+
+header .category .cateItem .cateSub{
+    position: absolute;
+    display: none;
+}
+header .category .cateItem .moreBtn i{
+    width: 14px;
+    height: 14px;
+}
+header .sideBox {
+    gap: 12px;
+}
+
+body.headerON header{
+    bottom: 0;
+    background-color: rgba(10,10,10, .5);
+    backdrop-filter: blur(5px);
+}
+body.headerON header .logo{
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+body.headerON header > .wrap {
+    height: 100%;
+    flex-direction: column !important;
+    justify-content: center
+}
+body.headerON header .category {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+    
+}
+body.headerON header .category .cateItem h5{
+    font-size: 3rem;
+}
+
+header .category .cateItem {
+  opacity: .5;
+  white-space: nowrap;
+  transition: .5s all;
+}
+body.fp-viewing-extended header .category .cateItem:nth-child(1),
+body.fp-viewing-notarization header .category .cateItem:nth-child(2),
+body.fp-viewing-channel header .category .cateItem:nth-child(3),
+body.fp-viewing-recovery header .category .cateItem:nth-child(4)
+{
+  border-radius: 30px;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+  padding: 0 20px;
+  opacity: 1;
+}
+
+
+
+footer {
+    /* background: linear-gradient(180deg,#111 0%, #000 100%); */
+}
+
+footer,footer .fp-tableCell {
+    height: fit-content !important;
+  }
+  footer .fp-tableCell > .wrap{
+    padding:30px
+  }
+  
+  footer .topBox,
+  footer .bottomBox,
+  footer .snsList {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+  }
+  footer .logo {
+    display: block;
+    height: 30px;
+    width: 100%;
+    background-position: center left;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-image: url(../resources/gio-logo.png);
+  }
+  
+  footer .snsList {
+    gap: 12px;
+  }
+  footer .snsList .snsItem i {
+    width: 30px;
+    height: 30px;
+    background-color: #555;
+  }
+    /* .ic-snsX {-webkit-mask-image: url(../resources/icon-x.png); mask-image: url(../resources/icon-x.png)   }
+    .ic-snsGithub {-webkit-mask-image: url(../resources/icon-github.png);    }
+    .ic-snsTele {-webkit-mask-image: url(../resources/icon-telegram.png);    } */
+  footer .sitemap {
+    display: flex;
+    gap: 10px;
+  }
+  footer .bottomBox {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
