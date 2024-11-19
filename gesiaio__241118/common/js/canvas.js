@@ -541,7 +541,7 @@ drawPointText() {
                 // 새로운 텍스트 페이드 인 (A원에서만)
                 if ( point.circle === 'A') {
                     this.ctx.fillStyle = `rgba(40, 40, 40, ${fadeProgress})`;
-                    const text = `L1(N${point.number}) : L2(N${point.number}) : L1(N${point.number})`;
+                    const text = `L1(N${point.number}) : L2(N${point.number}) : L3(N${point.number})`;
                     this.ctx.fillText(text, textX + additionalOffsetX, textY + additionalOffsetY);
                 }
             } else {
