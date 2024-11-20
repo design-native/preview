@@ -27,17 +27,160 @@
   <link rel="manifest" href="./common/resources/favicon/site.webmanifest"> -->
 
   <link type="text/css" rel="stylesheet" href="./common/css/reset.css?update=241118_1051">
-  <link type="text/css" rel="stylesheet" href="./common/css/fullPage.css">
   <link type="text/css" rel="stylesheet" href="./common/css/common.css?update=241118_1051">
   <link type="text/css" rel="stylesheet" href="./common/css/layout.css?update=241118_1051">
   <link type="text/css" rel="stylesheet" href="./common/css/contents.css?update=241118_1051">
   <link type="text/css" rel="stylesheet" href="./common/css/response.css?update=241118_1051">
 
   <script type="text/javascript" src="./common/js/jquery.min.js"></script>
-  <script type="text/javascript" src="./common/js/fullPage.min.js?update=241118_1051"></script>
+  <!-- <script type="text/javascript" src="./common/js/hammer.js"></script> -->
+  
 </head>
 
-<body  data-location="index">
+<body  data-location="index" data-state="1">
+
+
+  <div class="frame"><div class="wrap">
+    <div class="contents"><div class="wrap">
+      <h3 class="title"><b>이야기를 선택해주세요</b></h3>
+      <ul class="storyList">
+        <li class="storyItem ACTIVE"><button type="button">
+          <div class="thm" style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></div>
+          <h5 class="label">피노키오</h5>
+        </button></li>
+        <li class="storyItem"><button type="button">
+          <div class="thm"></div>
+          <h5 class="label">백설공주</h5>
+        </button></li>
+        <li class="storyItem"><button type="button">
+          <div class="thm"></div>
+          <h5 class="label">신데렐라</h5>
+        </button></li>
+      </ul>
+    </div></div>
+    <div class="scene">
+      <article class="book">
+      <section class="page ACTIVE">
+        <div class="front">
+          <div class="textBox">
+            <h5 class="owner">카를로 콜로디</h5>
+            <h2 class="title"><b>피노키오</b></h2>
+          </div>
+          <h4 class="desc">옛날 옛날에......<Br/>
+            "왕이 있었습니다!"<Br/>
+            어린이 독자 여러분은 냉큼 이렇게 말할 거예요. 하지만 아니예요!<Br/>
+            여러분이 틀렸어요. 옛날 옛날에 나무토막이 하나 있었답니다.<Br/>
+            값비싼 나무가 아니라 보통 땔나무였어요. 겨울에 불을 지피고 방을 따뜻하게 하려고 화덕과 벽난로에 넣는 나무 말이예요.</h4>
+          <div class="thm" style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></div>
+          <button type="button" class="btn btn-fill-primary size-m btnNext">나만의 동화 만들기</button>
+
+        </div>
+        <div class="back">
+          <div class="textBox">
+            <h4>1장</h4>
+            <h1 class="title">피노키오의 탄생</h1>
+            <h3 class="detail">마법 목수 제페토 할아버지는 나무로 만든 인형을 만들어 "피노키오"라고 이름 지었어요. 어느 날 밤, 푸른 요정이 나타나 피노키오에게 생명을 주었어요. 요정은 피노키오가 착한 아이가 되면 인간이 될 수 있다고 알려주었답니다. 피노키오는 이제 살아 움직이게 되었고, 제페토는 그를 자신의 아들처럼 사랑했어요.</h3>
+          </div>
+          <button type="button" class="btn btn-fill size-m btnPrev">처음으로</button>
+
+        </div>    
+      </section>
+
+
+      <section class="page">
+        <div class="front">
+          <div class="imgBox">
+            <h3 class="title">이미지를 선택해주세요</h3>
+
+            <div class="imgSelect">
+              <div class="imgOption">
+                <button type="button" class="btn btnImg"style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></button>
+                <button type="button" class="btn btnImg"style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></button>
+                <button type="button" class="btn btnImg"style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></button>
+              </div>
+            </div>
+            <div class="imgFixed" style="display: none;">
+              <div class="img" style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></div>
+              <button type="button" class="btn btn-fill">이미지 다시 고르기</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-line-primary size-m btnNext">다음 장</button>
+
+        </div>
+        <div class="back">
+          <div class="textBox">
+            <h4>1장</h4>
+            <h1 class="title">첫 번째 유혹: <br/>학교 대신 인형극장</h1>
+            <h3 class="detail">피노키오는 학교에 가야 했지만, 길에서 인형극장을 발견하고 마음이 흔들렸어요. 인형극장은 흥미로워 보였고, 결국 그는 학교 대신 극장으로 가기로 결심해요. 인형극장 주인은 피노키오를 잡아 가두고 돈을 벌 계획을 세웠어요. 하지만 피노키오는 무사히 빠져나오게 되었어요.</h3>
+          </div>
+          <button type="button" class="btn btn-fill size-m btnPrev">이전화</button>
+
+        </div>    
+      </section>
+
+
+      <section class="page">
+        <div class="front">
+          <div class="imgBox">
+            <h3 class="title">이미지를 선택해주세요</h3>
+
+            <div class="imgSelect">
+              <div class="imgOption">
+                <button type="button" class="btn btnImg"style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></button>
+                <button type="button" class="btn btnImg"style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></button>
+                <button type="button" class="btn btnImg"style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></button>
+              </div>
+            </div>
+            <div class="imgFixed" style="display: none;">
+              <div class="img" style="background-image: url(https://i.namu.wiki/i/uiwnxqluIX17gzTsiONbfW49H9iLZDiff2NS5XaaJTDkRHydQmZMEzmKzS1ltJB6LPpVGZNv-9BLdHuQevaFyg.webp);"></div>
+              <button type="button" class="btn btn-fill">이미지 다시 고르기</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-line-primary size-m btnNext">목소리 정하기</button>
+
+        </div>
+        <div class="back">
+          <h3 class="title">목소리를 정해주세요</h3>
+
+          <div class="scriptBox">
+            <pre class="script">
+<b>1. 피노키오의 탄생</b>
+마법 목수 제페토 할아버지는 나무로 만든 인형을 만들어 "피노키오"라고 이름 지었어요. 어느 날 밤, 푸른 요정이 나타나 피노키오에게 생명을 주었어요. 요정은 피노키오가 착한 아이가 되면 인간이 될 수 있다고 알려주었답니다. 피노키오는 이제 살아 움직이게 되었고, 제페토는 그를 자신의 아들처럼 사랑했어요.
+
+<b>2. 첫 번째 유혹: 학교 대신 인형극장</b>
+피노키오는 학교에 가야 했지만, 길에서 인형극장을 발견하고 마음이 흔들렸어요. 인형극장은 흥미로워 보였고, 결국 그는 학교 대신 극장으로 가기로 결심해요. 인형극장 주인은 피노키오를 잡아 가두고 돈을 벌 계획을 세웠어요. 하지만 피노키오는 무사히 빠져나오게 되었어요.
+
+<b>3. 거짓말하는 피노키오</b>
+피노키오는 요정과 만나 자신의 모험을 이야기했지만, 자꾸 거짓말을 하게 돼요. 거짓말을 할 때마다 그의 코는 점점 길어졌어요. 요정은 피노키오에게 진실을 말하는 것이 중요하다고 가르쳤어요. 피노키오는 진실의 가치를 깨닫기 시작했답니다.
+            </pre>
+          </div>
+          <div class="voiceBox">
+            <button type="button" class="btn size-s btn-fill" disabled>내 목소리로 만들기</button>
+            <button type="button" class="btn size-s btn-fill">뽀로로가 읽어주기</button>
+            <button type="button" class="btn size-s btn-fill">아이유가 읽어주기</button>
+          </div>
+
+          <button type="button" class="btn btn-fill size-m btnPrev">동화 구현 만들기</button>
+
+        </div>    
+      </section>
+
+      <section class="page">
+        <div class="front">
+          <h3 class="title">뽀로로가 읽어주는 피노키오</h3>
+
+          <video width="550" controls>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"> 
+            Your browser does not support HTML5 video.
+          </video>
+
+          <button type="button" class="btn btn-line-primary size-m">처음으로</button>
+
+        </div>
+        <div class="back">
+          </div>
+    </div>
+  </div></div>
 
 </body>
 

@@ -49,8 +49,8 @@ body.type-device.layerON #fullpage{
     --color-gray300 :#ddd;
 
 
-    --color-primary:#fff;
-    --color-primaryPink:#fff;
+    --color-primary:orange;
+    --color-primary2:gold;
 
 }
 /************************     BUTTON      ************************/
@@ -59,14 +59,14 @@ body.type-device.layerON #fullpage{
 .btn.btn-line{border:1px solid #fff;color: #fff;}
 .btn.btn-line-gray{border:1px solid #eee;color: #000;font-weight: 600;}
 .btn.btn-line-dark{border:1px solid #333;color: #000;font-weight: 600;}
-.btn.btn-line-primary{border:1px solid var(--color-primary);color: var(--color-primary);}
+.btn.btn-line-primary{border:1px solid var(--color-primary);color: var(--color-primary);background-color: #fff;}
 .btn.btn-fill{background-color:#fff ;color: var(--color-primary);font-weight: 600;}
 .btn.btn-fill-primary,
-.btn.btn-fill-primary{background-color:var(--color-primary) ;color: #000 ;font-weight: 600;}
+.btn.btn-fill-primary{background-color:var(--color-primary) ;color: #fff ;font-weight: 600;}
 .btn.btn-fill-white{background-color:#fff ;color: #000;}
 .btn.btn-fill-gray{background-color:#f5f5f5 ;color: #000;}
 .btn.btn-fill-dark{background-color:#333 ;color: #fff;}
-.btn.btn-fill-gradient {background: var(--primary-gradient, linear-gradient(57deg, var(--color-primary) 8.76%, var(--color-primaryPink) 80.88%));color: #000;font-weight: 800;}
+.btn.btn-fill-gradient {background: var(--primary-gradient, linear-gradient(57deg, var(--color-primary) 8.76%, var(--color-primary2) 80.88%));color: #000;font-weight: 800;}
 
 .size-sqaure35{width: 35px;height: 35px;border-radius: 6px;}
 .size-circle40{width: 40px;height: 40px;border-radius: 50%;}
