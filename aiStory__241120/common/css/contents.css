@@ -230,7 +230,8 @@ and (orientation : portrait) {
 .scene .book .front .inputBox label{
   text-align: left;
 }
-.scene .book .front .inputBox input {
+
+  .scene .book .front .inputBox input {
   height: 60px;
   border-radius: 6px;
   padding: 0 12px;
