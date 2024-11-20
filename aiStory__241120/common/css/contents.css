@@ -295,7 +295,6 @@ and (orientation : portrait) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 5;
   border-radius: 12px;
 }
 .imgBox .imgFixed .img{
