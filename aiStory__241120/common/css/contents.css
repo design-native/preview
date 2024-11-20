@@ -5,8 +5,8 @@
   * {font-weight: 400;}
   h1{ font-size: 4rem; line-height:5.4rem;}
   h2{ font-size: 3rem; line-height: 4.2rem;}
-  h3{ font-size: 2.2rem; line-height: 2.8rem;}
-  h4{ font-size: 1.6rem; line-height: 2rem;}
+  h3{ font-size: 2.2rem; line-height: 3rem;}
+  h4{ font-size: 1.6rem; line-height: 2.2rem;}
   h5{ font-size: 1.4rem; line-height: 1.6rem;}
   h6{ font-size: 1rem; line-height: 1.6rem;}
   p{ font-size: 1rem; line-height: 1.8rem;}
@@ -168,10 +168,21 @@ and (orientation : portrait) {
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'TTHakgyoansimSonagiR';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimSonagiR.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 .frame .contents {
   position: absolute;
   width: 40%;
   left: 5%;
+}
+.frame .contents > .wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 .frame .contents .storyList{
   display: grid;
@@ -206,10 +217,30 @@ and (orientation : portrait) {
 .scene .book .front .textBox .title{
   font-family: 'HS-Regular';
 }
+.scene .book .front .desc{
+  font-family: 'TTHakgyoansimSonagiR';
+  letter-spacing: -.5px;
+
+}
+.scene .book .front .inputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.scene .book .front .inputBox label{
+  text-align: left;
+}
+.scene .book .front .inputBox input {
+  height: 60px;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 1.6rem;
+  text-align: center;
+}
 .scene .book .front .thm{
   width: calc(100%);
   height: 0;
-  padding-bottom: 60%;
+  flex: 1;
   background-size: cover;
   background-position: center;
 }
@@ -236,13 +267,12 @@ and (orientation : portrait) {
 }
 
 .imgBox {
+  position: relative;
+
   height: 100%;    
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-.imgBox .imgSelect {
-  position: relative;
 }
 .imgBox .imgSelect .imgOption {
   display: flex;
@@ -258,12 +288,27 @@ and (orientation : portrait) {
   background-position: center;
 }
 
-.imgBox .imgSelect .imgFixed {
+.imgBox .imgFixed {
   position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  z-index: 5;
+  border-radius: 12px;
+}
+.imgBox .imgFixed .img{
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.imgBox .imgFixed .btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .back{
@@ -278,4 +323,9 @@ and (orientation : portrait) {
   flex-direction: column;
   justify-content: center;
   flex: 1;
+}
+.front.resultBox .title,
+.back .textBox .title{
+  font-family: 'HS-Regular';
+
 }

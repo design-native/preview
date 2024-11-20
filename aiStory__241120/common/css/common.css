@@ -67,7 +67,7 @@ body.type-device.layerON #fullpage{
 .btn.btn-fill-gray{background-color:#f5f5f5 ;color: #000;}
 .btn.btn-fill-dark{background-color:#333 ;color: #fff;}
 .btn.btn-fill-gradient {background: var(--primary-gradient, linear-gradient(57deg, var(--color-primary) 8.76%, var(--color-primary2) 80.88%));color: #000;font-weight: 800;}
-
+.btn:disabled {filter: grayscale(1); opacity: .5;}
 .size-sqaure35{width: 35px;height: 35px;border-radius: 6px;}
 .size-circle40{width: 40px;height: 40px;border-radius: 50%;}
 .size-circle60{width: 60px;height: 60px;border-radius: 50%;}
