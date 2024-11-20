@@ -1,0 +1,76 @@
+
+/* animate */
+
+/* response */
+@media only screen and (min-width:1601px) {
+    html{
+        font-size: 13px;
+
+    }
+}
+
+@media only screen and (max-width:1200px) {
+
+
+    html {
+        font-size: 12px;
+    }
+
+    
+
+}
+
+
+@media only screen and (min-width:901px) {
+
+    
+}
+
+@media only screen and (max-width:900px) {
+
+    html {
+        font-size: 11px;
+    }
+
+    h1 {
+        font-size: 2.6rem;
+        line-height: 3.2rem;
+    }
+    h2 {
+        font-size: 2.2rem;
+        line-height: 2.6rem;
+    }
+    h3 {
+        font-size: 1.8rem;
+        line-height: 2.2rem;
+    }
+
+}
+
+
+@media (orientation: landscape )  {
+    @media only screen and (min-width:900px) {
+    }
+
+    
+}
+@media (orientation: portrait )  {
+
+    
+}
+
+
+
+@media only screen and (max-width:900px) {
+}
+
+
+
+@media only screen and (max-width:600px) {
+    html{
+        font-size: 10px;
+    }
+
+    
+
+}
