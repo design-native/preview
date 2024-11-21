@@ -62,7 +62,7 @@ body.type-device.layerON #fullpage{
     --color-gray300 :#ddd;
 
 
-    --color-primary:#fff;
+    --color-primary:#00C1B3;
     --color-primaryPink:#fff;
 
 }
@@ -133,7 +133,7 @@ body.type-device.layerON #fullpage{
     width: 30px;
     height: 2px;
     border-radius: 1px;
-    background-color: #fff;
+    background-color: #333;
     margin-top: 6px;
     transition: all 0.3s ease-in-out;
   }

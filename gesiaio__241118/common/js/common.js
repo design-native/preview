@@ -115,6 +115,136 @@ window.addEventListener("resize", function () {
 });
 
 
+// 모든 data-lang 번역 텍스트 정의
+let lang1 = ["CAuth", "CAuth"];
+let lang2 = ["Carbon Authentication", "탄소 인증"];
+let lang3 = ["Transaction Authentication", "거래 인증"];
+let lang4 = ["Exchange Authentication", "거래소 인증"];
+let lang5 = ["Trader Authentication", "거래자 인증"];
+let lang6 = ["Emission Authentication", "배출 인증"];
+let lang7 = ["Emission Data Provider Authentication", "배출 데이터 제공자 인증"];
+let lang8 = ["Emission Data Administrator Authentication", "배출 데이터 관리자 인증"];
+let lang9 = ["Offset Authentication", "상쇄 인증"];
+let lang10 = ["Offset Data Provider Authentication", "상쇄 데이터 제공자 인증"];
+let lang11 = ["Offset Data Administrator Authentication", "상쇄 데이터 관리자 인증"];
+let lang12 = ["Platform", "플랫폼"];
+let lang13 = ["Carbon Platform", "탄소 플랫폼"];
+let lang14 = ["NetZero Dashboard", "넷제로 대시보드"];
+let lang15 = ["Emission Dashboard", "배출 대시보드"];
+let lang16 = ["Offset Dashboard", "상쇄 대시보드"];
+let lang17 = ["Explore", "탐색"];
+let lang18 = ["Carbon Explore", "탄소 탐색"];
+let lang19 = ["NetZero Explore", "넷제로 탐색"];
+let lang20 = ["Emission Explore", "배출 탐색"];
+let lang21 = ["Offset Explore", "상쇄 탐색"];
+let lang22 = ["Community", "커뮤니티"];
+let lang23 = ["Developer", "개발자"];
+let lang24 = ["Github", "깃허브"];
+let lang25 = ["News", "뉴스"];
+let lang26 = ["Medium", "미디엄"];
+let lang27 = ["Instagram", "인스타그램"];
+let lang28 = ["Youtube", "유튜브"];
+let lang29 = ["Communication", "소통"];
+let lang30 = ["Twitter", "트위터"];
+let lang31 = ["Telegram", "텔레그램"];
+let lang32 = ["Net-Zero Layer 3 Platform", "넷제로 레이어 3 플랫폼"];
+let lang33 = ["", ""];
+let lang34 = ["", ""];
+let lang35 = ["Net-Zero Consensus", "넷제로 컨센서스"];
+let lang36 = ["Carbon Credit Burning Consensus", "탄소 크레딧 소각 컨센서스"];
+let lang37 = [
+    "1. Carbon emission offset and carbon credit burning<br/>2. Carbon emission verification through burn request<br/>3. Thorough verification process via rollup<br/>4. Permanently recorded net-zero status on the blockchain",
+    "1. 탄소 배출 상쇄 및 탄소 크레딧 소각<br/>2. 소각 요청을 통한 탄소 배출 검증<br/>3. 롤업을 통한 철저한 검증 프로세스<br/>4. 블록체인에 영구적으로 기록된 넷제로 상태"
+];
+let lang38 = ["Carbon Reduction Consensus", "탄소 감축 컨센서스"];
+let lang39 = [
+    "1. Accurate identification of emission sources<br/>2. Analysis and verification of reduction activities<br/>3. Carbon credit issuance upon achievement of reduction targets",
+    "1. 배출원의 정확한 식별<br/>2. 감축 활동 분석 및 검증<br/>3. 감축 목표 달성 시 탄소 크레딧 발급"
+];
+let lang40 = ["Carbon Emission Data Tokenization", "탄소 배출 데이터 토큰화"];
+let lang41 = ["The Notary Oracle tokenizes external carbon emission data using calculators from certified institutions.", "공증 오라클은 인증된 기관의 계산기를 사용하여 외부 탄소 배출 데이터를 토큰화합니다."];
+let lang42 = ["Carbon Offset Data Tokenization", "탄소 상쇄 데이터 토큰화"];
+let lang43 = ["The Notary Oracle tokenizes external carbon absorption and reduction data authenticated by certified institutions.", "공증 오라클은 인증된 기관이 인증한 외부 탄소 흡수 및 감축 데이터를 토큰화합니다."];
+let lang44 = ["Preventing Double Counting in Cross-Chain Token Transfers", "체인 간 토큰 전송에서 중복 계산 방지"];
+let lang45 = ["Carbon Credit Products", "탄소 크레딧 제품"];
+let lang46 = ["ExoMad Green's Sustainable<br/>Biochar Project in Bolivia", "ExoMad Green의 지속 가능한<br/>바이오차 프로젝트"];
+let lang47 = [
+    "ExoMad Green's sustainable biochar project<br/>creates environmental and social value<br/>through a circular economy model.",
+    "ExoMad Green의 지속 가능한 바이오차 프로젝트는<br/>순환 경제 모델을 통해 환경적 및 사회적 가치를 창출합니다."
+];
+let lang48 = ["A Unique and Influential<br/>REDD+ Project Preserving<br/>the Tropical Rainforest", "열대우림을 보존하는<br/>독창적이고 영향력 있는 REDD+ 프로젝트"];
+let lang49 = [
+    "In collaboration with Netherlands-based<br/>Quadriz B.V., its local affiliate Quadriz<br/>Paraguay S.A., and Atenil S.A., the project<br/>has implemented verified carbon standards.",
+    "네덜란드의 Quadriz B.V., 지역 계열사 Quadriz Paraguay S.A., Atenil S.A.와 협력하여 이 프로젝트는<br/>검증된 탄소 표준을 구현했습니다."
+];
+let lang50 = ["Delta Blue<br/>Carbon Project", "델타 블루<br/>탄소 프로젝트"];
+let lang51 = [
+    "The Indus Delta Blue Carbon Project works<br/>to restore one of the world's largest arid climate<br/>mangrove forests located in Pakistan.",
+    "인더스 델타 블루 탄소 프로젝트는 파키스탄에 위치한 세계 최대의 건조 기후 맹그로브 숲 중 하나를 복원하기 위해 노력합니다."
+];
+let lang52 = ["CAuth", "CAuth"];
+let lang53 = ["Carbon Authentication", "탄소 인증"];
+let lang54 = ["Transaction Authentication", "거래 인증"];
+let lang55 = ["Exchange Authentication", "거래소 인증"];
+let lang56 = ["Trader Authentication", "거래자 인증"];
+let lang57 = ["Emission Authentication", "배출 인증"];
+let lang58 = ["Emission Data Provider Authentication", "배출 데이터 제공자 인증"];
+let lang59 = ["Emission Data Administrator Authentication", "배출 데이터 관리자 인증"];
+let lang60 = ["Offset Authentication", "상쇄 인증"];
+let lang61 = ["Offset Data Provider Authentication", "상쇄 데이터 제공자 인증"];
+let lang62 = ["Offset Data Administrator Authentication", "상쇄 데이터 관리자 인증"];
+let lang63 = ["Platform", "플랫폼"];
+let lang64 = ["Carbon Platform", "탄소 플랫폼"];
+let lang65 = ["NetZero Dashboard", "넷제로 대시보드"];
+let lang66 = ["Emission Dashboard", "배출 대시보드"];
+let lang67 = ["Offset Dashboard", "상쇄 대시보드"];
+let lang68 = ["Explore", "탐색"];
+let lang69 = ["Carbon Explore", "탄소 탐색"];
+let lang70 = ["NetZero Explore", "넷제로 탐색"];
+let lang71 = ["Emission Explore", "배출 탐색"];
+let lang72 = ["Offset Explore", "상쇄 탐색"];
+let lang73 = ["Community", "커뮤니티"];
+let lang74 = ["Developer", "개발자"];
+let lang75 = ["Github", "깃허브"];
+let lang76 = ["News", "뉴스"];
+let lang77 = ["Medium", "미디엄"];
+let lang78 = ["Instagram", "인스타그램"];
+let lang79 = ["Youtube", "유튜브"];
+let lang80 = ["Communication", "소통"];
+let lang81 = ["Twitter", "트위터"];
+let lang82 = ["Telegram", "텔레그램"];
+let lang83 = ["Copyright © 2024 GESIA. All rights reserved.", "저작권 © 2024 GESIA. 모든 권리 보유."];
+let lang84 = ["Status", "상태"];
+let lang85 = ["Legal", "법적 고지"];
+let lang86 = ["Privacy", "개인정보 보호"];
+let lang87 = ["Terms", "이용 약관"];
+let lang88 = ["Net-Zero School", "넷제로 스쿨"];
+let lang89 = [
+    "A project that aggregates carbon emissions from elementary, middle, and high schools to contribute to achieving Net-Zero goals. By analyzing energy usage data from each school, it assesses carbon emissions and suggests reduction strategies.",
+    "초등학교, 중학교, 고등학교의 탄소 배출량을 집계하여 넷제로 목표 달성에 기여하는 프로젝트입니다. 각 학교의 에너지 사용 데이터를 분석하여 탄소 배출량을 평가하고 감축 전략을 제안합니다."
+];
+let lang90 = ["GXCE ( Gesia X Carbon Exchange )", "GXCE (Gesia X 탄소 거래소)"];
+let lang91 = [
+    "GXCE is a rollup-based decentralized exchange (DEX) where users can trade carbon credits authenticated by certified institutions such as Verra, ProArles, and the Korea Forestry Promotion Institute. The platform emphasizes transparency in all carbon credit transactions, creating a trustworthy environment for carbon trading.",
+    "GXCE는 Verra, ProArles, 한국산림진흥원과 같은 인증 기관에서 인증한 탄소 크레딧을 거래할 수 있는 롤업 기반 탈중앙화 거래소(DEX)입니다. 이 플랫폼은 모든 탄소 크레딧 거래에서 투명성을 강조하여 신뢰할 수 있는 탄소 거래 환경을 제공합니다."
+];
+let lang92 = ["Net-Zero Heroes", "넷제로 히어로즈"];
+let lang93 = [
+    "A campaign project designed to raise awareness about the climate crisis and encourage carbon reduction efforts. Through various platforms and social media, it highlights the importance of addressing climate change and offers practical ways to reduce one's carbon footprint.",
+    "기후 위기에 대한 인식을 높이고 탄소 감축 노력을 독려하기 위해 설계된 캠페인 프로젝트입니다. 다양한 플랫폼과 소셜 미디어를 통해 기후 변화 대응의 중요성을 강조하고 개인의 탄소 발자국을 줄이는 실용적인 방법을 제공합니다."
+];
+let lang94 = ["Net-Zero Wallet", "넷제로 월렛"];
+let lang95 = [
+    "Net-Zero Wallet securely stores carbon credits issued by the Offset Chain and supports reliable carbon management and transactions through comprehensive authentication, including transaction, emission, and offset authentication.",
+    "넷제로 월렛은 Offset Chain에서 발행한 탄소 크레딧을 안전하게 저장하고, 거래, 배출, 상쇄 인증을 포함한 종합 인증을 통해 신뢰할 수 있는 탄소 관리 및 거래를 지원합니다."
+];
+let lang96 = ["What is GESIA", "GESIA란"];
+let lang97 = [
+    "GESIA, a Net-Zero Layer 3 platform that transparently and efficiently manages carbon emission tracking, reduction, and offset activities, leverages innovative blockchain layer technology, IoT integration, and AI-based analysis to help businesses, individuals, and governments effectively achieve their carbon neutrality goals.",
+    "GESIA는 탄소 배출 추적, 감축, 상쇄 활동을 투명하고 효율적으로 관리하는 넷제로 레이어 3 플랫폼으로, 혁신적인 블록체인 레이어 기술, IoT 통합 및 AI 기반 분석을 활용하여 기업, 개인 및 정부가 탄소 중립 목표를 효과적으로 달성하도록 지원합니다."
+];
+
+
 
 function changeLang(target){
     if(target == 'kr'){langNum = 2}
@@ -124,60 +254,8 @@ function changeLang(target){
     if($('body').attr('data-location') == 'index'){
         
 
-        let lang1 = ["Together, let's open up new possibilities for chain network with OAuth 3. <br/>Effortlessly manage complex chain network networks with a single account, unlocking a seamless, fully integrated experience like never before.", "OAuth 3로 체인 네트워크의 새로운 가능성을 함께 열어갑시다. <br/>하나의 계정으로 복잡한 체인 네트워크를 손쉽게 관리하고, 그 어느 때보다 원활하고 통합된 경험을 제공합니다."];
-        let lang2 = ["1. Extended", "1. 확장된 기능"];
-        let lang3 = ["2. Notarization", "2. 공증"];
-        let lang4 = ["3. Channel", "3. 채널"];
-        let lang5 = ["4. Recovery", "4. 복구"];
-        let lang6 = ["EN", "KR"];
-        let lang7 = ["Standby Mode", "대기 모드"];
-        let lang8 = ["Step 1", "1단계"];
-        let lang9 = ["Step 2", "2단계"];
-        let lang10 = ["Step 3", "3단계"];
-        let lang11 = ["Together, let's open up new possibilities for chain network with OAuth 3. <br/>Effortlessly manage complex chain network networks with a single account, unlocking a seamless, fully integrated experience like never before.", "OAuth 3로 체인 네트워크의 새로운 가능성을 함께 열어갑시다. <br/>하나의 계정으로 복잡한 체인 네트워크를 손쉽게 관리하고, 그 어느 때보다 원활하고 통합된 경험을 제공합니다."];
-        let lang12 = ["<b>OAuth 3</b>", "<b>OAuth 3</b>"];
-        let lang13 = ["Effortlessly manage complex chain network networks with <br/>a single account, unlocking a seamless, fully integrated experience like never before.", "하나의 계정으로 복잡한 체인 네트워크를 손쉽게 관리하고, <br/>그 어느 때보다 원활하고 통합된 경험을 제공합니다."];
-        let lang14 = ["All Assets in One Account", "모든 자산을 하나의 계정에"];
-        let lang15 = ["Manage and own chain network assets scattered across multiple chains with a single account.<br/>Simplify complex multi-chain network environments by integrating them for easier operation.", "여러 체인에 분산된 체인 네트워크 자산을 하나의 계정으로 관리하고 소유하십시오.<br/>복잡한 멀티 체인 네트워크 환경을 통합하여 운영을 단순화합니다."];
-        let lang16 = ["Connection Across All Networks", "모든 네트워크 간 연결"];
-        let lang17 = ["All you need is one account.<br/>Synchronize all chain network networks with a single account, making asset management across multiple chains easier and more optimized than ever.", "필요한 것은 하나의 계정뿐입니다.<br/>하나의 계정으로 모든 체인 네트워크를 동기화하여 여러 체인에 걸친 자산 관리를 그 어느 때보다 간편하고 최적화된 방식으로 제공합니다."];
-        let lang18 = ["Real-Time Asset Synchronization", "실시간 자산 동기화"];
-        let lang19 = ["Keep assets across multiple chains up-to-date with real-time synchronization.<br/>Manage your assets seamlessly with accurate data that instantly responds to changes.", "여러 체인에 걸친 자산을 실시간 동기화로 최신 상태로 유지하십시오.<br/>변경 사항에 즉시 반응하는 정확한 데이터로 자산을 원활하게 관리하세요."];
-        let lang20 = ["Extended Account", "확장된 계정"];
-        let lang21 = ["Decentralized Account Management through Perceptron Sync", "퍼셉트론 싱크를 통한 탈중앙화 계정 관리"];
-        let lang22 = ["Secure and Consistent Multi-Chain Account Deployment with Perceptron Sync", "퍼셉트론 싱크를 통한 안전하고 일관된 멀티 체인 계정 배포"];
-        let lang23 = ["With Perceptron Sync, you can easily deploy and manage secure and consistent accounts across various chain networks without external intervention.", "퍼셉트론 싱크를 통해 외부 개입 없이 다양한 체인 네트워크에 걸쳐 안전하고 일관된 계정을 쉽게 배포하고 관리할 수 있습니다."];
-        let lang24 = ["Account Creation Notarization", "계정 생성 공증"];
-        let lang25 = ["Now, you can use a single secure account consistently across multiple chain network networks like Ethereum, Bitcoin, and Solana.<br/>No need to create separate accounts for each chain—manage your account easily and enhance connectivity across chain networks!", "이제 이더리움, 비트코인, 솔라나 등 여러 체인 네트워크에서 하나의 안전한 계정을 일관되게 사용할 수 있습니다.<br/>각 체인에 별도의 계정을 생성할 필요 없이 계정을 쉽게 관리하고 체인 네트워크 간 연결성을 강화하십시오!"];
-        let lang26 = ["Unified Access", "통합 접근"];
-        let lang27 = ["Access multiple chain network ecosystems with a single account, reducing complexity and enhancing user experience.", "하나의 계정으로 여러 체인 네트워크 생태계에 접근하여 복잡성을 줄이고 사용자 경험을 향상시킵니다."];
-        let lang28 = ["Enhanced Security", "강화된 보안"];
-        let lang29 = ["Advanced authentication protocols ensure that your account is securely protected across all connected chains.", "고급 인증 프로토콜로 연결된 모든 체인에서 계정이 안전하게 보호됩니다."];
-        let lang30 = ["Seamless Interoperability", "원활한 상호운용성"];
-        let lang31 = ["Manage assets and interactions across various chains from a single point of control, without additional configurations.", "추가 설정 없이 하나의 제어 지점에서 여러 체인에 걸친 자산과 상호작용을 관리하십시오."];
-        let lang32 = ["Dedicated Channel Synchronization", "전용 채널 동기화"];
-        let lang33 = ["Real-Time Synchronization of Dedicated Account State Channels Across Chain Networks", "체인 네트워크 간 전용 계정 상태 채널의 실시간 동기화"];
-        let lang34 = ["Real-time synchronization of dedicated account state channels enables consistent and rapid data updates across multiple chain networks.", "전용 계정 상태 채널의 실시간 동기화를 통해 여러 체인 네트워크에서 일관되고 빠른 데이터 업데이트가 가능합니다."];
-        let lang35 = ["Fast Data Synchronization", "빠른 데이터 동기화"];
-        let lang36 = ["Real-time synchronization of state changes across multiple chain networks ensures updates are reflected without delay.", "여러 체인 네트워크에서 상태 변경의 실시간 동기화를 통해 지연 없이 업데이트가 반영됩니다."];
-        let lang37 = ["High Security", "높은 보안"];
-        let lang38 = ["Consistent account security protocols across all networks enable safe state management.", "모든 네트워크에 걸친 일관된 계정 보안 프로토콜이 안전한 상태 관리를 가능하게 합니다."];
-        let lang39 = ["Account dedicated channel notarization is a mechanism that synchronizes accounts and assets in real time in a multi-chain network environment, enhancing transaction security.", "계정 전용 채널 공증은 멀티 체인 네트워크 환경에서 계정과 자산을 실시간으로 동기화하여 거래 보안을 강화하는 메커니즘입니다."];
-        let lang40 = ["Account Recovery", "계정 복구"];
-        let lang41 = ["Notary Account Recovery and Account Synchronization", "공증된 계정 복구 및 계정 동기화"];
-        let lang42 = ["Secure Disconnection of Existing Account", "기존 계정의 안전한 연결 해제"];
-        let lang43 = ["The existing account is securely disconnected by using the SEED phrase set by the user when creating the account.", "계정 생성 시 사용자가 설정한 SEED 문구를 사용하여 기존 계정을 안전하게 연결 해제합니다."];
-        let lang44 = ["New Account Linking", "새 계정 연결"];
-        let lang45 = ["After disconnecting the existing account, the SEED phrase is automatically checked for a match. If successfully matched, the new account links with the CA (Certified Account), ensuring secure continuity of asset and data management.", "기존 계정 연결 해제 후 SEED 문구가 자동으로 일치하는지 확인됩니다. 성공적으로 일치하면 새 계정이 CA(인증 계정)와 연결되어 자산 및 데이터 관리의 안전한 연속성을 보장합니다."];
-        let lang46 = ["Notary Account Recovery is a technical mechanism that addresses security issues and real-time synchronization that arise during the account recovery and asset synchronization processes.", "공증된 계정 복구는 계정 복구 및 자산 동기화 과정에서 발생하는 보안 문제와 실시간 동기화를 해결하는 기술적 메커니즘입니다."];
-        let lang47 = ["Copyright © 2024 OPEN ENTRY. All rights reserved.", "저작권 © 2024 OPEN ENTRY. 모든 권리 보유."];
-        let lang48 = ["Status", "상태"];
-        let lang49 = ["Legal", "법적 고지"];
-        let lang50 = ["Privacy", "개인 정보 보호"];
-        let lang51 = ["Terms", "이용 약관"];
-        let lang52 = ["Integrated Account Creation Across Chain Networks", "체인 네트워크 간 통합된 계정 생성"];
         
-        for (i = 0; i < 52; i++) {
+        for (i = 0; i < 97; i++) {
             var text = eval('lang'+(i+1));
             $('[data-lang="'+ (i+1) +'"]').html(text[(langNum - 1)]);
         }
@@ -200,191 +278,14 @@ function changeLang(target){
     // }
 
     $('body').attr('data-lang',target);
-    $('.langNow').text($('.langItem[data-lang="'+target+'"]').text());
     
+    updateIntroText()
 
 }
 
  
 
 
-
-function setFlowBanner(target) {
-    const $wrap = $('.'+target);
-    const $list = $('.'+target+' .list');
-    let wrapWidth = ''; 
-    let listWidth = '';
-    const speed = 60; 
-
-    let $clone = $list.clone();
-    $wrap.append($clone);
-    flowBannerAct()
-
-    let oldWChk = window.innerWidth > 1279 ? 'pc' : window.innerWidth > 767 ? 'ta' : 'mo';
-    $(window).on('resize', function() {
-        let newWChk = window.innerWidth > 1279 ? 'pc' : window.innerWidth > 767 ? 'ta' : 'mo';
-        if (newWChk != oldWChk) {
-            oldWChk = newWChk;
-            flowBannerAct();
-        }
-    });
-
-    function flowBannerAct() {
-        if (wrapWidth != '') {
-            $wrap.find('.list').css({
-                'animation': 'none'
-            });
-            $wrap.find('.list').slice(2).remove();
-        }
-        wrapWidth = $wrap.width();
-        listWidth = $list.width();
-        wrapHeight = $wrap.height();
-        listHeight = $list.height();
-
-        if($wrap.hasClass('flowY')){
-            if (listHeight < wrapHeight) {
-                const listCount = Math.ceil(wrapHeight * 2 / listHeight);
-                for (let i = 2; i < listCount; i++) {
-                    $clone = $clone.clone();
-                    $wrap.append($clone);
-                }
-            }
-            $wrap.find('.list').css({
-                'animation': `${listHeight / speed}s linear infinite flowRollingY`
-            });
-        }else{
-            
-            if (listWidth < wrapWidth) {
-                const listCount = Math.ceil(wrapWidth * 2 / listWidth);
-                for (let i = 2; i < listCount; i++) {
-                    $clone = $clone.clone();
-                    $wrap.append($clone);
-                }
-            }
-            if($wrap.hasClass('flowXreverse')){
-
-                $wrap.find('.list').css({
-                    'animation': `${listWidth / speed}s linear infinite flowRollingXreverse`
-                });
-            }else{
-                
-                $wrap.find('.list').css({
-                    'animation': `${listWidth / speed}s linear infinite flowRolling`
-                });
-            }
-        }
-    }
-
-}
-
-(function($) {
-    $.fn.extend({
-      flowBanner: function(options) {
-  
-        var defaults = {
-          control: false,
-          speed: 20,
-          ctrlSelector: 'box-flow-ctrl',
-          wrapSelector: 'box-flow-wrap',
-          playSelector: 'btn-play',
-          pauseSelector: 'btn-pause',
-          playText: '재생',
-          pauseText: '일시정지'
-        };
-  
-        var opt = $.extend(defaults, options);
-  
-        return this.each(function() {
-          var o = opt;
-          var left = 0;
-          var timer = '';
-          var ctrl = o.control;
-          var speed = o.speed;
-          var ctrlSelector = o.ctrlSelector;
-          var wrapSelector = o.wrapSelector;
-          var playSelector = o.playSelector;
-          var pauseSelector = o.pauseSelector;
-          var playText = o.playText;
-          var pauseText = o.pauseText;
-          var $box = $(this);
-          var $wrap = '<div class="' + wrapSelector + '"><\/div>';
-          var $banner = $box.children("li");
-          var $bannerSize = $banner.length;
-          var $bannerW = $banner.outerWidth(true);
-          var $ctrlHtml = '';
-          $ctrlHtml += '<div class="' + ctrlSelector + '">';
-          $ctrlHtml += '	<button type="button" class="' + playSelector + '">' + playText + '<\/button>';
-          $ctrlHtml += '	<button type="button" class="' + pauseSelector + '">' + pauseText + '<\/button>';
-          $ctrlHtml += '<\/div>';
-  
-  
-          $box.wrap($wrap);
-          $box.width($bannerW * $bannerSize);
-          flowPlay();
-  
-          if (ctrl) {
-            $box.parent().before($ctrlHtml);
-  
-            $box.parent().prev('.' + ctrlSelector).on("click", "button", function(e) {
-              e.preventDefault;
-  
-              if ($(this).hasClass(playSelector)) {
-                flowPause();
-                flowPlay();
-              }
-  
-              if ($(this).hasClass(pauseSelector)) {
-                flowPause();
-              }
-            });
-          }
-  
-        //   $box.on("mouseenter", function() {
-        //     flowPause();
-        //   }).on("mouseleave", function() {
-        //     flowPlay();
-        //   });
-  
-          $banner.on("focusin", "a", function() {
-            flowPause();
-          }).on("focusout", "a", function() {
-            flowPause();
-            flowPlay();
-          });
-  
-          function flow() {
-  
-            if (Math.abs(left) >= $bannerW) {
-              left = 0;
-              $box.children("li").first().appendTo($box);
-            }
-  
-            left = left - 1;
-            $box.css({
-              'left': left
-            });
-  
-          }
-  
-          function flowPause() {
-            clearInterval(timer);
-          }
-  
-          function flowPlay() {
-            timer = setInterval(flow, speed);
-          }
-  
-        });
-      }
-    });
-  })(jQuery);
-  
-  $(function() {
-    $(".box-flow").flowBanner({
-      control: false
-      //speed: 20
-    });
-  });
 
 function mobileHeaderControll(){
     $('body').toggleClass('headerON');
@@ -404,9 +305,69 @@ function langToggle(){
 }
 
 
+function updateIntroText() {
+    var labelLang = 0; 
+    if($('body').attr('data-lang') == 'en'){  var labelLang = 0; }
+    else if($('body').attr('data-lang') == 'kr'){ var labelLang = 1;  }
+
+    const labelTextMap = {
+        n2: {
+            title: lang88[labelLang], // Net-Zero School
+            desc: lang89[labelLang]  // 상세 설명
+        },
+        n16: {
+            title: lang90[labelLang], // GXCE ( Gesia X Carbon Exchange )
+            desc: lang91[labelLang]  // 상세 설명
+        },
+        n8: {
+            title: lang92[labelLang], // Net-Zero Heroes
+            desc: lang93[labelLang]  // 상세 설명
+        },
+        n10: {
+            title: lang94[labelLang], // Net-Zero Wallet
+            desc: lang95[labelLang]  // 상세 설명
+        },
+        gesia: {
+            title: lang96[labelLang], // What is GESIA
+            desc: lang97[labelLang]  // 상세 설명
+        }
+    };
+    
+   $('#visualizer').on('mousemove', function(e) {
+    const hoveredLabel = $('body').attr('data-intro');
+    
+    if (hoveredLabel && labelTextMap[hoveredLabel]) {
+      $('.sec-intro .titleBox h3').text(labelTextMap[hoveredLabel].title);
+      $('.sec-intro .titleBox h4').text(labelTextMap[hoveredLabel].desc);
+    } else {
+      $('.sec-intro .titleBox h3').text('');
+      $('.sec-intro .titleBox h4').text('');
+    }
+   });
 
 
+   $('.sec-intro .titleBox h3').text(labelTextMap.gesia.title);
+   $('.sec-intro .titleBox h4').text(labelTextMap.gesia.desc);
 
+   
+    // 모든 텍스트 콘텐츠를 숨겨진 div에 렌더링하여 최대 높이 계산
+    const $tempDiv = $('<div/>', {
+        style: 'position:absolute; visibility:hidden; width:' + $('.sec-intro .titleBox:last-child').width() + 'px'
+    }).appendTo('body');
+    
+    let maxHeight = 0;
+    
+    // labelTextMap의 모든 텍스트를 렌더링하여 높이 체크
+    Object.values(labelTextMap).forEach(content => {
+        $tempDiv.html(`<h3>${content.title}</h3><h4>${content.desc}</h4>`);
+        maxHeight = Math.max(maxHeight, $tempDiv.height());
+    });
+    
+    $tempDiv.remove();
+    
+    // 최대 높이에 여유값 추가
+    $('.sec-intro .titleBox:last-child').css('min-height', maxHeight + 20);
+};
 function onloadDONE(){       // All element interaction script  - sys 221016
     if(window.location.hash !== ''){
         location.href = window.location.hash;
@@ -418,42 +379,19 @@ function onloadDONE(){       // All element interaction script  - sys 221016
     });
 
 
+    updateIntroText() ;
 
-
-    const labelTextMap = {
-        n2: {
-          title: 'Net Zero School',
-          desc: 'A project that aggregates carbon emissions from elementary, middle, and high schools to contribute to achieving net zero goals. By analyzing energy usage data from each school, it assesses carbon emissions and suggests reduction strategies.'
-        },
-        n16: {
-          title: 'GXCE ( Gesia X Carbon Exchange )',
-          desc: 'GXCE is a rollup-based decentralized exchange (DEX) where users can trade carbon credits authenticated by certified institutions such as Verra, ProArles, and the Korea Forestry Promotion Institute. The platform emphasizes transparency in all carbon credit transactions, creating a trustworthy environment for carbon trading.'
-        }, 
-        n8: {
-          title: 'Net Zero Heroes',
-          desc: 'A campaign project designed to raise awareness about the climate crisis and encourage carbon reduction efforts. Through various platforms and social media, it highlights the importance of addressing climate change and offers practical ways to reduce one\'s carbon footprint.'
-        },
-        n10: {
-          title: 'Net Zero Wallet', 
-          desc: 'Net Zero Wallet securely stores carbon credits issued by the Offset Chain and supports reliable carbon management and transactions through comprehensive authentication, including transaction, emission, and offset authentication.'
-        }
-       };
-       
-       $('#visualizer').on('mousemove', function(e) {
-        const hoveredLabel = $('body').attr('data-intro');
-        
-        if (hoveredLabel && labelTextMap[hoveredLabel]) {
-          $('.sec-intro .titleBox h3').text(labelTextMap[hoveredLabel].title);
-          $('.sec-intro .titleBox h4').text(labelTextMap[hoveredLabel].desc);
-        } else {
-          $('.sec-intro .titleBox h3').text('');
-          $('.sec-intro .titleBox h4').text('');
-        }
-       });
-    
 
 }
-
+let resizeTimer;
+$(window).on('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function() {
+    // 위의 높이 계산 코드 실행
+    // 모든 텍스트 콘텐츠를 숨겨진 div에 렌더링하여 최대 높이 계산
+    updateIntroText() ;
+  }, 250);
+});
 
 
 function loadHTML() {
@@ -493,13 +431,18 @@ $(document).ready(function() {
             $('body').attr('data-fullpage','break');
             scrolloverflowed = false;
         } else {
+            // scrolloverflowed = false;
             scrolloverflowed = true;
-            // scrolloverflowed = true;
         }
         $('#fullpage').fullpage({
             sectionSelector: '.secItem',
             anchors: [
                 'intro',
+                'consensus',
+                'emission',
+                'offset',
+                'cross-chain',
+                'products',
                 'info'
             ],
             autoScrolling : scrolloverflowed,      

@@ -137,10 +137,10 @@ class OAuthVisualizer {
         
     // Add labels definition before setupLabelEvents
     this.labels = [
-        { id: 'n2', text: 'Net Zero School', nodeNumber: 2, top: true, distance: 80 },  // 더 높게
+        { id: 'n2', text: 'Net Zero School', nodeNumber: 2, top: true, distance: 70 },  // 더 높게
         { id: 'n16', text: 'GXCE', nodeNumber: 16, top: true, distance: 100 },          // 기본 높이
         { id: 'n8', text: 'Net Zero HEROES', nodeNumber: 8, bottom: true, distance: 60 }, // 기본 높이
-        { id: 'n10', text: 'Net Zero Wallet', nodeNumber: 10, bottom: true, distance: 80 } // 더 낮게
+        { id: 'n10', text: 'Net Zero Wallet', nodeNumber: 10, bottom: true, distance: 90 } // 더 낮게
     ];
     
     this.hoveredLabel = null;
@@ -156,29 +156,53 @@ setupLabelEvents() {
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
         
+        // 1. 레이블 호버 체크
         this.hoveredLabel = this.labels.find(label => {
             const point = this.getNodePosition(label.nodeNumber);
             const textWidth = this.ctx.measureText(label.text).width;
             const textHeight = 20;
+            const padding = 20;
             
-            const padding = 20; // Increase padding for larger hit box
-            
-            const boxX = point.x - textWidth/2 - padding; 
-            const boxY = label.top ? point.y - label.distance - textHeight - padding : point.y + label.distance - textHeight - padding;
+            const boxX = point.x - textWidth/2 - padding;
+            const boxY = label.top ? 
+                point.y - label.distance - textHeight - padding : 
+                point.y + label.distance - textHeight - padding;
             const boxWidth = textWidth + padding * 2;
             const boxHeight = textHeight + padding * 2;
             
             return mouseX >= boxX && mouseX <= boxX + boxWidth &&
                    mouseY >= boxY && mouseY <= boxY + boxHeight;
         });
+
+        // 2. 원 영역 호버 체크 (레이블에 호버되지 않은 경우)
+        if (!this.hoveredLabel) {
+            const distanceA = Math.hypot(mouseX - this.circleA.x, mouseY - this.circleA.y);
+            const distanceB = Math.hypot(mouseX - this.circleB.x, mouseY - this.circleB.y);
+            const distanceC = Math.hypot(mouseX - this.circleC.x, mouseY - this.circleC.y);
+
+            if (distanceA <= this.circleRadius || 
+                distanceB <= this.circleRadius || 
+                distanceC <= this.circleRadius) {
+                this.hoveredLabel = { id: 'gesia' };
+            }
+        }
+
+        // 3. data-intro 속성 업데이트
         if (this.hoveredLabel !== this.prevHoveredLabel) {
             this.prevHoveredLabel = this.hoveredLabel;
             if (this.hoveredLabel) {
                 document.body.setAttribute('data-intro', this.hoveredLabel.id);
             } else {
-                document.body.removeAttribute('data-intro');
+                document.body.setAttribute('data-intro', 'gesia');
             }
         }
+    });
+
+    // 마우스가 캔버스를 벗어날 때
+    this.canvas.addEventListener('mouseleave', () => {
+        this.hoveredLabel = null;
+        this.prevHoveredLabel = null;
+        document.body.setAttribute('data-intro', 'gesia');
     });
 }
 
@@ -282,7 +306,7 @@ drawStatusText() {
         this.ctx.fillStyle = `rgba(40, 40, 40, ${this.statusText.fadeOpacity})`;
         
         this.ctx.font = `${mainFontSize} Times New Roman`;
-        const baseY = this.circleA.y + circleDiameter *0.85;
+        const baseY = this.circleA.y * 1.8;
         
         // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
         this.ctx.textAlign = 'center';
@@ -324,7 +348,7 @@ drawStatusText() {
             
             this.ctx.font = `${mainFontSize} Times New Roman`;
 
-            const baseY = this.circleA.y + circleDiameter *0.85;
+            const baseY = this.circleA.y * 1.8;
             
             // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
             this.ctx.textAlign = 'center';
@@ -419,12 +443,6 @@ selectRandomActivePoints() {
             nonIntersectionPoints.C[Math.floor(Math.random() * nonIntersectionPoints.C.length)] : null
     };
 }
-
-    // 배열에서 랜덤하게 요소 선택
-    getRandomElements(array, count) {
-        const shuffled = [...array].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, count);
-    }
 
 
     // 고정된 점들 초기화
@@ -636,11 +654,6 @@ updateScenario() {
             const intersectionRatio = this.getIntersectionRatio();
             break;
 
-        //case 'waiting':
-        //    if (elapsedInStep >= 30000) { // 30초 대기
-        //        this.startScenario(); // 처음부터 다시 시작
-        //    }
-        //    break;
     }
 }
    
@@ -667,15 +680,15 @@ updateScenario() {
 
     resize() {
     const browserHeight = window.innerHeight;
-    this.canvas.height = browserHeight * 0.8;  // 브라우저 높이의 80%
-    this.canvas.width = window.innerWidth;
+    this.canvas.height = browserHeight * 0.6;  // 브라우저 높이의 80%
 
     // 원의 크기를 더 작게 조정
     // 원 3개가 모두 들어갈 수 있도록 여유 공간 확보
     const maxRadius = Math.min(
         this.canvas.height * 0.25,  // 높이의 25%로 제한 (기존 35%)
-        this.canvas.width * 0.15    // 너비의 15%로 제한 (기존 25%)
+        window.innerWidth * 0.15    // 너비의 15%로 제한 (기존 25%)
     );
+    this.canvas.width = maxRadius * 3.5 * 2;
     
     this.circleRadius = maxRadius;
     this.initCirclePositions();
@@ -713,13 +726,6 @@ updateScenario() {
     }
 
     setupEventListeners() {
-        // window.addEventListener('resize', () => {
-        //     clearTimeout(this.resizeTimeout);
-        //     this.resizeTimeout = setTimeout(() => {
-        //         this.resize();
-        //     }, 250);
-        // });
-
         document.getElementById('waitingBtn').addEventListener('click', () => {
             this.setState('waiting');
         });
@@ -824,27 +830,6 @@ setState(newState) {
         );
     }
 
-    getIntersectionPoints() {
-        const d = this.getDistance();
-        if (d >= this.circleRadius * 2 || d <= 0) return null;
-
-        const a = (this.circleRadius * this.circleRadius - this.circleRadius * this.circleRadius + d * d) / (2 * d);
-        const h = Math.sqrt(this.circleRadius * this.circleRadius - a * a);
-
-        const px = this.circleA.x + a * (this.circleB.x - this.circleA.x) / d;
-        const py = this.circleA.y + a * (this.circleB.y - this.circleA.y) / d;
-
-        return [
-            {
-                x: px + h * (this.circleB.y - this.circleA.y) / d,
-                y: py - h * (this.circleB.x - this.circleA.x) / d
-            },
-            {
-                x: px - h * (this.circleB.y - this.circleA.y) / d,
-                y: py + h * (this.circleB.x - this.circleA.x) / d
-            }
-        ];
-    }
 
     getIntersectionRatio() {
         const distance = this.getDistance();
@@ -870,99 +855,7 @@ setState(newState) {
         };
     }
 
-    generateRandomPointOnArc(circle, intersectionPoints) {
-        if (!intersectionPoints) return null;
 
-        // 두 교차점 사이의 호를 계산
-        const angles = intersectionPoints.map(point => {
-            return Math.atan2(point.y - circle.y, point.x - circle.x);
-        });
-
-        // 각도 범위 계산
-        let startAngle, endAngle;
-        
-        if (circle === this.circleA) {
-            // A 원의 교집합 호 계산
-            [startAngle, endAngle] = angles.sort((a, b) => a - b);
-            if (endAngle - startAngle > Math.PI) {
-                [startAngle, endAngle] = [endAngle, startAngle + 2 * Math.PI];
-            }
-        } else {
-            // B 원의 교집합 호 계산
-            const dx = this.circleA.x - circle.x;
-            const dy = this.circleA.y - circle.y;
-            const centerAngle = Math.atan2(dy, dx);
-
-            // 교차점 각도를 중심각 기준으로 정규화
-            const normalizedAngles = angles.map(angle => {
-                let normalized = angle - centerAngle;
-                while (normalized < -Math.PI) normalized += 2 * Math.PI;
-                while (normalized > Math.PI) normalized -= 2 * Math.PI;
-                return {
-                    original: angle,
-                    normalized: normalized
-                };
-            });
-
-            // 중심각과의 차이가 작은 쪽이 교집합 호
-            if (Math.abs(normalizedAngles[0].normalized) < Math.abs(normalizedAngles[1].normalized)) {
-                [startAngle, endAngle] = [normalizedAngles[0].original, normalizedAngles[1].original];
-            } else {
-                [startAngle, endAngle] = [normalizedAngles[1].original, normalizedAngles[0].original];
-            }
-        }
-
-        // 호의 길이 계산
-        let arcLength = endAngle - startAngle;
-        if (arcLength < 0) arcLength += 2 * Math.PI;
-        if (arcLength > Math.PI) arcLength = 2 * Math.PI - arcLength;
-
-        // 랜덤한 위치에 점 생성
-        const randomAngle = startAngle + Math.random() * arcLength;
-        
-        return {
-            x: circle.x + circle.radius * Math.cos(randomAngle),
-            y: circle.y + circle.radius * Math.sin(randomAngle),
-            circle: circle === this.circleA ? 'A' : 'B',
-            opacity: 1,
-            createdAt: performance.now(),
-            lifetime: 3000 + Math.random() * 2000 // 3-5초 사이의 수명
-        };
-    }
-
-
-
-    isPointOnIntersectionArc(point, circle, intersectionPoints) {
-        // 교차점들과의 거리를 확인
-        for (let i = 0; i < intersectionPoints.length; i++) {
-            const dx = point.x - intersectionPoints[i].x;
-            const dy = point.y - intersectionPoints[i].y;
-            const distToIntersection = Math.sqrt(dx * dx + dy * dy);
-            
-            // 호의 길이의 절반을 기준으로 점의 유효성 검사
-            if (distToIntersection <= this.circleRadius * 0.5) {
-                // 원의 중심에서 점까지의 벡터
-                const px = point.x - circle.x;
-                const py = point.y - circle.y;
-                
-                // 원의 중심에서 교차점까지의 벡터
-                const ix = intersectionPoints[i].x - circle.x;
-                const iy = intersectionPoints[i].y - circle.y;
-                
-                // 두 벡터 사이의 각도
-                const angle = Math.acos(
-                    (px * ix + py * iy) / 
-                    (Math.sqrt(px * px + py * py) * Math.sqrt(ix * ix + iy * iy))
-                );
-                
-                // 각도가 일정 범위 내에 있는지 확인
-                if (angle <= Math.PI / 4) {  // 45도 이내
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     // drawCircle 함수 단순화
     drawCircle(x, y, radius) {
@@ -1017,9 +910,6 @@ drawIntersectionArea(circle1, circle2) {
     if (angle4 < angle3) angle4 += 2 * Math.PI;
     this.ctx.arc(circle2.x, circle2.y, this.circleRadius, angle3, angle4);
 
-    const ratio = this.getIntersectionRatio();
-    const color = ratio >= 0.99 ? 'rgba(0, 193, 132, 0.1)' : 'rgba(0, 193, 132, 0.1)';
-    this.ctx.fillStyle = color;
 
     this.ctx.closePath();
     this.ctx.fill();

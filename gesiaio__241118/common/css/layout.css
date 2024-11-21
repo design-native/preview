@@ -19,6 +19,7 @@ header > .wrap {
 
 
 header .logo {
+  z-index: 1;
     height: 32px;
     width: 200px;
     background-position: center left;
@@ -27,20 +28,17 @@ header .logo {
     background-image: url(../resources/gio-logo.png?update=240911);
 }
 header .category {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
     display: flex;
     flex-direction: row;
     gap: 30px;
+    flex: 1;
+    justify-content: center;
 }
 
 header .category .cateItem{
-    position: relative;
     height: fit-content;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     text-align: center;
     gap: 6px;
 
@@ -48,7 +46,30 @@ header .category .cateItem{
 
 header .category .cateItem .cateSub{
     position: absolute;
+    z-index: -1;
     display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+  padding:calc(92px + 20px) 40px 40px;
+  background-color: #fff;
+  box-shadow: 0 0 20px rgba(0,0,0,.1);
+}
+header .category .cateItem .cateSub ul{
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+header .category .cateItem .cateSub ul li{
+  flex: 1;
+}
+header .category .cateItem .cateSub ul li .title + a{
+  margin-top: 12px;
+  display: block;
+}
+header .category .cateItem:hover .cateSub,
+header .category .cateItem.ACTIVE .cateSub{
+  display: block;
 }
 header .category .cateItem .moreBtn i{
     width: 14px;
@@ -56,11 +77,13 @@ header .category .cateItem .moreBtn i{
 }
 header .sideBox {
     gap: 12px;
+    width: 200px;
+    justify-content: end;
 }
 
 body.headerON header{
     bottom: 0;
-    background-color: rgba(10,10,10, .5);
+    background-color: rgba(255,255,255, .8);
     backdrop-filter: blur(5px);
 }
 body.headerON header .logo{
@@ -80,14 +103,9 @@ body.headerON header .category {
     gap: 40px;
     
 }
-body.headerON header .category .cateItem h5{
-    font-size: 3rem;
-}
-
-header .category .cateItem {
-  opacity: .5;
-  white-space: nowrap;
-  transition: .5s all;
+header .category .cateItem > a{
+  z-index: 2;
+  position: relative;
 }
 body.fp-viewing-extended header .category .cateItem:nth-child(1),
 body.fp-viewing-notarization header .category .cateItem:nth-child(2),
@@ -125,16 +143,28 @@ footer,footer .fp-tableCell {
     align-items: center;
 
   }
+  footer .topBox{
+    align-items: flex-start;
+  }
   footer .logo {
     display: block;
-    height: 30px;
+    height: 60px;
     width: 100%;
     background-position: center left;
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-image: url(../resources/gio-logo.png);
   }
-  
+  footer .category {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+ 
+    white-space: nowrap;
+   }
+   footer .category .cateSub li {
+    margin-top: 8px;
+   }
   footer .snsList {
     gap: 12px;
   }
@@ -153,5 +183,5 @@ footer,footer .fp-tableCell {
   footer .bottomBox {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #ddd;
   }

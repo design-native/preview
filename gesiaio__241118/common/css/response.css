@@ -28,34 +28,27 @@
     }
 
     
-
+    footer .topBox{
+        flex-direction: column;
+        gap: 40px;
+    }
+    footer .category{
+        width: 100%;
+        gap: inherit;
+        justify-content: space-between;
+    }
+    footer .category .cateItem{
+        flex: 1;
+    }
 }
 
 
 @media only screen and (min-width:901px) {
 
     
-    .secItem[class*="sec-detail"]:not(.active){
-        z-index:  -1;
-    
-    }
-    .secItem[class*="sec-detail"]:not(.active):not(.sec-detail4)  > .fp-tableCell{
-  
-        transform: translateY(100%);
-        opacity: 0.5;
-        filter: blur(5px);
-    }
-  
-    .secItem[class*="sec-point"].active + .secItem[class*="sec-detail1"]:not(.active)  > .fp-tableCell{
-        
-        transform: translateY(-260px);
-        opacity: 0.5;
-        filter: blur(5px);
-    }
-
     
     .secItem[class*="sec-detail"] > .fp-tableCell{
-        padding-top: 100px;
+        /* padding-top: 100px; */
         max-height: calc((var(--vh, 1vh)* 100)) !important;
         display: block;
     }
@@ -79,19 +72,26 @@
         font-size: 1.8rem;
         line-height: 2.2rem;
     }
+    footer .logo{
+        height: 50px;
+    }
+    footer .category{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
 
+    footer .bottomBox{
+        flex-direction: column;
+        gap: 20px;
+    }
+    footer .copyright{
+        order: 2;
+    }
 }
 
 
 @media (orientation: landscape )  {
     @media only screen and (min-width:900px) {
-        .canvasBox canvas{
-            max-width: 80vh;
-        }
-        /* .secItem.sec-detail2 .canvasBox canvas{
-            max-width: 65vh;
-
-        } */
     }
 
     
@@ -130,7 +130,7 @@
     .btnLang {
         
         position: absolute;
-        top: 18px;
+        top: 17px;
         right: 60px;
     }
     .btnMenu{
@@ -147,8 +147,21 @@
         height: 28px;
         width: 200px;
     }
-
-    .secItem[class*="sec-point"] .contentBox{
+    header .category .cateItem > a{
+        opacity: .5;
+    }
+    header .category .cateItem .cateSub{
+        position: unset;
+        z-index: unset;
+        background-color: unset;
+        box-shadow: unset;
+        display: block;
+        padding:0;
+    }
+    
+    header .category .cateItem .cateSub ul,
+    .secItem[class*="sec-point"] .contentBox,
+    .secItem[class*="sec-product"] .contentBox{
         flex-direction: column;
     }
 
@@ -189,10 +202,7 @@
         height: fit-content !important;    
     }
     .secItem[class*="sec-intro"] > .fp-tableCell > .wrap{
-        padding: 40px 0 20px;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+        padding: calc(92px + 30px) 20px 30px;
     }
     .secItem[class*="sec-intro"] .canvasWrap{
         flex: 1;
