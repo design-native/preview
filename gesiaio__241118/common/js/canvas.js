@@ -137,10 +137,10 @@ class OAuthVisualizer {
         
     // Add labels definition before setupLabelEvents
     this.labels = [
-        { id: 'n2', text: 'Net-Zero School', nodeNumber: 2, top: true, distance: 70 },  // 더 높게
-        { id: 'n16', text: 'GXCE', nodeNumber: 16, top: true, distance: 100 },          // 기본 높이
-        { id: 'n8', text: 'Net-Zero HEROES', nodeNumber: 8, bottom: true, distance: 60 }, // 기본 높이
-        { id: 'n10', text: 'Net-Zero Wallet', nodeNumber: 10, bottom: true, distance: 90 } // 더 낮게
+        { id: 'n2', text: 'Net-Zero School', nodeNumber: 2, top: true, distance: 75 },  // 더 높게
+        { id: 'n16', text: 'GXCE', nodeNumber: 16, top: true, distance: 105 },          // 기본 높이
+        { id: 'n8', text: 'Net-Zero HEROES', nodeNumber: 8, bottom: true, distance: 50 }, // 기본 높이
+        { id: 'n10', text: 'Net-Zero Wallet', nodeNumber: 10, bottom: true, distance: 80 } // 더 낮게
     ];
     
     this.hoveredLabel = null;
@@ -323,7 +323,7 @@ drawStatusText() {
         this.ctx.fillStyle = `rgba(40, 40, 40, ${this.statusText.fadeOpacity})`;
         
         this.ctx.font = `${mainFontSize} Times New Roman`;
-        const baseY = this.circleA.y * 1.8;
+        const baseY = this.circleA.y * 1.85;
         
         // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
         this.ctx.textAlign = 'center';
@@ -340,7 +340,7 @@ drawStatusText() {
         this.ctx.textAlign = 'center';
         
         const spacing = 25;
-        const baseY = this.circleA.y + circleDiameter * 0.17;
+        const baseY = this.circleA.y + circleDiameter * 0.16;
         
         this.ctx.font = `${mainFontSize} Times New Roman`;
         this.ctx.fillText('Rollup sync completed.',
@@ -365,7 +365,7 @@ drawStatusText() {
             
             this.ctx.font = `${mainFontSize} Times New Roman`;
 
-            const baseY = this.circleA.y * 1.8;
+            const baseY = this.circleA.y * 1.85;
             
             // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
             this.ctx.textAlign = 'center';
@@ -381,53 +381,59 @@ drawStatusText() {
     }
 }
 drawImages() {
-   const ratio = this.getIntersectionRatio();
-   this.ctx.textAlign = 'center';
-   this.ctx.textBaseline = 'middle';
-   this.ctx.fillStyle = 'rgba(40, 40, 40, 1)';
-
-   const transitionThreshold = 0.75;
-   
-   const minTextSpacing = this.circleRadius * 0.5; // Adjust this value as needed
-
-   if (ratio >= transitionThreshold) {
-       const transition = (ratio - transitionThreshold) / (1 - transitionThreshold);
-       const easing = this.easeInOutQuad(transition);
-       
-       const centerX = this.canvas.width / 2;
-       const centerY = this.circleA.y;
-       const minSpacing = this.circleRadius * 0.15;
-       const spacing = Math.max(minSpacing, this.circleRadius * 0.3 * (1 - easing));
-
-       const co2X = Math.min(centerX - spacing, centerX - minTextSpacing);
-       const zeroX = centerX;
-       const cocX = Math.max(centerX + spacing, centerX + minTextSpacing);
-
-       this.ctx.font = 'bold 32px Times New Roman';       
-       this.ctx.fillText('CO2', co2X, centerY - 10);
-       this.ctx.font = 'bold 40px Times New Roman';  
-       this.ctx.fillText('0', zeroX, centerY - 10);
-       this.ctx.font = 'bold 32px Times New Roman';
-       this.ctx.fillText('COC', cocX, centerY - 10);
-
-       this.ctx.font = '14px Times New Roman';
-       this.ctx.fillText('Carbon Emission', co2X, centerY + 15);
-       this.ctx.fillText('Net-Zero', zeroX, centerY + 15);
-       this.ctx.fillText('Carbon Offset', cocX, centerY + 15);
-   } else {
-       this.ctx.font = 'bold 32px Times New Roman';
-       this.ctx.fillText('CO2', this.circleA.x, this.circleA.y - 10);
-       this.ctx.font = 'bold 40px Times New Roman';
-       this.ctx.fillText('0', this.circleB.x, this.circleB.y - 10);
-       this.ctx.font = 'bold 32px Times New Roman';
-       this.ctx.fillText('COC', this.circleC.x, this.circleC.y - 10);
-
-       this.ctx.font = '14px Times New Roman';  
-       this.ctx.fillText('Carbon Emission', this.circleA.x, this.circleA.y + 15);
-       this.ctx.fillText('Net-Zero', this.circleB.x, this.circleB.y + 15);
-       this.ctx.fillText('Carbon Offset', this.circleC.x, this.circleC.y + 15);
-   }
-}
+    const ratio = this.getIntersectionRatio();
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillStyle = 'rgba(40, 40, 40, 1)';
+ 
+    const transitionThreshold = 0.65;
+    
+    // 더 작은 폰트 크기와 간격으로 조정
+    const fontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.2), 16), 24); // 최대 24px로 제한
+    const smallFontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.1), 10), 14); // 최대 14px로 제한
+    
+    // 텍스트 수직 간격을 더 좁게 조정
+    const verticalSpacing = fontSize * 0.8; // 0.8에서 0.6으로 감소
+ 
+    if (ratio >= transitionThreshold) {
+        const transition = (ratio - transitionThreshold) / (1 - transitionThreshold);
+        const easing = this.easeInOutQuad(transition);
+        
+        const centerX = this.canvas.width / 2;
+        const centerY = this.circleA.y;
+        
+        // 최소 간격 보장하면서 수평 간격 조정
+        const minSpacing = Math.max(this.circleRadius * 0.55, 50); // 간격을 더 좁게 조정
+        const spacing = Math.max(minSpacing, this.circleRadius * 0.3 * (1 - easing));
+ 
+        const co2X = Math.min(centerX - spacing, centerX - minSpacing);
+        const zeroX = centerX;
+        const cocX = Math.max(centerX + spacing, centerX + minSpacing);
+ 
+        // 메인 텍스트 (위치 조정)
+        this.ctx.font = `bold ${fontSize}px Times New Roman`;
+        this.ctx.fillText('CO2', co2X, centerY - verticalSpacing/2);
+        this.ctx.fillText('0', zeroX, centerY - verticalSpacing/2);
+        this.ctx.fillText('COC', cocX, centerY - verticalSpacing/2);
+ 
+        // 설명 텍스트 (위치 조정)
+        this.ctx.font = `${smallFontSize}px Times New Roman`;
+        this.ctx.fillText('Carbon Emission', co2X, centerY + verticalSpacing/2);
+        this.ctx.fillText('Net-Zero', zeroX, centerY + verticalSpacing/2);
+        this.ctx.fillText('Carbon Offset', cocX, centerY + verticalSpacing/2);
+    } else {
+        // 기본 상태 텍스트 렌더링 (더 컴팩트하게)
+        this.ctx.font = `bold ${fontSize}px Times New Roman`;
+        this.ctx.fillText('CO2', this.circleA.x, this.circleA.y - verticalSpacing/2);
+        this.ctx.fillText('0', this.circleB.x, this.circleB.y - verticalSpacing/2);
+        this.ctx.fillText('COC', this.circleC.x, this.circleC.y - verticalSpacing/2);
+ 
+        this.ctx.font = `${smallFontSize}px Times New Roman`;
+        this.ctx.fillText('Carbon Emission', this.circleA.x, this.circleA.y + verticalSpacing/2);
+        this.ctx.fillText('Net-Zero', this.circleB.x, this.circleB.y + verticalSpacing/2);
+        this.ctx.fillText('Carbon Offset', this.circleC.x, this.circleC.y + verticalSpacing/2);
+    }
+ }
 // 이징 함수 추가
 easeInOutQuad(t) {
     return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -514,19 +520,26 @@ drawPointText() {
             // 기본 텍스트 오프셋
             let textOffset = this.circleRadius * 0.05;
             
+            // 기본 미세 조정 오프셋
+            let additionalOffsetX = 0;
+            let additionalOffsetY = 0;
+            const offsetAmount = 3;
+
             // 특정 점들에 대한 추가 조정
             const specificAdjustments = {
-                3: { offsetMultiplier: 0.08, extraX: -10, extraY: 10 },   // N3
-                7: { offsetMultiplier: 0.08, extraX: -10, extraY: -10 },   // N7
-                11: { offsetMultiplier: 0.08, extraX: 5, extraY: -2 },   // N1
-                15: { offsetMultiplier: 0.08, extraX: 10, extraY: 10 }    // N15
+                // 3: { offsetMultiplier: 0.08, extraX: 0, extraY: 10 },   // N3
+                // 7: { offsetMultiplier: 0.08, extraX: 0, extraY: -10 },   // N7
+                // 11: { offsetMultiplier: 0.08, extraX: 0, extraY: -2 },   // N1
+                // 15: { offsetMultiplier: 0.08, extraX: 0, extraY: 10 }    // N15
+                1: { offsetMultiplier: 0.08, extraX: 0, extraY: -8 },    // N15
+                9: { offsetMultiplier: 0.08, extraX: 0, extraY: 8 }    // N15
             };
             
             // 특정 점에 대한 조정 적용
-            if (specificAdjustments[point.number]) {
-                const adjustment = specificAdjustments[point.number];
-                textOffset = this.circleRadius * adjustment.offsetMultiplier;
-            }
+            // if (specificAdjustments[point.number]) {
+            //     const adjustment = specificAdjustments[point.number];
+            //     textOffset = this.circleRadius * adjustment.offsetMultiplier;
+            // }
 
             // 각도에 따른 텍스트 위치 계산
             let textX = pos.x + Math.cos(angle) * textOffset;
@@ -542,24 +555,64 @@ drawPointText() {
             const textAngle = (angle + Math.PI * 2) % (Math.PI * 2);
             
             // 각도에 따른 텍스트 정렬 조정
-            if (textAngle <= Math.PI * 0.25 || textAngle > Math.PI * 1.75) {
-                this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'middle';
-            } else if (textAngle > Math.PI * 0.25 && textAngle <= Math.PI * 0.75) {
-                this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'top';
-            } else if (textAngle > Math.PI * 0.75 && textAngle <= Math.PI * 1.25) {
-                this.ctx.textAlign = 'right';
-                this.ctx.textBaseline = 'middle';
-            } else {
+            if (textAngle > Math.PI * 0.45 && textAngle <= Math.PI * 0.55) {
+                // 정중앙 상단 (약 90도 부근)
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'bottom';
+                additionalOffsetX = 0;
+                additionalOffsetY = 0;
+            } else if (textAngle > Math.PI * 1.45 && textAngle <= Math.PI * 1.55) {
+                // 정중앙 하단 (약 270도 부근)
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'top';
+                additionalOffsetX = 0;
+                additionalOffsetY = 0;
+            } else if (textAngle <= Math.PI * 0.25 || textAngle > Math.PI * 1.75) {
+                // 오른쪽 영역 (0도 ~ 45도, 315도 ~ 360도)
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'middle';
+                additionalOffsetX = 10;
+                additionalOffsetY = 0;
+            } else if (textAngle > Math.PI * 0.25 && textAngle <= Math.PI * 0.45) {
+                // 우상단 영역 (45도 ~ 90도)
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'bottom';
+                additionalOffsetX = 10;
+                additionalOffsetY = -5;
+            } else if (textAngle > Math.PI * 0.55 && textAngle <= Math.PI * 0.75) {
+                // 좌상단 영역 (90도 ~ 135도)
+                this.ctx.textAlign = 'right';
+                this.ctx.textBaseline = 'bottom';
+                additionalOffsetX = -10;
+                additionalOffsetY = -5;
+            } else if (textAngle > Math.PI * 0.75 && textAngle <= Math.PI * 1.25) {
+                // 왼쪽 영역 (135도 ~ 225도)
+                this.ctx.textAlign = 'right';
+                this.ctx.textBaseline = 'middle';
+                additionalOffsetX = -10;
+                additionalOffsetY = 0;
+            } else if (textAngle > Math.PI * 1.25 && textAngle <= Math.PI * 1.45) {
+                // 좌하단 영역 (225도 ~ 270도)
+                this.ctx.textAlign = 'right';
+                this.ctx.textBaseline = 'top';
+                additionalOffsetX = -10;
+                additionalOffsetY = 5;
+            } else if (textAngle > Math.PI * 1.55 && textAngle <= Math.PI * 1.75) {
+                // 우하단 영역 (270도 ~ 315도)
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                additionalOffsetX = 10;
+                additionalOffsetY = 5;
             }
 
-            // 기본 미세 조정 오프셋
-            let additionalOffsetX = 0;
-            let additionalOffsetY = 0;
-            const offsetAmount = 3;
+            // 노드 번호에 따른 추가 조정
+            if (point.number === 1 ) {
+                // 상단 노드들
+                additionalOffsetY -= 5;
+            } else if (point.number === 9) {
+                // 하단 노드들
+                additionalOffsetY += 5;
+            }
 
             if (textAngle <= Math.PI * 0.25 || textAngle > Math.PI * 1.75) {
                 additionalOffsetX = offsetAmount;
@@ -697,20 +750,20 @@ updateScenario() {
 
 resize() {
     const browserHeight = window.innerHeight;
-    const aspectRatio = 13/9;
+    const aspectRatio = 14/9;
 
     const minWidth = 700; // 최소 너비 설정
-    const minheight = 600; // 최소 너비 설정
+    const minheight = 650; // 최소 너비 설정
 
     if (window.innerWidth < 800) {
         this.canvas.height = Math.max(window.innerWidth / aspectRatio, minheight )
     }else {
-        this.canvas.height = Math.min(Math.max(window.innerWidth / aspectRatio, minheight ), browserHeight *0.6);  // 브라우저 높이의 80%
+        this.canvas.height = Math.min(Math.max(window.innerWidth / aspectRatio, minheight ), browserHeight *0.58);  // 브라우저 높이의 80%
 
     }
     const maxRadius = Math.min(
-        window.innerWidth * 0.3,  // 높이의 25%로 제한 (기존 35%)
-        this.canvas.height * 0.25    // 너비의 15%로 제한 (기존 25%)
+        window.innerWidth * 0.28,  // 높이의 25%로 제한 (기존 35%)
+        this.canvas.height * 0.22    // 너비의 15%로 제한 (기존 25%)
     );
 
     // 원의 크기를 더 작게 조정

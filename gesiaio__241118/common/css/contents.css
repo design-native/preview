@@ -180,7 +180,7 @@ body.loading .secItem:not(.active){
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: calc(92px + 40px) 40px 40px;
+  padding: calc(92px + 30px) 40px 40px;
   min-height: calc((var(--vh, 1vh) * 100));
 }
 
@@ -227,11 +227,11 @@ body.loading .secItem:not(.active){
 .secItem[class*="sec-point"] .contentBox .iconBox{
   width: 100%;
   flex: 1;
-  max-width: 600px;
+  max-width: 1000px;
   margin: 0 auto;
 }
-.secItem[class*="sec-point"] .contentBox .iconBox .icon{
-  background-size: 100% auto;
+.secItem[class*="sec-point"] .contentBox .righttop .iconBox{
+  max-width: unset
 }
 .ic-point1{background-image: url(../resources/glo-detail1.png);}
 .ic-point2{background-image: url(../resources/glo-detail2.png);}
