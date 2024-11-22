@@ -222,9 +222,9 @@ body.loading .secItem:not(.active){
   border-radius: 20px !important;
 }
 .secItem[class*="sec-point"] .contentBox .iconBox{
-  width: 80%;
+  width: 100%;
   flex: 1;
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
 }
 .secItem[class*="sec-point"] .contentBox .iconBox .icon{
