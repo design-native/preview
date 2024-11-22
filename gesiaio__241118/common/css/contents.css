@@ -233,10 +233,12 @@ body.loading .secItem:not(.active){
 .secItem:not(footer) .fp-tableCell {
   min-height: 500px;
 }
-.secItem[class*="sec-detail"] > .fp-tableCell{
+.secItem[class*="sec-detail"] > .fp-tableCell,
+.secItem[class*="sec-product"] > .fp-tableCell{
   padding: 20px 20px 0;
 }
-.secItem[class*="sec-detail"] > .fp-tableCell > .wrap{
+.secItem[class*="sec-detail"] > .fp-tableCell > .wrap,
+.secItem[class*="sec-product"] > .fp-tableCell > .wrap{
   border-radius: 20px;
   background-color: #fff;
   width: 100%;
@@ -247,7 +249,7 @@ body.loading .secItem:not(.active){
   flex-direction: column;
   justify-content: center;
   position: relative;
-  gap: 30px;
+  gap: 20px;
 }
 
 .secItem[class*="sec-detail"] .titleBox  >* {
@@ -320,27 +322,29 @@ body.loading .secItem:not(.active){
 
 
 
-
-
-.secItem[class*="sec-product"] > .fp-tableCell{
-  padding: 200px 30px 80px;
+.secItem[class*="sec-product"] > .fp-tableCell > .wrap{
+  background-color: unset;
+  padding: unset;
 }
 .secItem[class*="sec-product"] .titleBox{
   text-align: center;
 }
-.secItem[class*="sec-product"] .titleBox > * {
-  margin: 0 auto 30px;
-}
-
 .secItem[class*="sec-product"] .contentBox {
-  gap: 40px;
+  gap: 8px;
   display: flex;
   flex-direction: row;
   text-align: center;
-  margin-top: 30px;
+
+  flex: 1;
 }
 .secItem[class*="sec-product"] .contentBox li{
   flex: 1;
+  border-radius: 12px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  flex-direction: column;
 }
 .secItem[class*="sec-product"] .contentBox li h5 {
   opacity: .6;

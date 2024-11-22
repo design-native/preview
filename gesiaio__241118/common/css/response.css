@@ -47,9 +47,10 @@
 
     
     
-    .secItem[class*="sec-detail"] > .fp-tableCell{
-        /* padding-top: 100px; */
-        max-height: calc((var(--vh, 1vh)* 100)) !important;
+    .secItem[class*="sec-detail"] > .fp-tableCell,
+    .secItem[class*="sec-product"] > .fp-tableCell{
+        padding-top: 100px;
+        max-height: calc((var(--vh, 1vh)* 100) - 20px) !important;
         display: block;
     }
 }
@@ -76,8 +77,8 @@
         height: 50px;
     }
     footer .category{
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        flex-direction: column;
+        gap: 20px;
     }
 
     footer .bottomBox{
@@ -124,7 +125,7 @@
 
 
 @media only screen and (max-width:900px) {
-    .secItem .fp-tableCell > .wrap{
+    .secItem:not(.sec-point) .fp-tableCell > .wrap{
         padding: 68px 20px 20px;
     }
     .btnLang {
@@ -202,7 +203,7 @@
         height: fit-content !important;    
     }
     .secItem[class*="sec-intro"] > .fp-tableCell > .wrap{
-        padding: calc(92px + 30px) 20px 30px;
+        padding: calc(66px + 30px) 20px 30px;
     }
     .secItem[class*="sec-intro"] .canvasWrap{
         flex: 1;
@@ -218,6 +219,21 @@
     }
     #visualizer{
         width: 100%;
+    }
+    .secItem[class*="sec-point"] .contentBox .iconBox
+    {
+        width: 100%;
+        position: relative;
+        height: 0;
+        padding-bottom: 60%;
+    }
+    .secItem[class*="sec-point"] .contentBox .iconBox .icon{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .secItem[class*="sec-product"] .contentBox .iconBox .icon{
+        background-size: ;
     }
     .secItem[class*="sec-detail"] > .fp-tableCell{
         padding: 0 20px 12px;
