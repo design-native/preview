@@ -104,6 +104,9 @@ body.headerON header .category {
     width: 100%;
     
 }
+body.headerON header .category .cateItem.NOW{
+  display: none;
+}
 header .category .cateItem > a{
   z-index: 2;
   position: relative;
