@@ -4,7 +4,7 @@
   /* Text */
   * {font-weight: 400;}
   h1{ font-size: 4rem; line-height:5.4rem;}
-  h2{ font-size: 3rem; line-height: 4.2rem;}
+  h2{ font-size: 3rem; line-height: 4rem;}
   h3{ font-size: 2.2rem; line-height: 2.8rem;}
   h4{ font-size: 1.6rem; line-height: 2rem;}
   h5{ font-size: 1.4rem; line-height: 1.6rem;}
@@ -137,7 +137,13 @@ body {
   
 }
 .sec-intro .titleBox h3 {
-  margin-bottom: 12px;
+  width: fit-content;
+  margin: 0 auto;
+  border-bottom: 3px solid #000;
+  display: block;
+}
+.sec-intro .titleBox h4 {
+  margin-top: 20px;
 }
 header,
 .sec-intro .titleBox,
@@ -186,14 +192,14 @@ body.loading .secItem:not(.active){
 }
 .sec-intro .titleBox h3 {}
 
-.secItem[class*="sec-point"] > .fp-tableCell{
-  padding: 200px 30px 80px;
-}
 .secItem[class*="sec-point"] .titleBox{
-  text-align: center;
+  padding-top: 40px;
+}
+.secItem[class*="sec-point"] h3 {
+  opacity: .6;
 }
 .secItem[class*="sec-point"] .titleBox > * {
-  margin: 0 auto 30px;
+  margin: 0 auto 12px;
 }
 
 .secItem[class*="sec-point"]:not(.active) .titleBox .logo{
@@ -202,23 +208,15 @@ body.loading .secItem:not(.active){
   opacity: 0;
 }
 
-.secItem[class*="sec-point"] .contentBox {
-  gap: 40px;
-  display: flex;
-  flex-direction: row;
-  text-align: center;
-  margin-top: 80px;
-}
 .secItem[class*="sec-point"] .contentBox li{
-  flex: 1;
-}
-.secItem[class*="sec-point"] .contentBox li h5 {
-  opacity: .6;
-  margin-top: 6px;
+  text-align: left;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 40px !important;
 }
 .secItem[class*="sec-point"] .contentBox .iconBox{
   width: 80%;
-  height: 300px;
+  flex: 1;
   max-width: 500px;
   margin: 0 auto;
 }
@@ -233,10 +231,12 @@ body.loading .secItem:not(.active){
 .secItem:not(footer) .fp-tableCell {
   min-height: 500px;
 }
+.secItem[class*="sec-point"] > .fp-tableCell,
 .secItem[class*="sec-detail"] > .fp-tableCell,
 .secItem[class*="sec-product"] > .fp-tableCell{
   padding: 20px 20px 0;
 }
+.secItem[class*="sec-point"] > .fp-tableCell > .wrap,
 .secItem[class*="sec-detail"] > .fp-tableCell > .wrap,
 .secItem[class*="sec-product"] > .fp-tableCell > .wrap{
   border-radius: 20px;
@@ -321,7 +321,7 @@ body.loading .secItem:not(.active){
 
 
 
-
+.secItem[class*="sec-point"] > .fp-tableCell > .wrap,
 .secItem[class*="sec-product"] > .fp-tableCell > .wrap{
   background-color: unset;
   padding: unset;
@@ -329,6 +329,7 @@ body.loading .secItem:not(.active){
 .secItem[class*="sec-product"] .titleBox{
   text-align: center;
 }
+.secItem[class*="sec-point"] .contentBox,
 .secItem[class*="sec-product"] .contentBox {
   gap: 8px;
   display: flex;
@@ -337,6 +338,7 @@ body.loading .secItem:not(.active){
 
   flex: 1;
 }
+.secItem[class*="sec-point"] .contentBox li,
 .secItem[class*="sec-product"] .contentBox li{
   flex: 1;
   border-radius: 12px;
@@ -346,9 +348,8 @@ body.loading .secItem:not(.active){
   padding: 20px;
   flex-direction: column;
 }
-.secItem[class*="sec-product"] .contentBox li h5 {
-  opacity: .6;
-  margin-top: 6px;
+.secItem[class*="sec-product"] .contentBox li h2 {
+  margin-bottom: 20px;
 }
 .secItem[class*="sec-product"] .contentBox .iconBox{
   width: 240px;
