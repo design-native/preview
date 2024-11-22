@@ -101,6 +101,7 @@ body.headerON header .category {
     flex-direction: column;
     text-align: center;
     gap: 40px;
+    width: 100%;
     
 }
 header .category .cateItem > a{

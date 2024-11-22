@@ -74,7 +74,7 @@
         line-height: 2.2rem;
     }
     footer .logo{
-        height: 50px;
+        height: 40px;
     }
     footer .category{
         flex-direction: column;
@@ -125,7 +125,7 @@
 
 
 @media only screen and (max-width:900px) {
-    .secItem:not(.sec-point) .fp-tableCell > .wrap{
+    .secItem:not(.sec-point, .sec-product) .fp-tableCell > .wrap{
         padding: 68px 20px 20px;
     }
     .btnLang {
@@ -159,6 +159,19 @@
         display: block;
         padding:0;
     }
+    body.headerON header .category{
+        gap: 30px;
+        padding-top: 66px;
+    }
+    header .category .cateItem .cateSub ul{
+        gap: 6px;
+    }
+    header .category .cateItem .cateSub ul li .title + a{
+        margin-top: 6px;
+    }
+header .category .cateItem:nth-child(4) .cateSub ul{
+    flex-direction:row ;
+  }
     
     header .category .cateItem .cateSub ul,
     .secItem[class*="sec-point"] .contentBox,
@@ -168,7 +181,6 @@
 
     .secItem[class*="sec-detail"] > .fp-tableCell> .wrap {
         padding: 20px;
-        height: fit-content;
     }
     .secItem[class*="sec-detail"] .contentBox ul{
         padding: 12px;
