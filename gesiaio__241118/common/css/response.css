@@ -244,9 +244,6 @@ header .category .cateItem:nth-child(4) .cateSub ul{
         top: 0;
         left: 0;
     }
-    .secItem[class*="sec-detail"] > .fp-tableCell{
-        padding: 0 20px 12px;
-    }
     .secItem[class*="sec-detail"] .contentBox{
         width: 100%;
     }

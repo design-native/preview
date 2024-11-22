@@ -678,18 +678,30 @@ updateScenario() {
         }
     }
 
-    resize() {
+resize() {
     const browserHeight = window.innerHeight;
-    this.canvas.height = browserHeight * 0.6;  // 브라우저 높이의 80%
+    const aspectRatio = 13/9;
+
+    const minWidth = 700; // 최소 너비 설정
+    const minheight = 600; // 최소 너비 설정
+
+    if (window.innerWidth < 800) {
+        this.canvas.height = Math.max(window.innerWidth / aspectRatio, minheight )
+    }else {
+        this.canvas.height = Math.min(Math.max(window.innerWidth / aspectRatio, minheight ), browserHeight *0.6);  // 브라우저 높이의 80%
+
+    }
+    const maxRadius = Math.min(
+        window.innerWidth * 0.3,  // 높이의 25%로 제한 (기존 35%)
+        this.canvas.height * 0.25    // 너비의 15%로 제한 (기존 25%)
+    );
 
     // 원의 크기를 더 작게 조정
     // 원 3개가 모두 들어갈 수 있도록 여유 공간 확보
-    const maxRadius = Math.min(
-        this.canvas.height * 0.25,  // 높이의 25%로 제한 (기존 35%)
-        window.innerWidth * 0.15    // 너비의 15%로 제한 (기존 25%)
-    );
-    this.canvas.width = maxRadius * 3.5 * 2;
+    this.canvas.width = Math.max(minWidth, maxRadius * 3.5 * 2 );;
     
+
+
     this.circleRadius = maxRadius;
     this.initCirclePositions();
 }

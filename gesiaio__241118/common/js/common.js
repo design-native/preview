@@ -147,17 +147,17 @@ let lang28 = ["Youtube", "유튜브"];
 let lang29 = ["Communication", "커뮤니케이션"];
 let lang30 = ["Twitter", "트위터"];
 let lang31 = ["Telegram", "텔레그램"];
-let lang32 = ["Net-Zero Layer 3 Platform", "넷제로 레이어 3 플랫폼"];
+let lang32 = ["<B>Net-Zero Layer 3 Platform</b>", "<B>넷제로 레이어 3 플랫폼</b>"];
 let lang33 = ["", ""];
 let lang34 = ["", ""];
 let lang35 = ["Net-Zero Consensus", "넷제로 컨센서스"];
-let lang36 = ["Creating a digital carbon management platform<br/> that connects carbon emissions with reduction", "탄소 배출과 감축을 연결하는 디지털 탄소 관리 플랫폼을 구축"];
+let lang36 = ["<B>Creating a digital carbon management platform<br/> that connects carbon emissions with reduction</b>", "<B>탄소 배출과 감축을 연결하는 <br/>디지털 탄소 관리 플랫폼을 구축</b>"];
 let lang37 = ["We help companies reducing carbon emissions and individuals supporting carbon offset activities to achieve transparent carbon neutrality through collaboration on a blockchain-based platform.<br/> Our platform supports various partners in effectively achieving their carbon reduction goals and aims to be at the center of a sustainable environmental ecosystem.", "우리는 기업의 탄소 배출 감소와 개인의 탄소 상쇄 활동을 지원하여 블록체인 기반 플랫폼에서의 협력을 통해 투명한 탄소 중립을 달성하도록 돕습니다.<br/> 우리 플랫폼은 다양한 파트너가 효과적으로 탄소 감축 목표를 달성할 수 있도록 지원하며 지속 가능한 환경 생태계의 중심이 되는 것을 목표로 합니다."];
 let lang38 = ["Carbon Credit Burning Consensus", "탄소 크레딧 소각 컨센서스"];
-let lang39 = ["Permanent carbon credit burning mechanism for carbon emission offsetting.", "탄소 배출 상쇄를 위한 영구적인 탄소 크레딧 소각 메커니즘."];
+let lang39 = ["<B>Permanent carbon credit burning mechanism for carbon emission offsetting.</b>", "<b>탄소 배출 상쇄를 위한 <br/>영구적인 탄소 크레딧 소각 메커니즘.</b>"];
 let lang40 = ["1. Carbon emission offset and carbon credit burning<br/>2. Carbon emission verification through burn request<br/>3. Thorough verification process via rollup<br/>4. Permanently recorded net-zero status on the blockchain", "1. 탄소 배출 상쇄 및 탄소 크레딧 소각<br/>2. 소각 요청을 통한 탄소 배출 검증<br/>3. 롤업을 통한 철저한 검증 프로세스<br/>4. 블록체인에 영구적으로 기록된 넷제로 상태"];
 let lang41 = ["Carbon Reduction Consensus", "탄소 감축 컨센서스"];
-let lang42 = ["We design systematic reduction strategies and strengthen sustainability through performance-based carbon credit issuance.", "우리는 체계적인 감축 전략을 설계하고 성과 기반 탄소 크레딧 발행을 통해 지속 가능성을 강화합니다."];
+let lang42 = ["<B>We design systematic reduction strategies and strengthen sustainability through performance-based carbon credit issuance.</b>", "<b>우리는 체계적인 감축 전략을 설계하고 성과 기반 탄소 크레딧 발행을 통해 <br/>지속 가능성을 강화합니다.</b>"];
 let lang43 = ["1. Accurate identification of emission sources<br/>2. Analysis and verification of reduction activities<br/>3. Carbon credit issuance upon achievement of reduction targets", "1. 배출원 정확히 식별<br/>2. 감축 활동 분석 및 검증<br/>3. 감축 목표 달성 시 탄소 크레딧 발행"];
 let lang44 = ["Carbon Emission Data Tokenization", "탄소 배출 데이터 토큰화"];
 let lang45 = ["The Notary Oracle tokenizes external carbon emission data using calculators from certified institutions.", "노타리 오라클은 인증 기관의 계산기를 사용하여 외부 탄소 배출 데이터를 토큰화합니다."];
@@ -170,7 +170,7 @@ let lang51 = ["ExoMad Green's sustainable biochar project creates environmental 
 let lang52 = ["A Unique and Influential<br/>REDD+ Project Preserving<br/>the Tropical Rainforest", "독특하고 영향력 있는<br/>REDD+ 프로젝트로 열대 우림 보존"];
 let lang53 = ["In collaboration with Netherlands-based Quadriz B.V., its local affiliate Quadriz Paraguay S.A., and Atenil S.A., a major landowner in Paraguay's Chaco, the project has implemented verified carbon standards along with climate, community, and biodiversity standards (VCS – CCBS) to avoid planned deforestation.", "네덜란드 기반 Quadriz B.V., 현지 계열사 Quadriz Paraguay S.A., 그리고 파라과이 차코 지역의 주요 지주인 Atenil S.A.와 협력하여 이 프로젝트는 기후, 커뮤니티 및 생물다양성 기준(VCS – CCBS)과 함께 검증된 탄소 기준을 구현하여 계획된 산림 벌채를 방지했습니다."];
 let lang54 = ["Delta Blue<br/>Carbon Project", "델타 블루<br/>탄소 프로젝트"];
-let lang55 = ["The Indus Delta Blue Carbon Project is working to restore one of the world's largest arid climate mangrove forests located within the Sindh Indus Delta region in Thatta and Sujawal areas of Southeastern Sindh province, Pakistan.", "인더스 델타 블루 탄소 프로젝트는 파키스탄 동남부 신드 주의 타타와 수자왈 지역에 위치한 세계에서 가장 큰 건조 기후 맹그로브 숲 중 하나를 복원하기 위해 노력하고 있습니다."];
+let lang55 = ["The Indus Delta Blue Carbon Project is working to restore one of the world's largest arid climate mangrove forests located within the Sindh Indus Delta region in Thatta and Sujawal areas of Southeastern Sindh province, Pakistan.", "인더스 델타 블루 탄소 프로젝트는 <br/>파키스탄 동남부 신드 주의 타타와 수자왈 지역에 위치한 세계에서 가장 큰 건조 기후 맹그로브 숲 중 하나를 복원하기 위해 노력하고 있습니다."];
 let lang56 = ["CAuth", "CAuth"];
 let lang57 = ["Carbon Authentication", "탄소 인증"];
 let lang58 = ["Transaction Authentication", "거래 인증"];
@@ -210,28 +210,28 @@ let lang91 = ["Terms", "이용 약관"];
 
 let lang92 = ["Net-Zero School", "넷제로 스쿨"];
 let lang93 = [
-    "A project that aggregates carbon emissions from elementary, middle, and high schools to contribute to achieving Net-Zero goals. By analyzing energy usage data from each school, it assesses carbon emissions and suggests reduction strategies.",
-    "초등학교, 중학교, 고등학교의 탄소 배출량을 집계하여 넷제로 목표 달성에 기여하는 프로젝트입니다. 각 학교의 에너지 사용 데이터를 분석하여 탄소 배출량을 평가하고 감축 전략을 제안합니다."
+    "A project that aggregates carbon emissions from elementary, middle, and high schools to contribute to achieving Net-Zero goals. <br/>By analyzing energy usage data from each school, it assesses carbon emissions and suggests reduction strategies.",
+    "초등학교, 중학교, 고등학교의 탄소 배출량을 집계하여 넷제로 목표 달성에 기여하는 프로젝트입니다. <br/>각 학교의 에너지 사용 데이터를 분석하여 탄소 배출량을 평가하고 감축 전략을 제안합니다."
 ];
 let lang94 = ["GXCE ( Gesia X Carbon Exchange )", "GXCE (Gesia X 탄소 거래소)"];
 let lang95 = [
-    "GXCE is a rollup-based decentralized exchange (DEX) where users can trade carbon credits authenticated by certified institutions such as Verra, ProArles, and the Korea Forestry Promotion Institute. The platform emphasizes transparency in all carbon credit transactions, creating a trustworthy environment for carbon trading.",
-    "GXCE는 Verra, ProArles, 한국산림진흥원과 같은 인증 기관에서 인증한 탄소 크레딧을 거래할 수 있는 롤업 기반 탈중앙화 거래소(DEX)입니다. 이 플랫폼은 모든 탄소 크레딧 거래에서 투명성을 강조하여 신뢰할 수 있는 탄소 거래 환경을 제공합니다."
+    "GXCE is a rollup-based decentralized exchange (DEX) where users can trade carbon credits authenticated by certified institutions such as Verra, ProArles, and the Korea Forestry Promotion Institute. <br/>The platform emphasizes transparency in all carbon credit transactions, creating a trustworthy environment for carbon trading.",
+    "GXCE는 Verra, ProArles, 한국산림진흥원과 같은 인증 기관에서 인증한 탄소 크레딧을 거래할 수 있는 롤업 기반 탈중앙화 거래소(DEX)입니다. <br/>이 플랫폼은 모든 탄소 크레딧 거래에서 투명성을 강조하여 신뢰할 수 있는 탄소 거래 환경을 제공합니다."
 ];
 let lang96 = ["Net-Zero Heroes", "넷제로 히어로즈"];
 let lang97 = [
-    "A campaign project designed to raise awareness about the climate crisis and encourage carbon reduction efforts. Through various platforms and social media, it highlights the importance of addressing climate change and offers practical ways to reduce one's carbon footprint.",
-    "기후 위기에 대한 인식을 높이고 탄소 감축 노력을 독려하기 위해 설계된 캠페인 프로젝트입니다. 다양한 플랫폼과 소셜 미디어를 통해 기후 변화 대응의 중요성을 강조하고 개인의 탄소 발자국을 줄이는 실용적인 방법을 제공합니다."
+    "A campaign project designed to raise awareness about the climate crisis and encourage carbon reduction efforts. <br/>Through various platforms and social media, it highlights the importance of addressing climate change and offers practical ways to reduce one's carbon footprint.",
+    "기후 위기에 대한 인식을 높이고 탄소 감축 노력을 독려하기 위해 설계된 캠페인 프로젝트입니다. <br/>다양한 플랫폼과 소셜 미디어를 통해 기후 변화 대응의 중요성을 강조하고 개인의 탄소 발자국을 줄이는 실용적인 방법을 제공합니다."
 ];
 let lang98 = ["Net-Zero Wallet", "넷제로 월렛"];
 let lang99 = [
-    "Net-Zero Wallet securely stores carbon credits issued by the Offset Chain and supports reliable carbon management and transactions through comprehensive authentication, including transaction, emission, and offset authentication.",
-    "넷제로 월렛은 Offset Chain에서 발행한 탄소 크레딧을 안전하게 저장하고, 거래, 배출, 상쇄 인증을 포함한 종합 인증을 통해 신뢰할 수 있는 탄소 관리 및 거래를 지원합니다."
+    "Net-Zero Wallet securely stores carbon credits issued <br/>by the Offset Chain and supports reliable carbon management and transactions through comprehensive authentication, including transaction, emission, and offset authentication.",
+    "넷제로 월렛은 Offset Chain에서 발행한 탄소 크레딧을 안전하게 저장하고, <br/>거래, 배출, 상쇄 인증을 포함한 종합 인증을 통해 신뢰할 수 있는 탄소 관리 및 거래를 지원합니다."
 ];
 let lang100 = ["What is GESIA", "GESIA란"];
 let lang101 = [
-    "GESIA, a Net-Zero Layer 3 platform that transparently and efficiently manages carbon emission tracking, reduction, and offset activities, leverages innovative blockchain layer technology, IoT integration, and AI-based analysis to help businesses, individuals, and governments effectively achieve their carbon neutrality goals.",
-    "GESIA는 탄소 배출 추적, 감축, 상쇄 활동을 투명하고 효율적으로 관리하는 넷제로 레이어 3 플랫폼으로, 혁신적인 블록체인 레이어 기술, IoT 통합 및 AI 기반 분석을 활용하여 기업, 개인 및 정부가 탄소 중립 목표를 효과적으로 달성하도록 지원합니다."
+    "GESIA, a Net-Zero Layer 3 platform that transparently and efficiently manages <br/>carbon emission tracking, reduction, and offset activities, leverages innovative blockchain layer technology, IoT integration, and AI-based analysis to help businesses, individuals, and governments effectively achieve their carbon neutrality goals.",
+    "GESIA는 탄소 배출 추적, 감축, 상쇄 활동을 투명하고 효율적으로 관리하는 넷제로 레이어 3 플랫폼으로, <br/>혁신적인 블록체인 레이어 기술, IoT 통합 및 AI 기반 분석을 활용하여 기업, 개인 및 정부가 탄소 중립 목표를 효과적으로 달성하도록 지원합니다."
 ];
 
 
@@ -327,17 +327,17 @@ function updateIntroText() {
     const hoveredLabel = $('body').attr('data-intro');
     
     if (hoveredLabel && labelTextMap[hoveredLabel]) {
-      $('.sec-intro .titleBox h3').text(labelTextMap[hoveredLabel].title);
-      $('.sec-intro .titleBox h4').text(labelTextMap[hoveredLabel].desc);
+      $('.sec-intro .titleBox h3').html(labelTextMap[hoveredLabel].title);
+      $('.sec-intro .titleBox h4').html(labelTextMap[hoveredLabel].desc);
     } else {
-      $('.sec-intro .titleBox h3').text('');
-      $('.sec-intro .titleBox h4').text('');
+      $('.sec-intro .titleBox h3').html('');
+      $('.sec-intro .titleBox h4').html('');
     }
    });
 
 
-   $('.sec-intro .titleBox h3').text(labelTextMap.gesia.title);
-   $('.sec-intro .titleBox h4').text(labelTextMap.gesia.desc);
+   $('.sec-intro .titleBox h3').html(labelTextMap.gesia.title);
+   $('.sec-intro .titleBox h4').html(labelTextMap.gesia.desc);
 
    
     // 모든 텍스트 콘텐츠를 숨겨진 div에 렌더링하여 최대 높이 계산

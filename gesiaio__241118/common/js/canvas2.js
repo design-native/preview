@@ -21,9 +21,10 @@ function resizeCanvas() {
    const vw = window.innerWidth;
    const aspectRatio = 25/9;
    const minWidth = 1280; // 최소 너비 설정
+   const maxWidth = 1600; // 최소 너비 설정
    
    // 너비를 먼저 계산 - 화면의 90% 사용하되 최소값 보장
-   let width = Math.max(minWidth, vw * 0.9);
+   let width = Math.min(Math.max(minWidth, vw * 0.9), maxWidth);
    let height = width / aspectRatio;
    
    // 높이가 화면의 90%를 넘으면 높이 기준으로 다시 계산
