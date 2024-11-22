@@ -946,7 +946,7 @@ function resizeCanvas() {
             drawText("Carbon Offset Chain", circle1X, centerY - radius + radius/2, false, true);
             drawText("Carbon Credit", circle1X, centerY );
         
-            drawText("Net Zero Chain", circle2X, centerY - radius + radius/2, false, true);
+            drawText("Net-Zero Chain", circle2X, centerY - radius + radius/2, false, true);
             drawText("Carbon Credit", circle2X, centerY, true, false);
         
             // 중앙 텍스트들

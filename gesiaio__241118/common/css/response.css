@@ -1,8 +1,7 @@
 
 /* animate */
-.debugWrap ,
-.debugger {
-    transition: all ease-in-out .5s;
+body {
+    transition: background-color ease-in .5s;
 
 }
 

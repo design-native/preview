@@ -137,10 +137,10 @@ class OAuthVisualizer {
         
     // Add labels definition before setupLabelEvents
     this.labels = [
-        { id: 'n2', text: 'Net Zero School', nodeNumber: 2, top: true, distance: 70 },  // 더 높게
+        { id: 'n2', text: 'Net-Zero School', nodeNumber: 2, top: true, distance: 70 },  // 더 높게
         { id: 'n16', text: 'GXCE', nodeNumber: 16, top: true, distance: 100 },          // 기본 높이
-        { id: 'n8', text: 'Net Zero HEROES', nodeNumber: 8, bottom: true, distance: 60 }, // 기본 높이
-        { id: 'n10', text: 'Net Zero Wallet', nodeNumber: 10, bottom: true, distance: 90 } // 더 낮게
+        { id: 'n8', text: 'Net-Zero HEROES', nodeNumber: 8, bottom: true, distance: 60 }, // 기본 높이
+        { id: 'n10', text: 'Net-Zero Wallet', nodeNumber: 10, bottom: true, distance: 90 } // 더 낮게
     ];
     
     this.hoveredLabel = null;
@@ -395,7 +395,7 @@ drawImages() {
 
        this.ctx.font = '14px Times New Roman';
        this.ctx.fillText('Carbon Emission', co2X, centerY + 15);
-       this.ctx.fillText('Net Zero', zeroX, centerY + 15);
+       this.ctx.fillText('Net-Zero', zeroX, centerY + 15);
        this.ctx.fillText('Carbon Offset', cocX, centerY + 15);
    } else {
        this.ctx.font = 'bold 32px Times New Roman';
@@ -407,7 +407,7 @@ drawImages() {
 
        this.ctx.font = '14px Times New Roman';  
        this.ctx.fillText('Carbon Emission', this.circleA.x, this.circleA.y + 15);
-       this.ctx.fillText('Net Zero', this.circleB.x, this.circleB.y + 15);
+       this.ctx.fillText('Net-Zero', this.circleB.x, this.circleB.y + 15);
        this.ctx.fillText('Carbon Offset', this.circleC.x, this.circleC.y + 15);
    }
 }
