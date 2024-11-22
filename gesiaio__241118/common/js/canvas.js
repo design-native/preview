@@ -245,7 +245,7 @@ drawLabels() {
        
        // 외곽선 그리기
         this.ctx.strokeStyle = this.hoveredLabel?.id === label.id ? 
-        'rgba(0, 0, 0, 1)' : 'rgba(50, 50, 50, 1)';
+        'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, .5)';
        this.ctx.lineWidth = 1.5;
        this.ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
 
@@ -257,7 +257,7 @@ drawLabels() {
        
        // 텍스트 그리기
        this.ctx.fillStyle = this.hoveredLabel?.id === label.id ? 
-        'rgba(0, 0, 0, 1)' : 'rgba(50, 50, 50, 1)';
+        'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, .5)';
        this.ctx.fillText(label.text, point.x, label.top ? boxY + boxHeight/2 : boxY + boxHeight/2);
    });
 }
