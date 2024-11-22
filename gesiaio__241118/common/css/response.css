@@ -147,6 +147,7 @@ body {
     }
     header .category .cateItem > a{
         opacity: .5;
+        padding: 0;
     }
     header .category .cateItem .cateSub{
         position: unset;

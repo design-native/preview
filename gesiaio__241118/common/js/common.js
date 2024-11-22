@@ -435,6 +435,7 @@ $(document).ready(function() {
                 'products',
                 'info'
             ],
+            // scrollBar: true,
             autoScrolling : scrolloverflowed,      
             fitToSection : scrolloverflowed,      
             responsiveWidth: 900,

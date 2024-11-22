@@ -330,7 +330,9 @@ body.loading .secItem:not(.active){
     align-content: center;
 }
 
-
+.secItem[class*="sec-point"] > .fp-tableCell > .wrap{
+  gap: 30px;
+}
 
 .secItem[class*="sec-point"] > .fp-tableCell > .wrap,
 .secItem[class*="sec-product"] > .fp-tableCell > .wrap{
