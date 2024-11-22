@@ -159,22 +159,46 @@ setupLabelEvents() {
         // 1. 레이블 호버 체크
         this.hoveredLabel = this.labels.find(label => {
             const point = this.getNodePosition(label.nodeNumber);
+            if (!point) return false;
+
+            // 텍스트 크기 측정을 위한 설정
+            this.ctx.font = '14px Times New Roman';
             const textWidth = this.ctx.measureText(label.text).width;
-            const textHeight = 20;
-            const padding = 20;
-            
-            const boxX = point.x - textWidth/2 - padding;
+            const textHeight = 14; // 폰트 크기와 동일하게 설정
+            const padding = { x: 10, y: 6 };
+
+            // 라벨 박스의 실제 위치 계산
+            const boxWidth = textWidth + (padding.x * 2);
+            const boxHeight = textHeight + (padding.y * 2);
+            const boxX = point.x - boxWidth/2;
             const boxY = label.top ? 
-                point.y - label.distance - textHeight - padding : 
-                point.y + label.distance - textHeight - padding;
-            const boxWidth = textWidth + padding * 2;
-            const boxHeight = textHeight + padding * 2;
+                point.y - label.distance - boxHeight + 20: 
+                point.y + label.distance - boxHeight + 20;
+
+            // 연결선 영역도 포함
+            const lineGap = 35;
+            const lineStartY = label.top ? boxY + boxHeight : boxY;
+            const lineEndY = label.top ? 
+                point.y - lineGap : 
+                point.y + lineGap;
             
-            return mouseX >= boxX && mouseX <= boxX + boxWidth &&
-                   mouseY >= boxY && mouseY <= boxY + boxHeight;
+            // 박스 영역 체크
+            const isInBox = mouseX >= boxX && 
+                          mouseX <= boxX + boxWidth && 
+                          mouseY >= boxY && 
+                          mouseY <= boxY + boxHeight;
+
+            // 연결선 영역 체크 (선 주변 약간의 여유 영역 포함)
+            const lineHitboxWidth = 10; // 선 주변 클릭 가능 영역
+            const isOnLine = mouseX >= point.x - lineHitboxWidth/2 && 
+                           mouseX <= point.x + lineHitboxWidth/2 && 
+                           mouseY >= Math.min(lineStartY, lineEndY) && 
+                           mouseY <= Math.max(lineStartY, lineEndY);
+
+            return isInBox || isOnLine;
         });
 
-        // 2. 원 영역 호버 체크 (레이블에 호버되지 않은 경우)
+        // 2. 원 영역 호버 체크
         if (!this.hoveredLabel) {
             const distanceA = Math.hypot(mouseX - this.circleA.x, mouseY - this.circleA.y);
             const distanceB = Math.hypot(mouseX - this.circleB.x, mouseY - this.circleB.y);
@@ -196,13 +220,6 @@ setupLabelEvents() {
                 document.body.setAttribute('data-intro', 'gesia');
             }
         }
-    });
-
-    // 마우스가 캔버스를 벗어날 때
-    this.canvas.addEventListener('mouseleave', () => {
-        this.hoveredLabel = null;
-        this.prevHoveredLabel = null;
-        document.body.setAttribute('data-intro', 'gesia');
     });
 }
 
