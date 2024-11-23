@@ -66,10 +66,8 @@ body {
     body[data-lang="en"] h2{ font-size: 2.2rem; line-height: 2.6rem;}
     body[data-lang="kr"] h2{ font-size: 2.2rem; line-height: 2.8rem;}
 
-    h3 {
-        font-size: 1.8rem;
-        line-height: 2.2rem;
-    }
+    body[data-lang="en"] h3 {        font-size: 1.8rem;        line-height: 2rem;    }
+    body[data-lang="kr"] h3 {        font-size: 1.8rem;        line-height: 2.6rem;    }
     footer .logo{
         height: 40px;
     }
