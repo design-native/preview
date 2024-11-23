@@ -295,23 +295,6 @@ function resizeCanvas() {
             let borderColor = 'rgba(50,50,50,1)';
             let textColor = 'rgba(50,50,50,1)';
             
-            // Special styling for "Notarized Multi-Signature Oracle"
-            if (text === "Notarized Multi-Signature Oracle") {
-                if (dashedLines.line1 && !dashedLines.line2) {
-                    // Only line1 is true: special border color
-                    textColor = '#333';
-                    borderColor = '#333';
-                } else if (dashedLines.line1 && dashedLines.line2) {
-                    // Both lines are true: special background and white text
-                    textColor = '#333';
-                    borderColor = '#333';
-                }else {
-                     textColor = 'rgba(50,50,50,0)';
-                     backgroundColor = 'rgba(255,255,255,0)';
-                    borderColor = 'rgba(50,50,50,0)';
-                }
-            }
-            
             ctx.fillStyle = backgroundColor;
             ctx.beginPath();
             ctx.roundRect(x - width/2, y - height/2, width, height, radius);
@@ -506,11 +489,11 @@ function resizeCanvas() {
                 ctx.fill();
                 
                 // 점 번호 그리기
-                // const textRadius = radius + 15;
-                // const textPos = calculatePointPosition(point, circle2X, centerY, textRadius);
-                // ctx.fillStyle = 'rgba(50,50,50,1)';
-                // ctx.font = '11px Times New Roman';
-                // ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
+                const textRadius = radius + 15;
+                const textPos = calculatePointPosition(point, circle2X, centerY, textRadius);
+                ctx.fillStyle = 'rgba(50,50,50,1)';
+                ctx.font = '11px Times New Roman';
+                ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
             });
         
             // 타이틀과 내부 텍스트
@@ -630,7 +613,7 @@ function animate() {
                             dashedLines.line1 = false;
                             dashedLines.line2 = false;
                             shouldClearDashedLines = false;
-                        }, 150);
+                        }, 20);
                     }
                     
                     // Reset segment and movement for next path

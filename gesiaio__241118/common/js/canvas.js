@@ -350,7 +350,7 @@ drawStatusText() {
         this.ctx.font = `${percentageFontSize} Times New Roman`;
         this.ctx.fillText('100%',
             this.canvas.width/2,
-            baseY + spacing - 1);
+            baseY + spacing - 3);
             
         // evolution 텍스트도 동일하게 단일 스페이스 적용
         this.ctx.font = `${evolutionFontSize} Times New Roman`;
@@ -390,7 +390,7 @@ drawImages() {
     
     // 더 작은 폰트 크기와 간격으로 조정
     const fontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.2), 16), 24); // 최대 24px로 제한
-    const smallFontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.1), 10), 14); // 최대 14px로 제한
+    const smallFontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.1), 10), 13); // 최대 14px로 제한
     
     // 텍스트 수직 간격을 더 좁게 조정
     const verticalSpacing = fontSize * 0.8; // 0.8에서 0.6으로 감소
@@ -629,7 +629,7 @@ drawPointText() {
                 // 새로운 텍스트 페이드 인 (A원에서만)
                 if ( point.circle === 'A') {
                     this.ctx.fillStyle = `rgba(40, 40, 40, ${fadeProgress})`;
-                    const text = `L1(N${point.number}) : L2(N${point.number}) : L3(N${point.number})`;
+                    const text = `L2(N${point.number}) : L3(N${point.number}) : L3(N${point.number})`;
                     this.ctx.fillText(text, textX + additionalOffsetX, textY + additionalOffsetY);
                 }
             } else {

@@ -199,6 +199,9 @@ body.loading .secItem:not(.active){
 .secItem[class*="sec-point"] .titleBox > * {
   margin: 0 auto 12px;
 }
+.secItem[class*="sec-point"] .contentBox li h3{
+  text-align: center;
+}
 
 .secItem[class*="sec-point"]:not(.active) .titleBox .logo{
   background-position: top 100% center;
@@ -257,9 +260,6 @@ body.loading .secItem:not(.active){
 .secItem[class*="sec-detail"] > .fp-tableCell > .wrap {
   background-color: unset;
   padding: unset;
-}
-.secItem[class*="sec-detail"] .titleBox h2 {
-  text-align: center;
 }
 .secItem[class*="sec-detail"] .titleBox .desc {
   border-radius: 12px;
@@ -347,6 +347,8 @@ body.loading .secItem:not(.active){
   text-align: center;
   align-items: center;
   flex: 1;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 .secItem[class*="sec-point"] .contentBox li,
 .secItem[class*="sec-product"] .contentBox li{
