@@ -49,7 +49,6 @@ body {
     .secItem[class*="sec-point"] > .fp-tableCell,
     .secItem[class*="sec-detail"] > .fp-tableCell,
     .secItem[class*="sec-product"] > .fp-tableCell{
-        padding-top: 100px;
         max-height: calc((var(--vh, 1vh)* 100) - 20px) !important;
         display: block;
     }
@@ -79,6 +78,7 @@ body {
     footer .bottomBox{
         flex-direction: column;
         gap: 20px;
+        align-items: baseline;
     }
     footer .copyright{
         order: 2;
@@ -169,16 +169,20 @@ header .category .cateItem:nth-child(5) .cateSub ul{
     flex-direction:row ;
   }
   .secItem[class*="sec-point"] .contentBox li{
-    padding:20px 20px 40px !important
+    padding:20px 20px 40px !important;
+    width: 100%;
   }
     header .category .cateItem .cateSub ul,
     .secItem[class*="sec-point"] .contentBox,
     .secItem[class*="sec-product"] .contentBox{
         flex-direction: column;
     }
-
+    .secItem[class*="sec-product"] .contentBox .iconBox {
+        width: 180px;
+        height: 180px;
+    }
     .secItem[class*="sec-detail"] > .fp-tableCell> .wrap {
-        padding: 20px;
+        padding: 0;
     }
     .secItem[class*="sec-detail"] .contentBox ul{
         padding: 12px;

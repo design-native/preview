@@ -24,7 +24,7 @@ function initializeCanvas1(canvasId){
 
     // 선 애니메이션을 위한 상태
     const lineAnimationState = {
-        duration: 1500,    // 더 빠른 선 애니메이션
+        duration: 1200,    // 더 빠른 선 애니메이션
         interval: 1000,   // 더 빠른 생성 간격
         lastCreateTime: 0
     };
@@ -105,7 +105,7 @@ function createLines(sourcePoint, circle2X, centerY, radius, currentTime) {
                 opacity: 1,
                 startTime: currentTime,
                 duration: lineAnimationState.duration,
-                maxLength: 0.2  // 선의 최대 길이를 15%로 증가
+                maxLength: 1  // 선의 최대 길이를 15%로 증가
             });
         }
     });
@@ -146,7 +146,7 @@ function drawLine(line) {
     ctx.beginPath();
     ctx.moveTo(line.start.x, line.start.y);
     ctx.lineTo(currentX, currentY);
-    ctx.strokeStyle = `rgba(0, 193, 179, ${line.opacity})`;
+    ctx.strokeStyle = `rgba(50, 50, 50, ${line.opacity})`;
     ctx.lineWidth = 0.5;
     ctx.stroke();
 }
@@ -299,12 +299,12 @@ function resizeCanvas() {
             if (text === "Notarized Multi-Signature Oracle") {
                 if (dashedLines.line1 && !dashedLines.line2) {
                     // Only line1 is true: special border color
-                    textColor = '#00C1B3';
-                    borderColor = '#00C1B3';
+                    textColor = '#333';
+                    borderColor = '#333';
                 } else if (dashedLines.line1 && dashedLines.line2) {
                     // Both lines are true: special background and white text
-                    textColor = '#00C1B3';
-                    borderColor = '#00C1B3';
+                    textColor = '#333';
+                    borderColor = '#333';
                 }else {
                      textColor = 'rgba(50,50,50,0)';
                      backgroundColor = 'rgba(255,255,255,0)';
@@ -549,8 +549,8 @@ function resizeCanvas() {
             // Draw dashed lines based on animation state
             if (!shouldClearDashedLines) {
                 ctx.beginPath();
-                ctx.strokeStyle = '#00C1B3';
-                // ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = '#333';
+                ctx.setLineDash([5, 5]);
                 
                 if (dashedLines.line1) {
                     ctx.moveTo(midPoint1X, textBottomY);
@@ -563,7 +563,7 @@ function resizeCanvas() {
                 }
                 
                 ctx.stroke();
-                ctx.setLineDash([]);
+                // ctx.setLineDash([]);
             }
         
             // 모든 경로 화살표 그리기
@@ -630,7 +630,7 @@ function animate() {
                             dashedLines.line1 = false;
                             dashedLines.line2 = false;
                             shouldClearDashedLines = false;
-                        }, 100);
+                        }, 150);
                     }
                     
                     // Reset segment and movement for next path
