@@ -1,24 +1,24 @@
 
 
 
-class OAuthVisualizer {
+class ChainRollupVisualizer {
     constructor() {
         this.canvas = document.getElementById('visualizer');
         this.ctx = this.canvas.getContext('2d');
         this.state = 'init';
         this.timeInState = 0;
-        this.points = {
-            circleA: [],
-            circleB: [],
-            circleC: [] // Add circle C points
+        this.nodes = {
+            chainA: [],
+            chainB: [],
+            chainC: [] // Add chain C nodes
         };
-        this.activeLines = new Set();
-        this.lines = [];
+        this.activeConsensuses = new Set();
+        this.Consensuses = [];
         this.color = '#333';
         this.glowColor = 'rgba(0, 193,132, 0.2)';
-        this.maxPoints = 100;
-        this.currentMaxPoints = 0;
-        this.pointGrowthRate = 0.5;
+        this.maxNodes = 100;
+        this.currentMaxNodes = 0;
+        this.nodeGrowthRate = 0.5;
         
         this.animation = {
             inProgress: false,
@@ -30,15 +30,15 @@ class OAuthVisualizer {
             targetPosB: null
         };
         
-        // lineAnimationState 수정 (생성자 내부)
-        this.lineAnimationState = {
+        // ConsensusAnimationState 수정 (생성자 내부)
+        this.ConsensusAnimationState = {
             startTime: 0,
             duration: 1500,             // 비교집합 선 기본 duration
             intersectionDuration: 10000, // 교집합 선 duration
             fadeOutDuration: 500,
             interval: 3000,
             lastCreateTime: 0,
-            activePoints: {
+            activeNodes: {
                 A: null,
                 B: null
             }
@@ -50,11 +50,11 @@ class OAuthVisualizer {
             opacity: 0.5  // 잔상 투명도
         };
 
-        // 고정된 점들을 저장할 배열 추가
-        this.fixedPoints = {
-            circleA: [],
-            circleB: [],
-            circleC: [] // Add circle C fixed points
+        // 고정된 노드들을 저장할 배열 추가
+        this.fixedNodes = {
+            chainA: [],
+            chainB: [],
+            chainC: [] // Add chain C fixed nodes
         };
 
 
@@ -71,7 +71,6 @@ class OAuthVisualizer {
         this.scenario = {
             currentStep: 'init', // init, waiting, step1, step2
             stepStartTime: 0,
-            isFirstLoad: true
         };
 
         // 시나리오 타이밍 설정 (밀리초 단위)
@@ -116,9 +115,9 @@ class OAuthVisualizer {
         });
         // 상태 텍스트 설정
         this.statusText = {
-            dots: '.',
-            dotsTimer: 0,
-            dotsInterval: 500,
+            nodes: '.',
+            nodesTimer: 0,
+            nodesInterval: 500,
             fadeOpacity: 0,
             fadeTarget: 0
         };
@@ -130,8 +129,8 @@ class OAuthVisualizer {
         this.setupEventListeners();
         this.init();
 
-        // 초기 고정 점 생성
-        this.initializeFixedPoints();
+        // 초기 고정 노드 생성
+        this.initializeFixedNodes();
 
 
         
@@ -158,8 +157,8 @@ setupLabelEvents() {
         
         // 1. 레이블 호버 체크
         this.hoveredLabel = this.labels.find(label => {
-            const point = this.getNodePosition(label.nodeNumber);
-            if (!point) return false;
+            const node = this.getNodePosition(label.nodeNumber);
+            if (!node) return false;
 
             // 텍스트 크기 측정을 위한 설정
             this.ctx.font = '14px Times New Roman';
@@ -170,17 +169,17 @@ setupLabelEvents() {
             // 라벨 박스의 실제 위치 계산
             const boxWidth = textWidth + (padding.x * 2);
             const boxHeight = textHeight + (padding.y * 2);
-            const boxX = point.x - boxWidth/2;
+            const boxX = node.x - boxWidth/2;
             const boxY = label.top ? 
-                point.y - label.distance - boxHeight + 20: 
-                point.y + label.distance - boxHeight + 20;
+                node.y - label.distance - boxHeight + 20: 
+                node.y + label.distance - boxHeight + 20;
 
             // 연결선 영역도 포함
-            const lineGap = 35;
-            const lineStartY = label.top ? boxY + boxHeight : boxY;
-            const lineEndY = label.top ? 
-                point.y - lineGap : 
-                point.y + lineGap;
+            const consensusGap = 35;
+            const consensusStartY = label.top ? boxY + boxHeight : boxY;
+            const consensusEndY = label.top ? 
+                node.y - consensusGap : 
+                node.y + consensusGap;
             
             // 박스 영역 체크
             const isInBox = mouseX >= boxX && 
@@ -189,24 +188,24 @@ setupLabelEvents() {
                           mouseY <= boxY + boxHeight;
 
             // 연결선 영역 체크 (선 주변 약간의 여유 영역 포함)
-            const lineHitboxWidth = 10; // 선 주변 클릭 가능 영역
-            const isOnLine = mouseX >= point.x - lineHitboxWidth/2 && 
-                           mouseX <= point.x + lineHitboxWidth/2 && 
-                           mouseY >= Math.min(lineStartY, lineEndY) && 
-                           mouseY <= Math.max(lineStartY, lineEndY);
+            const consensusHitboxWidth = 10; // 선 주변 클릭 가능 영역
+            const isOnConsensus = mouseX >= node.x - consensusHitboxWidth/2 && 
+                           mouseX <= node.x + consensusHitboxWidth/2 && 
+                           mouseY >= Math.min(consensusStartY, consensusEndY) && 
+                           mouseY <= Math.max(consensusStartY, consensusEndY);
 
-            return isInBox || isOnLine;
+            return isInBox || isOnConsensus;
         });
 
         // 2. 원 영역 호버 체크
         if (!this.hoveredLabel) {
-            const distanceA = Math.hypot(mouseX - this.circleA.x, mouseY - this.circleA.y);
-            const distanceB = Math.hypot(mouseX - this.circleB.x, mouseY - this.circleB.y);
-            const distanceC = Math.hypot(mouseX - this.circleC.x, mouseY - this.circleC.y);
+            const distanceA = Math.hypot(mouseX - this.chainA.x, mouseY - this.chainA.y);
+            const distanceB = Math.hypot(mouseX - this.chainB.x, mouseY - this.chainB.y);
+            const distanceC = Math.hypot(mouseX - this.chainC.x, mouseY - this.chainC.y);
 
-            if (distanceA <= this.circleRadius || 
-                distanceB <= this.circleRadius || 
-                distanceC <= this.circleRadius) {
+            if (distanceA <= this.chainRadius || 
+                distanceB <= this.chainRadius || 
+                distanceC <= this.chainRadius) {
                 this.hoveredLabel = { id: 'gesia' };
             }
         }
@@ -227,65 +226,68 @@ setupLabelEvents() {
 drawLabels() {
    if (!this.labels) return;
 
-   this.ctx.font = '14px Times New Roman';
+   const fontSize = 14;
+   const lineHeight = 1.5;  // line-height 설정
+   this.ctx.font = `${fontSize}px Times New Roman`;
    this.ctx.textAlign = 'center';
    this.ctx.textBaseline = 'middle';
    
    this.labels.forEach(label => {
-       const point = this.getNodePosition(label.nodeNumber);
-       if (!point) return;
+       const node = this.getNodePosition(label.nodeNumber);
+       if (!node) return;
        
        const textWidth = this.ctx.measureText(label.text).width;
-       const padding = { x: 10, y: 6 };
+       const padding = { x: 10, y: 2.5 };
        
        // 박스 위치 계산
-       const boxX = point.x - textWidth/2 - padding.x;
+       const boxX = node.x - textWidth/2 - padding.x;
        const boxY = label.top ? 
-            point.y - label.distance - padding.y : 
-            point.y + label.distance - padding.y;
+            node.y - label.distance - padding.y : 
+            node.y + label.distance - padding.y;
 
        const boxWidth = textWidth + padding.x * 2;
-       const boxHeight = 14 + padding.y * 2;
+       const textHeight = fontSize * lineHeight;  // line-height 적용
+       const boxHeight = textHeight + padding.y * 2;
        
        // N2 등의 텍스트가 가려지지 않도록 선 분리
-       const lineGap = 35; // 텍스트와 선 사이 간격
-       const lineStartY = label.top ? boxY + boxHeight : boxY;
-       let  lineEndY = label.top ? point.y : point.y;
+       const consensusGap = 35; // 텍스트와 선 사이 간격
+       const consensusStartY = label.top ? boxY + boxHeight : boxY;
+       let  consensusEndY = label.top ? node.y : node.y;
 
-       // N8, N10의 경우 아래로 lineGap만큼 이동
+       // N8, N10의 경우 아래로 consensusGap만큼 이동
        if (label.id === 'n8' || label.id === 'n10') {
-           lineEndY += lineGap;
+           consensusEndY += consensusGap;
        } else {
-           lineEndY -= lineGap;
+           consensusEndY -= consensusGap;
        }
 
        
        // 외곽선 그리기
         this.ctx.strokeStyle = this.hoveredLabel?.id === label.id ? 
         'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, .5)';
-       this.ctx.lineWidth = 1.5;
+       this.ctx.consensusWidth = 1.5;
        this.ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
 
        // 연결선 그리기
        this.ctx.beginPath();
-       this.ctx.moveTo(point.x, lineStartY);
-       this.ctx.lineTo(point.x, lineEndY);
+       this.ctx.moveTo(node.x, consensusStartY);
+       this.ctx.lineTo(node.x, consensusEndY);
        this.ctx.stroke();
        
        // 텍스트 그리기
        this.ctx.fillStyle = this.hoveredLabel?.id === label.id ? 
         'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, .5)';
-       this.ctx.fillText(label.text, point.x, label.top ? boxY + boxHeight/2 : boxY + boxHeight/2);
+       this.ctx.fillText(label.text, node.x, label.top ? boxY + boxHeight/2 : boxY + boxHeight/2);
    });
 }
 
 getNodePosition(nodeNumber) {
-    const point = this.fixedPoints.circleB.find(p => p.number === nodeNumber);
-    if (!point) return null;
+    const node = this.fixedNodes.chainB.find(p => p.number === nodeNumber);
+    if (!node) return null;
     
     return {
-        x: this.circleB.x + this.circleRadius * Math.cos(point.angle),
-        y: this.circleB.y + this.circleRadius * Math.sin(point.angle)
+        x: this.chainB.x + this.chainRadius * Math.cos(node.angle),
+        y: this.chainB.y + this.chainRadius * Math.sin(node.angle)
     };
 }
 
@@ -294,7 +296,7 @@ drawStatusText() {
     const ratio = this.getIntersectionRatio();
     const percentage = Math.round(ratio * 100);
     const currentTime = performance.now();
-    const circleDiameter = this.circleRadius * 2;
+    const chainDiameter = this.chainRadius * 2;
     const isDeviceType = document.body.classList.contains('type-device');
     
     // 디바이스 타입에 따른 폰트 크기 설정
@@ -304,9 +306,9 @@ drawStatusText() {
 
     // 10~70% 상태에서만 진행 중 텍스트 표시
     if (ratio > 0.1 && ratio < 0.99) {
-        if (currentTime - this.statusText.dotsTimer > this.statusText.dotsInterval) {
-            this.statusText.dots = this.statusText.dots.length >= 3 ? '.' : this.statusText.dots + '.';
-            this.statusText.dotsTimer = currentTime;
+        if (currentTime - this.statusText.nodesTimer > this.statusText.nodesInterval) {
+            this.statusText.nodes = this.statusText.nodes.length >= 3 ? '.' : this.statusText.nodes + '.';
+            this.statusText.nodesTimer = currentTime;
         }
 
         this.statusText.fadeTarget = 1;
@@ -319,15 +321,15 @@ drawStatusText() {
     // 100% 상태 텍스트
     if (ratio >= 0.35 && ratio < 0.99 ) {
         this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
+        this.ctx.textBaseconsensus = 'middle';
         this.ctx.fillStyle = `rgba(40, 40, 40, ${this.statusText.fadeOpacity})`;
         
         this.ctx.font = `${mainFontSize} Times New Roman`;
-        const baseY = this.circleA.y * 1.85;
+        const baseY = this.chainA.y * 1.85;
         
         // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
         this.ctx.textAlign = 'center';
-        this.ctx.fillText(`Rollup syncing in progress${this.statusText.dots}`, 
+        this.ctx.fillText(`Rollup syncing in progress${this.statusText.nodes}`, 
             this.canvas.width/2, 
             baseY);
         
@@ -340,7 +342,7 @@ drawStatusText() {
         this.ctx.textAlign = 'center';
         
         const spacing = 25;
-        const baseY = this.circleA.y + circleDiameter * 0.16;
+        const baseY = this.chainA.y + chainDiameter * 0.16;
         
         this.ctx.font = `${mainFontSize} Times New Roman`;
         this.ctx.fillText('Rollup sync completed.',
@@ -354,22 +356,22 @@ drawStatusText() {
             
         // evolution 텍스트도 동일하게 단일 스페이스 적용
         this.ctx.font = `${evolutionFontSize} Times New Roman`;
-        this.ctx.fillText(`Preparing for evolution${this.statusText.dots}`,
+        this.ctx.fillText(`Preparing for evolution${this.statusText.nodes}`,
             this.canvas.width/2,
             baseY + spacing * 2 - 10);
     } else {
         if (this.statusText.fadeOpacity > 0.01) {
             this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
+            this.ctx.textBaseconsensus = 'middle';
             this.ctx.fillStyle = `rgba(40, 40, 40, ${this.statusText.fadeOpacity})`;
             
             this.ctx.font = `${mainFontSize} Times New Roman`;
 
-            const baseY = this.circleA.y * 1.85;
+            const baseY = this.chainA.y * 1.85;
             
             // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
             this.ctx.textAlign = 'center';
-            this.ctx.fillText(`Rollup syncing in progress${this.statusText.dots}`, 
+            this.ctx.fillText(`Rollup syncing in progress${this.statusText.nodes}`, 
                 this.canvas.width/2, 
                 baseY);
             
@@ -383,14 +385,14 @@ drawStatusText() {
 drawImages() {
     const ratio = this.getIntersectionRatio();
     this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
+    this.ctx.textBaseconsensus = 'middle';
     this.ctx.fillStyle = 'rgba(40, 40, 40, 1)';
  
     const transitionThreshold = 0.65;
     
     // 더 작은 폰트 크기와 간격으로 조정
-    const fontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.2), 16), 24); // 최대 24px로 제한
-    const smallFontSize = Math.min(Math.max(Math.floor(this.circleRadius * 0.1), 10), 13); // 최대 14px로 제한
+    const fontSize = Math.min(Math.max(Math.floor(this.chainRadius * 0.2), 16), 24); // 최대 24px로 제한
+    const smallFontSize = Math.min(Math.max(Math.floor(this.chainRadius * 0.1), 10), 13); // 최대 14px로 제한
     
     // 텍스트 수직 간격을 더 좁게 조정
     const verticalSpacing = fontSize * 0.8; // 0.8에서 0.6으로 감소
@@ -400,11 +402,11 @@ drawImages() {
         const easing = this.easeInOutQuad(transition);
         
         const centerX = this.canvas.width / 2;
-        const centerY = this.circleA.y;
+        const centerY = this.chainA.y;
         
         // 최소 간격 보장하면서 수평 간격 조정
-        const minSpacing = Math.max(this.circleRadius * 0.55, 50); // 간격을 더 좁게 조정
-        const spacing = Math.max(minSpacing, this.circleRadius * 0.3 * (1 - easing));
+        const minSpacing = Math.max(this.chainRadius * 0.55, 50); // 간격을 더 좁게 조정
+        const spacing = Math.max(minSpacing, this.chainRadius * 0.3 * (1 - easing));
  
         const co2X = Math.min(centerX - spacing, centerX - minSpacing);
         const zeroX = centerX;
@@ -424,14 +426,14 @@ drawImages() {
     } else {
         // 기본 상태 텍스트 렌더링 (더 컴팩트하게)
         this.ctx.font = `bold ${fontSize}px Times New Roman`;
-        this.ctx.fillText('CO2', this.circleA.x, this.circleA.y - verticalSpacing/2);
-        this.ctx.fillText('0', this.circleB.x, this.circleB.y - verticalSpacing/2);
-        this.ctx.fillText('COC', this.circleC.x, this.circleC.y - verticalSpacing/2);
+        this.ctx.fillText('CO2', this.chainA.x, this.chainA.y - verticalSpacing/2);
+        this.ctx.fillText('0', this.chainB.x, this.chainB.y - verticalSpacing/2);
+        this.ctx.fillText('COC', this.chainC.x, this.chainC.y - verticalSpacing/2);
  
         this.ctx.font = `${smallFontSize}px Times New Roman`;
-        this.ctx.fillText('Carbon Emission', this.circleA.x, this.circleA.y + verticalSpacing/2);
-        this.ctx.fillText('Net-Zero', this.circleB.x, this.circleB.y + verticalSpacing/2);
-        this.ctx.fillText('Carbon Offset', this.circleC.x, this.circleC.y + verticalSpacing/2);
+        this.ctx.fillText('Carbon Emission', this.chainA.x, this.chainA.y + verticalSpacing/2);
+        this.ctx.fillText('Net-Zero', this.chainB.x, this.chainB.y + verticalSpacing/2);
+        this.ctx.fillText('Carbon Offset', this.chainC.x, this.chainC.y + verticalSpacing/2);
     }
  }
 // 이징 함수 추가
@@ -444,51 +446,51 @@ lerp(start, end, t) {
    return start + (end - start) * t;
 }
 
-    // 랜덤하게 활성화할 점들 선택
-selectRandomActivePoints() {
-    // 각 원의 비교집합 점들 찾기
-    const nonIntersectionPoints = {
-        A: this.fixedPoints.circleA.filter(point => 
-            !this.isPointInIntersection(this.calculateFixedPointPosition(point, this.circleA))),
-        B: this.fixedPoints.circleB.filter(point => 
-            !this.isPointInIntersection(this.calculateFixedPointPosition(point, this.circleB))),
-        C: this.fixedPoints.circleC.filter(point => 
-            !this.isPointInIntersection(this.calculateFixedPointPosition(point, this.circleC)))
+    // 랜덤하게 활성화할 노드들 선택
+selectRandomActiveNodes() {
+    // 각 원의 비교집합 노드들 찾기
+    const nonIntersectionNodes = {
+        A: this.fixedNodes.chainA.filter(node => 
+            !this.isNodeInIntersection(this.calculateFixedNodePosition(node, this.chainA))),
+        B: this.fixedNodes.chainB.filter(node => 
+            !this.isNodeInIntersection(this.calculateFixedNodePosition(node, this.chainB))),
+        C: this.fixedNodes.chainC.filter(node => 
+            !this.isNodeInIntersection(this.calculateFixedNodePosition(node, this.chainC)))
     };
 
     // 각 원에서 하나씩 랜덤 선택
-    this.lineAnimationState.activePoints = {
-        A: nonIntersectionPoints.A.length > 0 ? 
-            nonIntersectionPoints.A[Math.floor(Math.random() * nonIntersectionPoints.A.length)] : null,
-        B: nonIntersectionPoints.B.length > 0 ? 
-            nonIntersectionPoints.B[Math.floor(Math.random() * nonIntersectionPoints.B.length)] : null,
-        C: nonIntersectionPoints.C.length > 0 ? 
-            nonIntersectionPoints.C[Math.floor(Math.random() * nonIntersectionPoints.C.length)] : null
+    this.ConsensusAnimationState.activeNodes = {
+        A: nonIntersectionNodes.A.length > 0 ? 
+            nonIntersectionNodes.A[Math.floor(Math.random() * nonIntersectionNodes.A.length)] : null,
+        B: nonIntersectionNodes.B.length > 0 ? 
+            nonIntersectionNodes.B[Math.floor(Math.random() * nonIntersectionNodes.B.length)] : null,
+        C: nonIntersectionNodes.C.length > 0 ? 
+            nonIntersectionNodes.C[Math.floor(Math.random() * nonIntersectionNodes.C.length)] : null
     };
 }
 
 
-    // 고정된 점들 초기화
-    initializeFixedPoints() {
+    // 고정된 노드들 초기화
+    initializeFixedNodes() {
         const angleStep = (Math.PI * 2) / 16;
 
-        // Existing A and B circle points initialization remains the same
-        ['A', 'B', 'C'].forEach(circleName => {
-            const points = [];
+        // Existing A and B chain nodes initialization remains the same
+        ['A', 'B', 'C'].forEach(chainName => {
+            const nodes = [];
             for (let i = 0; i < 16; i++) {
                 const angle = -i * angleStep - Math.PI/2;
-                points.push({
+                nodes.push({
                     angle: angle,
-                    circle: circleName,
+                    chain: chainName,
                     number: i + 1,
                     opacity: 1
                 });
             }
-            this.fixedPoints[`circle${circleName}`] = points;
+            this.fixedNodes[`chain${chainName}`] = nodes;
         });
     }
-// drawPointText 함수 수정
-drawPointText() {
+// drawNodeText 함수 수정
+drawNodeText() {
     const ratio = this.getIntersectionRatio();
     const currentTime = performance.now();
 
@@ -504,28 +506,28 @@ drawPointText() {
 
     this.ctx.font = '11px Times New Roman';
         
-    // 두 원의 점들에 대해 텍스트 그리기
+    // 두 원의 노드들에 대해 텍스트 그리기
     [
-        { points: this.fixedPoints.circleA, circle: this.circleA, prefix: 'N' },
-        { points: this.fixedPoints.circleB, circle: this.circleB, prefix: 'N' },
-        { points: this.fixedPoints.circleC, circle: this.circleC, prefix: 'N' }
-    ].forEach(({ points, circle, prefix }) => {
-        points.forEach(point => {
-            const pos = this.calculateFixedPointPosition(point, circle);
+        { nodes: this.fixedNodes.chainA, chain: this.chainA, prefix: 'N' },
+        { nodes: this.fixedNodes.chainB, chain: this.chainB, prefix: 'N' },
+        { nodes: this.fixedNodes.chainC, chain: this.chainC, prefix: 'N' }
+    ].forEach(({ nodes, chain, prefix }) => {
+        nodes.forEach(node => {
+            const pos = this.calculateFixedNodePosition(node, chain);
             
             // 각도 정규화 (0 ~ 2π)
-            let angle = point.angle;
+            let angle = node.angle;
             while (angle < 0) angle += 2 * Math.PI;
             
             // 기본 텍스트 오프셋
-            let textOffset = this.circleRadius * 0.05;
+            let textOffset = this.chainRadius * 0.05;
             
             // 기본 미세 조정 오프셋
             let additionalOffsetX = 0;
             let additionalOffsetY = 0;
             const offsetAmount = 3;
 
-            // 특정 점들에 대한 추가 조정
+            // 특정 노드들에 대한 추가 조정
             const specificAdjustments = {
                 // 3: { offsetMultiplier: 0.08, extraX: 0, extraY: 10 },   // N3
                 // 7: { offsetMultiplier: 0.08, extraX: 0, extraY: -10 },   // N7
@@ -535,20 +537,20 @@ drawPointText() {
                 9: { offsetMultiplier: 0.08, extraX: 0, extraY: 8 }    // N15
             };
             
-            // 특정 점에 대한 조정 적용
-            // if (specificAdjustments[point.number]) {
-            //     const adjustment = specificAdjustments[point.number];
-            //     textOffset = this.circleRadius * adjustment.offsetMultiplier;
+            // 특정 노드에 대한 조정 적용
+            // if (specificAdjustments[node.number]) {
+            //     const adjustment = specificAdjustments[node.number];
+            //     textOffset = this.chainRadius * adjustment.offsetMultiplier;
             // }
 
             // 각도에 따른 텍스트 위치 계산
             let textX = pos.x + Math.cos(angle) * textOffset;
             let textY = pos.y + Math.sin(angle) * textOffset;
             
-            // 특정 점들에 대한 추가 오프셋 적용
-            if (specificAdjustments[point.number]) {
-                textX += specificAdjustments[point.number].extraX;
-                textY += specificAdjustments[point.number].extraY;
+            // 특정 노드들에 대한 추가 오프셋 적용
+            if (specificAdjustments[node.number]) {
+                textX += specificAdjustments[node.number].extraX;
+                textY += specificAdjustments[node.number].extraY;
             }
             
             // 텍스트 방향 조정을 위한 각도 계산
@@ -558,58 +560,58 @@ drawPointText() {
             if (textAngle > Math.PI * 0.45 && textAngle <= Math.PI * 0.55) {
                 // 정중앙 상단 (약 90도 부근)
                 this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'bottom';
+                this.ctx.textBaseconsensus = 'bottom';
                 additionalOffsetX = 0;
                 additionalOffsetY = 0;
             } else if (textAngle > Math.PI * 1.45 && textAngle <= Math.PI * 1.55) {
                 // 정중앙 하단 (약 270도 부근)
                 this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'top';
+                this.ctx.textBaseconsensus = 'top';
                 additionalOffsetX = 0;
                 additionalOffsetY = 0;
             } else if (textAngle <= Math.PI * 0.25 || textAngle > Math.PI * 1.75) {
                 // 오른쪽 영역 (0도 ~ 45도, 315도 ~ 360도)
                 this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'middle';
+                this.ctx.textBaseconsensus = 'middle';
                 additionalOffsetX = 10;
                 additionalOffsetY = 0;
             } else if (textAngle > Math.PI * 0.25 && textAngle <= Math.PI * 0.45) {
                 // 우상단 영역 (45도 ~ 90도)
                 this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'bottom';
+                this.ctx.textBaseconsensus = 'bottom';
                 additionalOffsetX = 10;
                 additionalOffsetY = -5;
             } else if (textAngle > Math.PI * 0.55 && textAngle <= Math.PI * 0.75) {
                 // 좌상단 영역 (90도 ~ 135도)
                 this.ctx.textAlign = 'right';
-                this.ctx.textBaseline = 'bottom';
+                this.ctx.textBaseconsensus = 'bottom';
                 additionalOffsetX = -10;
                 additionalOffsetY = -5;
             } else if (textAngle > Math.PI * 0.75 && textAngle <= Math.PI * 1.25) {
                 // 왼쪽 영역 (135도 ~ 225도)
                 this.ctx.textAlign = 'right';
-                this.ctx.textBaseline = 'middle';
+                this.ctx.textBaseconsensus = 'middle';
                 additionalOffsetX = -10;
                 additionalOffsetY = 0;
             } else if (textAngle > Math.PI * 1.25 && textAngle <= Math.PI * 1.45) {
                 // 좌하단 영역 (225도 ~ 270도)
                 this.ctx.textAlign = 'right';
-                this.ctx.textBaseline = 'top';
+                this.ctx.textBaseconsensus = 'top';
                 additionalOffsetX = -10;
                 additionalOffsetY = 5;
             } else if (textAngle > Math.PI * 1.55 && textAngle <= Math.PI * 1.75) {
                 // 우하단 영역 (270도 ~ 315도)
                 this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'top';
+                this.ctx.textBaseconsensus = 'top';
                 additionalOffsetX = 10;
                 additionalOffsetY = 5;
             }
 
             // 노드 번호에 따른 추가 조정
-            if (point.number === 1 ) {
+            if (node.number === 1 ) {
                 // 상단 노드들
                 additionalOffsetY -= 5;
-            } else if (point.number === 9) {
+            } else if (node.number === 9) {
                 // 하단 노드들
                 additionalOffsetY += 5;
             }
@@ -627,44 +629,44 @@ drawPointText() {
             // ratio에 따른 텍스트 및 투명도 설정
             if (ratio >= 0.99) {
                 // 새로운 텍스트 페이드 인 (A원에서만)
-                if ( point.circle === 'A') {
+                if ( node.chain === 'A') {
                     this.ctx.fillStyle = `rgba(40, 40, 40, ${fadeProgress})`;
-                    const text = `L2(N${point.number}) : L3(N${point.number}) : L3(N${point.number})`;
+                    const text = `L2(N${node.number}) : L3(N${node.number}) : L3(N${node.number})`;
                     this.ctx.fillText(text, textX + additionalOffsetX, textY + additionalOffsetY);
                 }
             } else {
                 // 진행 상태 - 번호만 표시
                 this.ctx.fillStyle = 'rgba(40, 40, 40, 1)';
-                const text = `${prefix}${point.number}`;
+                const text = `${prefix}${node.number}`;
                 this.ctx.fillText(text, textX + additionalOffsetX, textY + additionalOffsetY);
             }
         });
     });
 }
 
-    // 고정 점의 현재 위치 계산
-    calculateFixedPointPosition(point, circle) {
+    // 고정 노드의 현재 위치 계산
+    calculateFixedNodePosition(node, chain) {
         return {
-            x: circle.x + circle.radius * Math.cos(point.angle),
-            y: circle.y + circle.radius * Math.sin(point.angle),
-            circle: point.circle,
-            opacity: point.opacity
+            x: chain.x + chain.radius * Math.cos(node.angle),
+            y: chain.y + chain.radius * Math.sin(node.angle),
+            chain: node.chain,
+            opacity: node.opacity
         };
     }
 
-    // isPointInIntersection 메서드 수정
-    isPointInIntersection(point) {
-        // point.circle이 어느 원에 속하는지에 따라 다른 원들과의 교집합 체크
-        switch(point.circle) {
+    // isNodeInIntersection 메서드 수정
+    isNodeInIntersection(node) {
+        // node.chain이 어느 원에 속하는지에 따라 다른 원들과의 교집합 체크
+        switch(node.chain) {
             case 'A':
-                // A원의 점이 B원이나 C원과 겹치는지 확인
-                return this.isPointInCircle(point, this.circleB) || this.isPointInCircle(point, this.circleC);
+                // A원의 노드이 B원이나 C원과 겹치는지 확인
+                return this.isNodeInChain(node, this.chainB) || this.isNodeInChain(node, this.chainC);
             case 'B':
-                // B원의 점이 A원이나 C원과 겹치는지 확인
-                return this.isPointInCircle(point, this.circleA) || this.isPointInCircle(point, this.circleC);
+                // B원의 노드이 A원이나 C원과 겹치는지 확인
+                return this.isNodeInChain(node, this.chainA) || this.isNodeInChain(node, this.chainC);
             case 'C':
-                // C원의 점이 A원이나 B원과 겹치는지 확인
-                return this.isPointInCircle(point, this.circleA) || this.isPointInCircle(point, this.circleB);
+                // C원의 노드이 A원이나 B원과 겹치는지 확인
+                return this.isNodeInChain(node, this.chainA) || this.isNodeInChain(node, this.chainB);
             default:
                 return false;
         }
@@ -736,15 +738,15 @@ updateScenario() {
     calculateTargetDistance(state) {
         switch(state) {
             case 'init':
-                return this.circleRadius * 2;  // 기존 2.0에서 축소
+                return this.chainRadius * 2;  // 기존 2.0에서 축소
             case 'waiting':
-                return this.circleRadius * 2;  // 기존 2.0에서 축소
+                return this.chainRadius * 2;  // 기존 2.0에서 축소
             case 'step1':
-                return this.circleRadius * 1.4;  // 기존 1.6에서 축소
+                return this.chainRadius * 1.4;  // 기존 1.6에서 축소
             case 'step2':
-                return this.circleRadius * 0;
+                return this.chainRadius * 0;
             default:
-                return this.circleRadius * 2;  // 기존 2.05에서 축소
+                return this.chainRadius * 2;  // 기존 2.05에서 축소
         }
     }
 
@@ -772,38 +774,38 @@ resize() {
     
 
 
-    this.circleRadius = maxRadius;
-    this.initCirclePositions();
+    this.chainRadius = maxRadius;
+    this.initChainPositions();
 }
-    initCirclePositions() {
+    initChainPositions() {
         const spacing = this.calculateTargetDistance(this.state);
         const centerX = this.canvas.width / 2;
         const centerY = this.canvas.height / 2;
         
         // B원을 중앙에 고정
-        this.circleB = {
+        this.chainB = {
             x: centerX,
             y: centerY,
-            radius: this.circleRadius
+            radius: this.chainRadius
         };
         
         // A원은 B원 기준으로 왼쪽에 위치
-        this.circleA = {
+        this.chainA = {
             x: centerX - spacing,
             y: centerY,
-            radius: this.circleRadius
+            radius: this.chainRadius
         };
         
         // C원은 B원 기준으로 오른쪽에 위치
-        this.circleC = {
+        this.chainC = {
             x: centerX + spacing,
             y: centerY,
-            radius: this.circleRadius
+            radius: this.chainRadius
         };
     }
 
     init() {
-        this.initCirclePositions();
+        this.initChainPositions();
         this.animate();
     }
 
@@ -835,15 +837,15 @@ setState(newState) {
     })();
 
     this.timeInState = 0;
-    this.currentMaxPoints = 0;
+    this.currentMaxNodes = 0;
 
     const centerX = this.canvas.width / 2;
     const targetDistance = this.calculateTargetDistance(newState);
 
     // 애니메이션 시작 위치 저장
-    this.animation.startPosA = { x: this.circleA.x, y: this.circleA.y };
-    this.animation.startPosB = { x: this.circleB.x, y: this.circleB.y };
-    this.animation.startPosC = { x: this.circleC.x, y: this.circleC.y };
+    this.animation.startPosA = { x: this.chainA.x, y: this.chainA.y };
+    this.animation.startPosB = { x: this.chainB.x, y: this.chainB.y };
+    this.animation.startPosC = { x: this.chainC.x, y: this.chainC.y };
 
     if (newState === 'step2') {
         // step2에서는 모든 원이 B원 위치로 이동
@@ -881,23 +883,23 @@ setState(newState) {
 }
 
 
-    // updateCirclePositions 메서드 수정
-    updateCirclePositions(currentTime) {
+    // updateChainPositions 메서드 수정
+    updateChainPositions(currentTime) {
         if (!this.animation.inProgress) return;
 
         const elapsed = currentTime - this.animation.startTime;
         const progress = Math.min(elapsed / this.animation.duration, 1);
         const easing = this.easeOutQuint(progress);
 
-        // Update positions for all circles
-        this.circleA.x = this.animation.startPosA.x + (this.animation.targetPosA.x - this.animation.startPosA.x) * easing;
-        this.circleA.y = this.animation.startPosA.y + (this.animation.targetPosA.y - this.animation.startPosA.y) * easing;
+        // Update positions for all chains
+        this.chainA.x = this.animation.startPosA.x + (this.animation.targetPosA.x - this.animation.startPosA.x) * easing;
+        this.chainA.y = this.animation.startPosA.y + (this.animation.targetPosA.y - this.animation.startPosA.y) * easing;
         
-        this.circleB.x = this.animation.startPosB.x + (this.animation.targetPosB.x - this.animation.startPosB.x) * easing;
-        this.circleB.y = this.animation.startPosB.y + (this.animation.targetPosB.y - this.animation.startPosB.y) * easing;
+        this.chainB.x = this.animation.startPosB.x + (this.animation.targetPosB.x - this.animation.startPosB.x) * easing;
+        this.chainB.y = this.animation.startPosB.y + (this.animation.targetPosB.y - this.animation.startPosB.y) * easing;
         
-        this.circleC.x = this.animation.startPosC.x + (this.animation.targetPosC.x - this.animation.startPosC.x) * easing;
-        this.circleC.y = this.animation.startPosC.y + (this.animation.targetPosC.y - this.animation.startPosC.y) * easing;
+        this.chainC.x = this.animation.startPosC.x + (this.animation.targetPosC.x - this.animation.startPosC.x) * easing;
+        this.chainC.y = this.animation.startPosC.y + (this.animation.targetPosC.y - this.animation.startPosC.y) * easing;
 
         if (progress >= 1) {
             this.animation.inProgress = false;
@@ -907,15 +909,15 @@ setState(newState) {
 
     getDistance() {
         return Math.hypot(
-            this.circleB.x - this.circleA.x,
-            this.circleB.y - this.circleA.y
+            this.chainB.x - this.chainA.x,
+            this.chainB.y - this.chainA.y
         );
     }
 
 
     getIntersectionRatio() {
         const distance = this.getDistance();
-        const maxDistance = this.circleRadius * 2;
+        const maxDistance = this.chainRadius * 2;
         
         if (distance >= maxDistance) return 0;
         if (distance <= 0) return 1;
@@ -923,26 +925,26 @@ setState(newState) {
         return 1 - (distance / maxDistance);
     }
 
-    adjustPointToCircle(point, circle) {
-        const dx = point.x - circle.x;
-        const dy = point.y - circle.y;
+    adjustNodeToChain(node, chain) {
+        const dx = node.x - chain.x;
+        const dy = node.y - chain.y;
         const currentRadius = Math.sqrt(dx * dx + dy * dy);
         const angle = Math.atan2(dy, dx);
         
         return {
-            x: circle.x + circle.radius * Math.cos(angle),
-            y: circle.y + circle.radius * Math.sin(angle),
-            circle: point.circle,
-            opacity: point.opacity
+            x: chain.x + chain.radius * Math.cos(angle),
+            y: chain.y + chain.radius * Math.sin(angle),
+            chain: node.chain,
+            opacity: node.opacity
         };
     }
 
 
 
-    // drawCircle 함수 단순화
-    drawCircle(x, y, radius) {
+    // drawChain 함수 단순화
+    drawChain(x, y, radius) {
          this.ctx.strokeStyle = 'rgba(40, 40, 40, 1)';
-        this.ctx.lineWidth = 1;
+        this.ctx.consensusWidth = 1;
         this.ctx.beginPath();
         this.ctx.arc(x, y, radius, 0, Math.PI * 2);
         this.ctx.stroke();
@@ -950,114 +952,115 @@ setState(newState) {
 
 drawIntersection() {
     // A∩B 교집합 그리기
-    this.drawIntersectionArea(this.circleA, this.circleB);
+    this.drawIntersectionArea(this.chainA, this.chainB);
     // B∩C 교집합 그리기
-    this.drawIntersectionArea(this.circleB, this.circleC);
+    this.drawIntersectionArea(this.chainB, this.chainC);
 }
 
 // 교집합 영역 그리기 함수 추가
-drawIntersectionArea(circle1, circle2) {
-    const d = Math.hypot(circle2.x - circle1.x, circle2.y - circle1.y);
-    if (d >= this.circleRadius * 2 || d <= 0) return;
+drawIntersectionArea(chain1, chain2) {
+    const d = Math.hypot(chain2.x - chain1.x, chain2.y - chain1.y);
+    // 100% 교집합 상태일 때 처리 추가
+    if (d <= 0.001) {  // 완전히 겹친 상태
+        this.ctx.fillStyle = 'rgba(0, 193, 132, 0.1)';
+        this.ctx.beginPath();
+        this.ctx.arc(chain1.x, chain1.y, this.chainRadius, 0, Math.PI * 2);
+        this.ctx.fill();
+        return;
+    }
+    
+    // 너무 멀리 떨어진 경우만 return
+    if (d >= this.chainRadius * 2) return;
 
-    const a = (this.circleRadius * this.circleRadius - this.circleRadius * this.circleRadius + d * d) / (2 * d);
-    const h = Math.sqrt(this.circleRadius * this.circleRadius - a * a);
+    const a = (this.chainRadius * this.chainRadius - this.chainRadius * this.chainRadius + d * d) / (2 * d);
+    const h = Math.sqrt(this.chainRadius * this.chainRadius - a * a);
 
-    const px = circle1.x + a * (circle2.x - circle1.x) / d;
-    const py = circle1.y + a * (circle2.y - circle1.y) / d;
+    const px = chain1.x + a * (chain2.x - chain1.x) / d;
+    const py = chain1.y + a * (chain2.y - chain1.y) / d;
 
-    const intersectionPoints = [
+    const intersectionNodes = [
         {
-            x: px + h * (circle2.y - circle1.y) / d,
-            y: py - h * (circle2.x - circle1.x) / d
+            x: px + h * (chain2.y - chain1.y) / d,
+            y: py - h * (chain2.x - chain1.x) / d
         },
         {
-            x: px - h * (circle2.y - circle1.y) / d,
-            y: py + h * (circle2.x - circle1.x) / d
+            x: px - h * (chain2.y - chain1.y) / d,
+            y: py + h * (chain2.x - chain1.x) / d
         }
     ];
 
 
     this.ctx.fillStyle = 'rgba(0, 193, 132, 0.1)';;
     this.ctx.beginPath();
-    this.ctx.moveTo(intersectionPoints[0].x, intersectionPoints[0].y);
+    this.ctx.moveTo(intersectionNodes[0].x, intersectionNodes[0].y);
 
-    let angle1 = Math.atan2(intersectionPoints[0].y - circle1.y, intersectionPoints[0].x - circle1.x);
-    let angle2 = Math.atan2(intersectionPoints[1].y - circle1.y, intersectionPoints[1].x - circle1.x);
+    let angle1 = Math.atan2(intersectionNodes[0].y - chain1.y, intersectionNodes[0].x - chain1.x);
+    let angle2 = Math.atan2(intersectionNodes[1].y - chain1.y, intersectionNodes[1].x - chain1.x);
     if (angle2 < angle1) angle2 += 2 * Math.PI;
-    this.ctx.arc(circle1.x, circle1.y, this.circleRadius, angle1, angle2);
+    this.ctx.arc(chain1.x, chain1.y, this.chainRadius, angle1, angle2);
 
-    let angle3 = Math.atan2(intersectionPoints[1].y - circle2.y, intersectionPoints[1].x - circle2.x);
-    let angle4 = Math.atan2(intersectionPoints[0].y - circle2.y, intersectionPoints[0].x - circle2.x);
+    let angle3 = Math.atan2(intersectionNodes[1].y - chain2.y, intersectionNodes[1].x - chain2.x);
+    let angle4 = Math.atan2(intersectionNodes[0].y - chain2.y, intersectionNodes[0].x - chain2.x);
     if (angle4 < angle3) angle4 += 2 * Math.PI;
-    this.ctx.arc(circle2.x, circle2.y, this.circleRadius, angle3, angle4);
+    this.ctx.arc(chain2.x, chain2.y, this.chainRadius, angle3, angle4);
 
 
     this.ctx.closePath();
     this.ctx.fill();
 }
 
-    // drawPoint 함수 단순화
-    drawPoint(point) {
-        const color = `rgba(40, 40, 40, ${point.opacity})`;
+    // drawNode 함수 단순화
+    drawNode(node) {
+        const color = `rgba(40, 40, 40, ${node.opacity})`;
         this.ctx.fillStyle = color;
         this.ctx.beginPath();
-        this.ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+        this.ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
         this.ctx.fill();
     }
 
 
 
 
-    // drawLine 메서드 수정
-    drawLine(line) {
+    // drawConsensus 메서드 수정
+    drawConsensus(consensus) {
         const isValidCoordinate = (x, y) => {
             return Number.isFinite(x) && Number.isFinite(y) && !isNaN(x) && !isNaN(y);
         };
 
-        // 현재 이동 중인 점의 위치 계산
-        const currentX = line.currentStart.x + (line.currentEnd.x - line.currentStart.x) * line.progress;
-        const currentY = line.currentStart.y + (line.currentEnd.y - line.currentStart.y) * line.progress;
+        // 현재 이동 중인 노드의 위치 계산
+        const currentX = consensus.currentStart.x + (consensus.currentEnd.x - consensus.currentStart.x) * consensus.progress;
+        const currentY = consensus.currentStart.y + (consensus.currentEnd.y - consensus.currentStart.y) * consensus.progress;
 
         if (!isValidCoordinate(currentX, currentY) || 
-            !isValidCoordinate(line.currentStart.x, line.currentStart.y)) {
+            !isValidCoordinate(consensus.currentStart.x, consensus.currentStart.y)) {
             return;
         }
 
         // 선 그리기
         this.ctx.beginPath();
-        this.ctx.strokeStyle = `rgba(40, 40, 40, ${line.opacity})`; // 투명도 적용
-        this.ctx.lineWidth = 1;
-        this.ctx.moveTo(line.currentStart.x, line.currentStart.y);
+        this.ctx.strokeStyle = `rgba(40, 40, 40, ${consensus.opacity})`; // 투명도 적용
+        this.ctx.consensusWidth = 1;
+        this.ctx.moveTo(consensus.currentStart.x, consensus.currentStart.y);
         this.ctx.lineTo(currentX, currentY);
         this.ctx.stroke();
 
-        // if (line.isIntersection) {
-        //     // 교집합 선에 대한 발광 효과 추가
-        //     this.ctx.shadowBlur = 15;
-        //     this.ctx.shadowColor = `rgba(40, 40, 40, ${line.opacity})`;
-        //     this.ctx.stroke();
-        //     this.ctx.shadowBlur = 0;
-        // } else {
-        //     this.ctx.stroke();
-        // }
     }
 
 
 
     // 라인 생성 헬퍼 함수 수정
-    createLine(startPoint, endPoint) {
-        // startPoint와 endPoint는 이미 계산된 위치와 원의 정보를 포함
-        // 시작점의 각도 계산
+    createConsensus(startNode, endNode) {
+        // startNode와 endNode는 이미 계산된 위치와 원의 정보를 포함
+        // 시작노드의 각도 계산
         const startAngle = Math.atan2(
-            startPoint.y - (startPoint.circle === 'A' ? this.circleA.y : this.circleB.y),
-            startPoint.x - (startPoint.circle === 'A' ? this.circleA.x : this.circleB.x)
+            startNode.y - (startNode.chain === 'A' ? this.chainA.y : this.chainB.y),
+            startNode.x - (startNode.chain === 'A' ? this.chainA.x : this.chainB.x)
         );
         
-        // 끝점의 각도 계산
+        // 끝노드의 각도 계산
         const endAngle = Math.atan2(
-            endPoint.y - (endPoint.circle === 'A' ? this.circleA.y : this.circleB.y),
-            endPoint.x - (endPoint.circle === 'A' ? this.circleA.x : this.circleB.x)
+            endNode.y - (endNode.chain === 'A' ? this.chainA.y : this.chainB.y),
+            endNode.x - (endNode.chain === 'A' ? this.chainA.x : this.chainB.x)
         );
 
         // 기본 애니메이션 시간을 2초(2000ms)로 설정
@@ -1065,15 +1068,15 @@ drawIntersectionArea(circle1, circle2) {
 
         return {
             start: {
-                x: startPoint.x,
-                y: startPoint.y,
-                circle: startPoint.circle,
+                x: startNode.x,
+                y: startNode.y,
+                chain: startNode.chain,
                 angle: startAngle
             },
             end: {
-                x: endPoint.x,
-                y: endPoint.y,
-                circle: endPoint.circle,
+                x: endNode.x,
+                y: endNode.y,
+                chain: endNode.chain,
                 angle: endAngle
             },
             progress: 0,
@@ -1086,25 +1089,25 @@ drawIntersectionArea(circle1, circle2) {
 
 
 // 현재 원 가져오기를 더 명확하게 수정
-getCurrentCircle(circle) {
-    switch(circle) {
+getCurrentChain(chain) {
+    switch(chain) {
         case 'A':
-            return this.circleA;
+            return this.chainA;
         case 'B':
-            return this.circleB;
+            return this.chainB;
         case 'C':
-            return this.circleC;
+            return this.chainC;
         default:
-            console.error('Invalid circle identifier:', circle);
+            console.error('Invalid chain identifier:', chain);
             return null;
     }
 }
 
 
 
-// createLines 메서드 수정
-createLines(state) {
-    const lines = [];
+// createConsensuses 메서드 수정
+createConsensuses(state) {
+    const Consensuses = [];
     const intersectionRatio = this.getIntersectionRatio();
 
     if (state !== 'waiting' && state !== 'init') {
@@ -1112,44 +1115,44 @@ createLines(state) {
         const hasTripleIntersection = this.hasTripleIntersection();
 
         if (hasTripleIntersection) {
-            // 3중 교집합 점들만 처리
-            this.processTripleIntersectionLines(lines);
+            // 3중 교집합 노드들만 처리
+            this.processTripleIntersectionConsensuses(Consensuses);
         } else {
             // A∩B 교집합 처리
-            this.processIntersectionLines('A', 'B', lines);
+            this.processIntersectionConsensuses('A', 'B', Consensuses);
             // B∩C 교집합 처리
-            this.processIntersectionLines('B', 'C', lines);
+            this.processIntersectionConsensuses('B', 'C', Consensuses);
         }
     }
 
     // 비교집합 영역의 랜덤 선 생성
     if (intersectionRatio < 0.99) {
-        ['A', 'B', 'C'].forEach(circle => {
-            const currentCircle = this.getCurrentCircle(circle);
-            if (!currentCircle) return;
+        ['A', 'B', 'C'].forEach(chain => {
+            const currentChain = this.getCurrentChain(chain);
+            if (!currentChain) return;
 
-            const nonIntersectionPoints = this.fixedPoints[`circle${circle}`].filter(point => {
+            const nonIntersectionNodes = this.fixedNodes[`chain${chain}`].filter(node => {
                 const pos = {
-                    x: currentCircle.x + currentCircle.radius * Math.cos(point.angle),
-                    y: currentCircle.y + currentCircle.radius * Math.sin(point.angle),
-                    circle: circle
+                    x: currentChain.x + currentChain.radius * Math.cos(node.angle),
+                    y: currentChain.y + currentChain.radius * Math.sin(node.angle),
+                    chain: chain
                 };
-                return !this.isPointInIntersection(pos);
+                return !this.isNodeInIntersection(pos);
             });
 
-            if (nonIntersectionPoints.length > 0) {
-                const startPoint = nonIntersectionPoints[Math.floor(Math.random() * nonIntersectionPoints.length)];
+            if (nonIntersectionNodes.length > 0) {
+                const startNode = nonIntersectionNodes[Math.floor(Math.random() * nonIntersectionNodes.length)];
                 
-                this.fixedPoints[`circle${circle}`].forEach(endPoint => {
-                    if (startPoint !== endPoint) {
-                        lines.push({
+                this.fixedNodes[`chain${chain}`].forEach(endNode => {
+                    if (startNode !== endNode) {
+                        Consensuses.push({
                             start: {
-                                angle: startPoint.angle,
-                                circle: circle
+                                angle: startNode.angle,
+                                chain: chain
                             },
                             end: {
-                                angle: endPoint.angle,
-                                circle: endPoint.circle
+                                angle: endNode.angle,
+                                chain: endNode.chain
                             },
                             progress: 0,
                             opacity: 1 - (intersectionRatio * 0.95),
@@ -1162,57 +1165,57 @@ createLines(state) {
         });
     }
 
-    return lines;
+    return Consensuses;
 }
 
 // 교집합 영역 처리 메서드
-// processIntersectionLines 메서드 수정
-processIntersectionLines(circle1, circle2, lines) {
-    const circle1Obj = this.getCurrentCircle(circle1);
-    const circle2Obj = this.getCurrentCircle(circle2);
+// processIntersectionConsensuses 메서드 수정
+processIntersectionConsensuses(chain1, chain2, Consensuses) {
+    const chain1Obj = this.getCurrentChain(chain1);
+    const chain2Obj = this.getCurrentChain(chain2);
     
-    // 각 원의 교집합 점 찾기
-    const intersectionPointsC1 = this.fixedPoints[`circle${circle1}`].filter(point => {
-        const pos = this.calculateFixedPointPosition(point, circle1Obj);
-        return this.isPointInSingleCircle(pos, circle2Obj);
+    // 각 원의 교집합 노드 찾기
+    const intersectionNodesC1 = this.fixedNodes[`chain${chain1}`].filter(node => {
+        const pos = this.calculateFixedNodePosition(node, chain1Obj);
+        return this.isNodeInSingleChain(pos, chain2Obj);
     });
 
-    const intersectionPointsC2 = this.fixedPoints[`circle${circle2}`].filter(point => {
-        const pos = this.calculateFixedPointPosition(point, circle2Obj);
-        return this.isPointInSingleCircle(pos, circle1Obj);
+    const intersectionNodesC2 = this.fixedNodes[`chain${chain2}`].filter(node => {
+        const pos = this.calculateFixedNodePosition(node, chain2Obj);
+        return this.isNodeInSingleChain(pos, chain1Obj);
     });
 
-    // circle1의 교집합 점들에서 선 생성
-    intersectionPointsC1.forEach(startPoint => {
-        // 같은 원의 모든 점들과 연결
-        this.fixedPoints[`circle${circle1}`].forEach(endPoint => {
-            if (startPoint !== endPoint) {
-                lines.push(this.createIntersectionLine(startPoint, endPoint, circle1, circle1));
+    // chain1의 교집합 노드들에서 선 생성
+    intersectionNodesC1.forEach(startNode => {
+        // 같은 원의 모든 노드들과 연결
+        this.fixedNodes[`chain${chain1}`].forEach(endNode => {
+            if (startNode !== endNode) {
+                Consensuses.push(this.createIntersectionConsensus(startNode, endNode, chain1, chain1));
             }
         });
     });
 
-    // circle2의 교집합 점들에서 선 생성
-    intersectionPointsC2.forEach(startPoint => {
-        // 같은 원의 모든 점들과 연결
-        this.fixedPoints[`circle${circle2}`].forEach(endPoint => {
-            if (startPoint !== endPoint) {
-                lines.push(this.createIntersectionLine(startPoint, endPoint, circle2, circle2));
+    // chain2의 교집합 노드들에서 선 생성
+    intersectionNodesC2.forEach(startNode => {
+        // 같은 원의 모든 노드들과 연결
+        this.fixedNodes[`chain${chain2}`].forEach(endNode => {
+            if (startNode !== endNode) {
+                Consensuses.push(this.createIntersectionConsensus(startNode, endNode, chain2, chain2));
             }
         });
     });
 }
 
 // 교집합 선 생성 헬퍼 함수
-createIntersectionLine(startPoint, endPoint, startCircle, endCircle) {
+createIntersectionConsensus(startNode, endNode, startChain, endChain) {
     return {
         start: {
-            angle: startPoint.angle,
-            circle: startCircle
+            angle: startNode.angle,
+            chain: startChain
         },
         end: {
-            angle: endPoint.angle,
-            circle: endCircle
+            angle: endNode.angle,
+            chain: endChain
         },
         progress: 0,
         opacity: 1,
@@ -1221,43 +1224,43 @@ createIntersectionLine(startPoint, endPoint, startCircle, endCircle) {
     };
 }
 
-processTripleIntersectionLines(lines) {
-    const tripleIntersectionPoints = this.getTripleIntersectionPoints();
+processTripleIntersectionConsensuses(Consensuses) {
+    const tripleIntersectionNodes = this.getTripleIntersectionNodes();
     const intersectionRatio = this.getIntersectionRatio();
     
     // 100% 교집합 상태 체크
     const isComplete = intersectionRatio >= 0.99;
     
     if (isComplete) {
-        // 100% 상태일 때는 A 원의 모든 점에서 선 생성
-        this.fixedPoints.circleA.forEach(startPoint => {
-            this.fixedPoints.circleA.forEach(endPoint => {
-                if (startPoint.angle !== endPoint.angle) {
-                    lines.push({
+        // 100% 상태일 때는 A 원의 모든 노드에서 선 생성
+        this.fixedNodes.chainA.forEach(startNode => {
+            this.fixedNodes.chainA.forEach(endNode => {
+                if (startNode.angle !== endNode.angle) {
+                    Consensuses.push({
                         start: {
-                            angle: startPoint.angle,
-                            circle: 'A'
+                            angle: startNode.angle,
+                            chain: 'A'
                         },
                         end: {
-                            angle: endPoint.angle,
-                            circle: 'A'
+                            angle: endNode.angle,
+                            chain: 'A'
                         },
                         progress: Math.random() * 0.2,
                         opacity: 1,
                         isIntersection: true,
                         fadeOutProgress: 0,
-                        duration: this.lineAnimationState.intersectionDuration
+                        duration: this.ConsensusAnimationState.intersectionDuration
                     });
                 }
             });
         });
     } else {
         // 100% 미만일 때는 기존 로직 유지
-        tripleIntersectionPoints.forEach(startPoint => {
-            ['A', 'B', 'C'].forEach(targetCircle => {
-                this.fixedPoints[`circle${targetCircle}`].forEach(endPoint => {
-                    if (!(startPoint.circle === targetCircle && startPoint.angle === endPoint.angle)) {
-                        lines.push(this.createTripleIntersectionLine(startPoint, endPoint, targetCircle));
+        tripleIntersectionNodes.forEach(startNode => {
+            ['A', 'B', 'C'].forEach(targetChain => {
+                this.fixedNodes[`chain${targetChain}`].forEach(endNode => {
+                    if (!(startNode.chain === targetChain && startNode.angle === endNode.angle)) {
+                        Consensuses.push(this.createTripleIntersectionConsensus(startNode, endNode, targetChain));
                     }
                 });
             });
@@ -1266,54 +1269,54 @@ processTripleIntersectionLines(lines) {
 }
 
 // 삼중 교집합 선 생성을 위한 헬퍼 함수
-createTripleIntersectionLine(startPoint, endPoint, targetCircle) {
+createTripleIntersectionConsensus(startNode, endNode, targetChain) {
     return {
         start: {
-            angle: startPoint.angle,
-            circle: startPoint.circle
+            angle: startNode.angle,
+            chain: startNode.chain
         },
         end: {
-            angle: endPoint.angle,
-            circle: targetCircle
+            angle: endNode.angle,
+            chain: targetChain
         },
         progress: Math.random() * 0.2,
         opacity: 1,
         isIntersection: true,
         fadeOutProgress: 0,
-        duration: this.lineAnimationState.intersectionDuration
+        duration: this.ConsensusAnimationState.intersectionDuration
     };
 }
 
 // 3중 교집합 여부 확인
 hasTripleIntersection() {
-    return this.getTripleIntersectionPoints().length > 0;
+    return this.getTripleIntersectionNodes().length > 0;
 }
 
 
-// getTripleIntersectionPoints 메서드도 개선
-getTripleIntersectionPoints() {
-    const points = [];
+// getTripleIntersectionNodes 메서드도 개선
+getTripleIntersectionNodes() {
+    const nodes = [];
     
-    ['A', 'B', 'C'].forEach(circleName => {
-        const currentCircle = this.getCurrentCircle(circleName);
+    ['A', 'B', 'C'].forEach(chainName => {
+        const currentChain = this.getCurrentChain(chainName);
         
-        this.fixedPoints[`circle${circleName}`].forEach(point => {
+        this.fixedNodes[`chain${chainName}`].forEach(node => {
             const pos = {
-                x: currentCircle.x + currentCircle.radius * Math.cos(point.angle),
-                y: currentCircle.y + currentCircle.radius * Math.sin(point.angle)
+                x: currentChain.x + currentChain.radius * Math.cos(node.angle),
+                y: currentChain.y + currentChain.radius * Math.sin(node.angle)
             };
             
             // 다른 두 원 모두와의 교집합 체크
-            const otherCircles = ['A', 'B', 'C'].filter(name => name !== circleName);
-            const isInTripleIntersection = otherCircles.every(otherName => {
-                const otherCircle = this.getCurrentCircle(otherName);
-                return this.isPointInSingleCircle(pos, otherCircle);
+            const otherChains = ['A', 'B', 'C'].filter(name => name !== chainName);
+            const isInTripleIntersection = otherChains.every(otherName => {
+                const otherChain = this.getCurrentChain(otherName);
+                return this.isNodeInSingleChain(pos, otherChain);
             });
             
             if (isInTripleIntersection) {
-                points.push({
-                    angle: point.angle,
-                    circle: circleName,
+                nodes.push({
+                    angle: node.angle,
+                    chain: chainName,
                     x: pos.x,
                     y: pos.y
                 });
@@ -1322,121 +1325,121 @@ getTripleIntersectionPoints() {
     });
 
     // 디버깅 로그
-    return points;
+    return nodes;
 }
 
-// 점이 특정 원 하나에만 있는지 확인
-isPointInSingleCircle(point, targetCircle) {
-    const dx = point.x - targetCircle.x;
-    const dy = point.y - targetCircle.y;
-    return Math.sqrt(dx * dx + dy * dy) <= targetCircle.radius;
+// 노드이 특정 원 하나에만 있는지 확인
+isNodeInSingleChain(node, targetChain) {
+    const dx = node.x - targetChain.x;
+    const dy = node.y - targetChain.y;
+    return Math.sqrt(dx * dx + dy * dy) <= targetChain.radius;
 }
 
-// isPointInAllCircles 메서드 수정
-isPointInAllCircles(point) {
-    const otherCircles = ['A', 'B', 'C'].filter(name => name !== point.circle)
-        .map(name => this.getCurrentCircle(name));
+// isNodeInAllChains 메서드 수정
+isNodeInAllChains(node) {
+    const otherChains = ['A', 'B', 'C'].filter(name => name !== node.chain)
+        .map(name => this.getCurrentChain(name));
     
-    return otherCircles.every(circle => this.isPointInSingleCircle(point, circle));
+    return otherChains.every(chain => this.isNodeInSingleChain(node, chain));
 }
 
 // B와 C 원 사이의 교점을 계산하는 새로운 메서드
-getIntersectionPointsBC() {
-    const d = Math.hypot(this.circleB.x - this.circleC.x, this.circleB.y - this.circleC.y);
-    if (d >= this.circleRadius * 2 || d <= 0) return null;
+getIntersectionNodesBC() {
+    const d = Math.hypot(this.chainB.x - this.chainC.x, this.chainB.y - this.chainC.y);
+    if (d >= this.chainRadius * 2 || d <= 0) return null;
 
-    const a = (this.circleRadius * this.circleRadius - this.circleRadius * this.circleRadius + d * d) / (2 * d);
-    const h = Math.sqrt(this.circleRadius * this.circleRadius - a * a);
+    const a = (this.chainRadius * this.chainRadius - this.chainRadius * this.chainRadius + d * d) / (2 * d);
+    const h = Math.sqrt(this.chainRadius * this.chainRadius - a * a);
 
-    const px = this.circleB.x + a * (this.circleC.x - this.circleB.x) / d;
-    const py = this.circleB.y + a * (this.circleC.y - this.circleB.y) / d;
+    const px = this.chainB.x + a * (this.chainC.x - this.chainB.x) / d;
+    const py = this.chainB.y + a * (this.chainC.y - this.chainB.y) / d;
 
     return [
         {
-            x: px + h * (this.circleC.y - this.circleB.y) / d,
-            y: py - h * (this.circleC.x - this.circleB.x) / d
+            x: px + h * (this.chainC.y - this.chainB.y) / d,
+            y: py - h * (this.chainC.x - this.chainB.x) / d
         },
         {
-            x: px - h * (this.circleC.y - this.circleB.y) / d,
-            y: py + h * (this.circleC.x - this.circleB.x) / d
+            x: px - h * (this.chainC.y - this.chainB.y) / d,
+            y: py + h * (this.chainC.x - this.chainB.x) / d
         }
     ];
 }
 
-// 한 점이 특정 원 안에 있는지 확인하는 헬퍼 메서드
-isPointInCircle(point, circle) {
-    const dx = point.x - circle.x;
-    const dy = point.y - circle.y;
-    return Math.sqrt(dx * dx + dy * dy) <= circle.radius;
+// 한 노드이 특정 원 안에 있는지 확인하는 헬퍼 메서드
+isNodeInChain(node, chain) {
+    const dx = node.x - chain.x;
+    const dy = node.y - chain.y;
+    return Math.sqrt(dx * dx + dy * dy) <= chain.radius;
 }
-// updateLines 메서드 수정
-updateLines(state) {
+// updateConsensuses 메서드 수정
+updateConsensuses(state) {
     const currentTime = performance.now();
 
     // 계속해서 새로운 라인 세트 생성
-    if (this.lines.length === 0 || currentTime - this.lineAnimationState.lastCreateTime >= this.lineAnimationState.interval) {
-        this.selectRandomActivePoints();
-        this.lines = this.createLines(state);
-        this.lineAnimationState.lastCreateTime = currentTime;
-        this.lineAnimationState.startTime = currentTime;
+    if (this.Consensuses.length === 0 || currentTime - this.ConsensusAnimationState.lastCreateTime >= this.ConsensusAnimationState.interval) {
+        this.selectRandomActiveNodes();
+        this.Consensuses = this.createConsensuses(state);
+        this.ConsensusAnimationState.lastCreateTime = currentTime;
+        this.ConsensusAnimationState.startTime = currentTime;
     }
 
-    if (this.lines.length > 0) {
-        const elapsed = currentTime - this.lineAnimationState.startTime;
+    if (this.Consensuses.length > 0) {
+        const elapsed = currentTime - this.ConsensusAnimationState.startTime;
         
-        this.lines.forEach(line => {
+        this.Consensuses.forEach(consensus => {
             let duration;
             let progress;
             
             // 교집합과 비교집합 선의 duration을 다르게 적용
-            duration = line.isIntersection ? 
-                this.lineAnimationState.intersectionDuration + (elapsed * 0.1) : 
-                this.lineAnimationState.duration;
+            duration = consensus.isIntersection ? 
+                this.ConsensusAnimationState.intersectionDuration + (elapsed * 0.1) : 
+                this.ConsensusAnimationState.duration;
     
-            if (!line.isIntersection) {
+            if (!consensus.isIntersection) {
                 const speed = 0.7;
                 progress = Math.min((elapsed / speed) / duration, 1);
             } else {
                 progress = Math.min(elapsed / duration, 1);
             }
 
-            // 여기를 수정: getCurrentCircle 메서드 사용
-            const startCircle = this.getCurrentCircle(line.start.circle);
-            const endCircle = this.getCurrentCircle(line.end.circle);
+            // 여기를 수정: getCurrentChain 메서드 사용
+            const startChain = this.getCurrentChain(consensus.start.chain);
+            const endChain = this.getCurrentChain(consensus.end.chain);
 
-            if (startCircle && endCircle) {  // null 체크 추가
-                line.currentStart = {
-                    x: startCircle.x + startCircle.radius * Math.cos(line.start.angle),
-                    y: startCircle.y + startCircle.radius * Math.sin(line.start.angle)
+            if (startChain && endChain) {  // null 체크 추가
+                consensus.currentStart = {
+                    x: startChain.x + startChain.radius * Math.cos(consensus.start.angle),
+                    y: startChain.y + startChain.radius * Math.sin(consensus.start.angle)
                 };
                 
-                line.currentEnd = {
-                    x: endCircle.x + endCircle.radius * Math.cos(line.end.angle),
-                    y: endCircle.y + endCircle.radius * Math.sin(line.end.angle)
+                consensus.currentEnd = {
+                    x: endChain.x + endChain.radius * Math.cos(consensus.end.angle),
+                    y: endChain.y + endChain.radius * Math.sin(consensus.end.angle)
                 };
 
-                line.progress = progress;
+                consensus.progress = progress;
 
                 // 비교집합 선의 투명도 처리
-                if (!line.isIntersection) {
+                if (!consensus.isIntersection) {
                     if (progress >= 1) {
-                        line.opacity = 0;
+                        consensus.opacity = 0;
                     }
                 } else {
                     // 교집합 선의 투명도 처리
                     if (progress >= 0.02 && progress < 0.1) {
-                        line.opacity = (0.1 - progress) * 10;
+                        consensus.opacity = (0.1 - progress) * 10;
                     } else if (progress >= 0.1) {
-                        line.opacity = 0;
+                        consensus.opacity = 0;
                     } else {
-                        line.opacity = 1;
+                        consensus.opacity = 1;
                     }
                 }
             }
         });
 
         // 투명도가 0 이하면 라인 제거
-        this.lines = this.lines.filter(line => line.opacity > 0);
+        this.Consensuses = this.Consensuses.filter(consensus => consensus.opacity > 0);
     }
 }
 
@@ -1445,12 +1448,12 @@ updateLines(state) {
         this.timeInState += 1/60;
 
         if (this.animation.inProgress) {
-            this.updateCirclePositions(performance.now());
+            this.updateChainPositions(performance.now());
         }
 
         // waiting 또는 step1 또는 step2 상태에서 라인 애니메이션 실행
         if (this.state === 'waiting' || this.state === 'step1' || this.state === 'step2') {
-            this.updateLines(this.state);
+            this.updateConsensuses(this.state);
         }
     }
 
@@ -1462,30 +1465,30 @@ updateLines(state) {
         
         
         if ((this.state === 'step1' || this.state === 'step2') && 
-            this.getDistance() < this.circleRadius * 2) {
+            this.getDistance() < this.chainRadius * 2) {
             this.drawIntersection();
         }
         
-        // Draw all circles
-        this.drawCircle(this.circleA.x, this.circleA.y, this.circleRadius);
-        this.drawCircle(this.circleB.x, this.circleB.y, this.circleRadius);
-        this.drawCircle(this.circleC.x, this.circleC.y, this.circleRadius);
+        // Draw all chains
+        this.drawChain(this.chainA.x, this.chainA.y, this.chainRadius);
+        this.drawChain(this.chainB.x, this.chainB.y, this.chainRadius);
+        this.drawChain(this.chainC.x, this.chainC.y, this.chainRadius);
         
-        // Draw points for all circles
-        ['A', 'B', 'C'].forEach(circleName => {
-            this.fixedPoints[`circle${circleName}`].forEach(point => {
-                const currentCircle = circleName === 'A' ? this.circleA :
-                                    circleName === 'B' ? this.circleB : this.circleC;
-                const pos = this.calculateFixedPointPosition(point, currentCircle);
-                this.drawPoint(pos);
+        // Draw nodes for all chains
+        ['A', 'B', 'C'].forEach(chainName => {
+            this.fixedNodes[`chain${chainName}`].forEach(node => {
+                const currentChain = chainName === 'A' ? this.chainA :
+                                    chainName === 'B' ? this.chainB : this.chainC;
+                const pos = this.calculateFixedNodePosition(node, currentChain);
+                this.drawNode(pos);
             });
         });
         
-        this.drawPointText();
+        this.drawNodeText();
         
-        if (this.lines.length > 0) {
-            this.lines.forEach(line => {
-                this.drawLine(line);
+        if (this.Consensuses.length > 0) {
+            this.Consensuses.forEach(consensus => {
+                this.drawConsensus(consensus);
             });
         }
 
@@ -1506,6 +1509,6 @@ updateLines(state) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-new OAuthVisualizer();
+new ChainRollupVisualizer();
 });
 

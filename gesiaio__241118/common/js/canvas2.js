@@ -88,7 +88,7 @@ function drawLine(line) {
 function updateAnimationState(movePoint, step) {
     const centerY = canvas.height / 2;
     const radius = canvas.height * 0.45;
-    const circle2X = canvas.width/2 + radius * 2;
+    const chain2X = canvas.width/2 + radius * 2;
 
     const dataMetrics = getTextDimensions("DATA", true);
     const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator");
@@ -96,15 +96,15 @@ function updateAnimationState(movePoint, step) {
     
     const positions = {
         data: {
-            x: circle2X - radius,
+            x: chain2X - radius,
             y: centerY - dataMetrics.height/2
         },
         calculator: {
-            x: circle2X - calculatorMetrics.width/2,
+            x: chain2X - calculatorMetrics.width/2,
             y: centerY
         },
         token: {
-            x: circle2X,
+            x: chain2X,
             y: centerY + 120 - tokenMetrics.height/1.8
         }
     };
@@ -147,14 +147,14 @@ function updateAnimationState(movePoint, step) {
         // DATA 위치 (첫 번째 점)에서는 즉시 생성하고 기록하지 않음
         if (distances.data < threshold && activeLines.length === 0) {
             // console.log('Creating first N5 line');
-            createLinesAtPosition(circle2X, centerY, radius, 'N5', currentTime);
+            createLinesAtPosition(chain2X, centerY, radius, 'N5', currentTime);
         }
         // Calculator와 Token 위치는 대기열에 기록
         else if (distances.calculator < threshold) {
             if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY)) {
                 // console.log('Recording Calculator point for later');
                 pendingLineCreations.push({
-                    position: { x: circle2X, y: centerY, radius: radius },
+                    position: { x: chain2X, y: centerY, radius: radius },
                     type: 'random'
                 });
             }
@@ -163,7 +163,7 @@ function updateAnimationState(movePoint, step) {
             if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY + 120)) {
                 // console.log('Recording Token point for later');
                 pendingLineCreations.push({
-                    position: { x: circle2X, y: centerY, radius: radius },
+                    position: { x: chain2X, y: centerY, radius: radius },
                     type: 'random'
                 });
             }
@@ -206,14 +206,14 @@ function updateLines(currentTime) {
 }
 
 // createLines 함수도 수정
-function createLines(sourcePoint, circle2X, centerY, radius, currentTime) {
+function createLines(sourcePoint, chain2X, centerY, radius, currentTime) {
     const lines = [];
     
-    const startPos = calculatePointPosition(sourcePoint, circle2X, centerY, radius);
+    const startPos = calculatePointPosition(sourcePoint, chain2X, centerY, radius);
     
     chainPoints.forEach(targetPoint => {
         if (targetPoint.number !== sourcePoint.number) {
-            const endPos = calculatePointPosition(targetPoint, circle2X, centerY, radius);
+            const endPos = calculatePointPosition(targetPoint, chain2X, centerY, radius);
             
             lines.push({
                 start: startPos,
@@ -415,8 +415,8 @@ function resizeCanvas() {
         function calculateAnimationPath(step) {
             const centerY = canvas.height / 2;
             const radius = canvas.height * 0.45;
-            const circle1X = canvas.width/2 - radius * 2;
-            const circle2X = canvas.width/2 + radius * 2;
+            const chain1X = canvas.width/2 - radius * 2;
+            const chain2X = canvas.width/2 + radius * 2;
 
             const dataMetrics = getTextDimensions("DATA", true);
             const notaryMetrics = getTextDimensions("Notary Oracle", true);
@@ -424,11 +424,11 @@ function resizeCanvas() {
 
             // 정확한 위치 계산을 위해 수정
             const positions = {
-                dataLeft: { x: circle1X + radius, y: centerY },
-                dataRight: { x: circle2X - radius, y: centerY },
-                notary: { x: (circle1X + circle2X) / 2, y: centerY },
-                calculator: { x: circle2X, y: centerY },
-                token: { x: circle2X, y: centerY + 120 }
+                dataLeft: { x: chain1X + radius, y: centerY },
+                dataRight: { x: chain2X - radius, y: centerY },
+                notary: { x: (chain1X + chain2X) / 2, y: centerY },
+                calculator: { x: chain2X, y: centerY },
+                token: { x: chain2X, y: centerY + 120 }
             };
                 
             switch(step) {
@@ -481,12 +481,12 @@ function resizeCanvas() {
             // 원의 크기를 캔버스 높이의 45%로 유지
             const radius = canvas.height * 0.45;
             // 원 사이 간격을 지름 하나만큼으로 조정
-            const circle1X = canvas.width/2 - radius * 2;
-            const circle2X = canvas.width/2 + radius * 2;
+            const chain1X = canvas.width/2 - radius * 2;
+            const chain2X = canvas.width/2 + radius * 2;
             
             // 기본 원 그리기
-            drawCircle(circle1X, centerY, radius);
-            drawCircle(circle2X, centerY, radius);
+            drawCircle(chain1X, centerY, radius);
+            drawCircle(chain2X, centerY, radius);
         
             // 활성화된 선 그리기
             activeLines.forEach(line => {
@@ -495,7 +495,7 @@ function resizeCanvas() {
         
             // Chain 원의 점들 그리기
             chainPoints.forEach(point => {
-                const pos = calculatePointPosition(point, circle2X, centerY, radius);
+                const pos = calculatePointPosition(point, chain2X, centerY, radius);
                 
                 // 점 그리기
                 ctx.beginPath();
@@ -505,27 +505,27 @@ function resizeCanvas() {
                 
                 // 점 번호 그리기
                 const textRadius = radius + 15;
-                const textPos = calculatePointPosition(point, circle2X, centerY, textRadius);
+                const textPos = calculatePointPosition(point, chain2X, centerY, textRadius);
                 ctx.fillStyle = 'rgba(50,50,50,1)';
                 ctx.font = '11px Times New Roman';
                 ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
             });
         
             // 타이틀과 내부 텍스트
-            drawText("External Channel", circle1X, centerY - radius + radius/2, false, true);
-            drawText("Electricity Usage", circle1X, centerY - 30);
-            drawText("Gas Usage", circle1X, centerY + 30);
-            drawText("...", circle1X, centerY + 90, false, true);
+            drawText("External Channel", chain1X, centerY - radius + radius/2, false, true);
+            drawText("Electricity Usage", chain1X, centerY - 30);
+            drawText("Gas Usage", chain1X, centerY + 30);
+            drawText("...", chain1X, centerY + 90, false, true);
         
-            drawText("Carbon Emission Chain", circle2X, centerY - radius + radius/2, false, true);
-            drawText("Carbon Emission\nCalculator", circle2X, centerY, true, false);
-            drawText("TOKEN", circle2X, centerY + 120);
+            drawText("Carbon Emission Chain", chain2X, centerY - radius + radius/2, false, true);
+            drawText("Carbon Emission\nCalculator", chain2X, centerY, true, false);
+            drawText("TOKEN", chain2X, centerY + 120);
         
             // 중앙 텍스트들
-            drawText("Notarized Multi-Signature Oracle", (circle1X + circle2X) / 2, centerY - radius + radius/2, true);
-            drawText("Notary Oracle", (circle1X + circle2X) / 2, centerY);
-            drawText("DATA", circle1X + radius, centerY);
-            drawText("DATA", circle2X - radius, centerY);
+            drawText("Notarized Multi-Signature Oracle", (chain1X + chain2X) / 2, centerY - radius + radius/2, true);
+            drawText("Notary Oracle", (chain1X + chain2X) / 2, centerY);
+            drawText("DATA", chain1X + radius, centerY);
+            drawText("DATA", chain2X - radius, centerY);
         
             // 각 이동 선의 중앙점 계산
             const path1 = calculateAnimationPath(0);
@@ -757,13 +757,13 @@ function initializeCanvas2(canvasId){
     }
 
     // 선 생성 함수
-    function createLines(sourcePoint, circle1X, centerY, radius, currentTime) {
+    function createLines(sourcePoint, chain1X, centerY, radius, currentTime) {
         const lines = [];
-        const startPos = calculatePointPosition(sourcePoint, circle1X, centerY, radius);
+        const startPos = calculatePointPosition(sourcePoint, chain1X, centerY, radius);
         
         chainPoints.forEach(targetPoint => {
             if (targetPoint.number !== sourcePoint.number) {
-                const endPos = calculatePointPosition(targetPoint, circle1X, centerY, radius);
+                const endPos = calculatePointPosition(targetPoint, chain1X, centerY, radius);
                 
                 lines.push({
                     start: startPos,
@@ -819,7 +819,7 @@ function initializeCanvas2(canvasId){
     function updateAnimationState(movePoint, step) {
         const centerY = canvas.height / 2;
         const radius = canvas.height * 0.45;
-        const circle1X = canvas.width/2 - radius * 2;
+        const chain1X = canvas.width/2 - radius * 2;
 
         const dataMetrics = getTextDimensions("DATA", true);
         const calculatorMetrics = getMultilineTextDimensions("Carbon Credits\nRegistry");
@@ -827,15 +827,15 @@ function initializeCanvas2(canvasId){
         
         const positions = {
             data: {
-                x: circle1X + radius,
+                x: chain1X + radius,
                 y: centerY + dataMetrics.height/2
             },
             calculator: {
-                x: circle1X,
+                x: chain1X,
                 y: centerY + calculatorMetrics.height/2
             },
             token: {
-                x: circle1X,
+                x: chain1X,
                 y: centerY + 120 - tokenMetrics.height/2
             }
         };
@@ -864,13 +864,13 @@ function initializeCanvas2(canvasId){
         if (step !== 3) {
             // DATA 위치에서는 즉시 선 생성
             if (distances.data < threshold && activeLines.length === 0) {
-                createLinesAtPosition(circle1X, centerY, radius, 'N13', currentTime);
+                createLinesAtPosition(chain1X, centerY, radius, 'N13', currentTime);
             }
             // Calculator와 Token 위치는 대기열에 기록
             else if (distances.calculator < threshold) {
                 if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY)) {
                     pendingLineCreations.push({
-                        position: { x: circle1X, y: centerY, radius: radius },
+                        position: { x: chain1X, y: centerY, radius: radius },
                         type: 'random'
                     });
                 }
@@ -878,7 +878,7 @@ function initializeCanvas2(canvasId){
             else if (distances.token < threshold) {
                 if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY + 120)) {
                     pendingLineCreations.push({
-                        position: { x: circle1X, y: centerY, radius: radius },
+                        position: { x: chain1X, y: centerY, radius: radius },
                         type: 'random'
                     });
                 }
@@ -1047,8 +1047,8 @@ function initializeCanvas2(canvasId){
         function calculateAnimationPath(step) {
             const centerY = canvas.height / 2;
             const radius = canvas.height * 0.45;
-            const circle1X = canvas.width/2 - radius * 2;
-            const circle2X = canvas.width/2 + radius * 2;
+            const chain1X = canvas.width/2 - radius * 2;
+            const chain2X = canvas.width/2 + radius * 2;
         
             const dataMetrics = getTextDimensions("DATA", true);
             const notaryMetrics = getTextDimensions("Notary Oracle", true);
@@ -1056,11 +1056,11 @@ function initializeCanvas2(canvasId){
             const tokenMetrics = getTextDimensions("TOKEN", true);
         
             const positions = {
-                dataLeft: { x: circle2X - radius, y: centerY },
-                dataRight: { x: circle1X + radius, y: centerY },
-                notary: { x: (circle1X + circle2X) / 2, y: centerY },
-                calculator: { x: circle1X, y: centerY },
-                token: { x: circle1X, y: centerY + 120 }
+                dataLeft: { x: chain2X - radius, y: centerY },
+                dataRight: { x: chain1X + radius, y: centerY },
+                notary: { x: (chain1X + chain2X) / 2, y: centerY },
+                calculator: { x: chain1X, y: centerY },
+                token: { x: chain1X, y: centerY + 120 }
             };
         
             let points = [];
@@ -1104,11 +1104,11 @@ function initializeCanvas2(canvasId){
         
         const centerY = canvas.height / 2;
         const radius = canvas.height * 0.45;
-        const circle1X = canvas.width/2 - radius * 2;
-        const circle2X = canvas.width/2 + radius * 2;
+        const chain1X = canvas.width/2 - radius * 2;
+        const chain2X = canvas.width/2 + radius * 2;
     
-        drawCircle(circle1X, centerY, radius);
-        drawCircle(circle2X, centerY, radius);
+        drawCircle(chain1X, centerY, radius);
+        drawCircle(chain2X, centerY, radius);
     
         // 체인 포인트와 라인 그리기
         activeLines.forEach(line => {
@@ -1116,7 +1116,7 @@ function initializeCanvas2(canvasId){
         });
     
         chainPoints.forEach(point => {
-            const pos = calculatePointPosition(point, circle1X, centerY, radius);
+            const pos = calculatePointPosition(point, chain1X, centerY, radius);
             
             ctx.beginPath();
             ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
@@ -1124,20 +1124,20 @@ function initializeCanvas2(canvasId){
             ctx.fill();
             
             const textRadius = radius + 15;
-            const textPos = calculatePointPosition(point, circle1X, centerY, textRadius);
+            const textPos = calculatePointPosition(point, chain1X, centerY, textRadius);
             ctx.fillStyle = 'rgba(50,50,50,1)';
             ctx.font = '11px Times New Roman';
             ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
         });
     
         // 타이틀과 내부 텍스트
-        drawText("External Channel", circle2X, centerY - radius + radius/2, false, true);
-        drawText("Carbon Absorption", circle2X, centerY - 30);
-        drawText("Carbon Reduction", circle2X, centerY + 30);
+        drawText("External Channel", chain2X, centerY - radius + radius/2, false, true);
+        drawText("Carbon Absorption", chain2X, centerY - 30);
+        drawText("Carbon Reduction", chain2X, centerY + 30);
     
-        drawText("Carbon Offset Chain", circle1X, centerY - radius + radius/2, false, true);
-        drawText("Carbon Credits\nRegistry", circle1X, centerY, true, false);
-        drawText("TOKEN", circle1X, centerY + 120);
+        drawText("Carbon Offset Chain", chain1X, centerY - radius + radius/2, false, true);
+        drawText("Carbon Credits\nRegistry", chain1X, centerY, true, false);
+        drawText("TOKEN", chain1X, centerY + 120);
     
         // 중앙 텍스트들과 점선
         const path1 = calculateAnimationPath(0);
@@ -1173,10 +1173,10 @@ function initializeCanvas2(canvasId){
             ctx.setLineDash([]);
         }
     
-        drawText("Notarized Multi-Signature Oracle", (circle1X + circle2X) / 2, centerY - radius + radius/2, true);
-        drawText("Notary Oracle", (circle1X + circle2X) / 2, centerY);
-        drawText("DATA", circle1X + radius, centerY);
-        drawText("DATA", circle2X - radius, centerY);
+        drawText("Notarized Multi-Signature Oracle", (chain1X + chain2X) / 2, centerY - radius + radius/2, true);
+        drawText("Notary Oracle", (chain1X + chain2X) / 2, centerY);
+        drawText("DATA", chain1X + radius, centerY);
+        drawText("DATA", chain2X - radius, centerY);
     
         // 화살표 그리기
         const paths = [
@@ -1533,27 +1533,27 @@ function initializeCanvas3(canvasId){
     function updateAnimationState(movePoint, step) {
         const centerY = canvas.height / 2;
         const radius = canvas.height * 0.45;
-        const circle1X = canvas.width/2 - radius * 2;
-        const circle2X = canvas.width/2 + radius * 2;
+        const chain1X = canvas.width/2 - radius * 2;
+        const chain2X = canvas.width/2 + radius * 2;
 
         const tokenMetrics = getTextDimensions("TOKEN", true);
         const creditMetrics = getTextDimensions("Carbon Credit", true);
         
         const positions = {
             leftToken: {
-                x: circle1X + radius,
+                x: chain1X + radius,
                 y: centerY + tokenMetrics.height/2
             },
             rightToken: {
-                x: circle2X - radius,
+                x: chain2X - radius,
                 y: centerY - tokenMetrics.height/2
             },
             leftCredit: {
-                x: circle1X + creditMetrics.width/2,
+                x: chain1X + creditMetrics.width/2,
                 y: centerY
             },
             rightCredit: {
-                x: circle2X - creditMetrics.width/2,
+                x: chain2X - creditMetrics.width/2,
                 y: centerY
             }
         };
@@ -1585,7 +1585,7 @@ function initializeCanvas3(canvasId){
             if (step !== 1) {
                 if (!recentVisitedPositions1.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
                     pendingLineCreations1.push({
-                        position: { x: circle1X, y: centerY, radius: radius },
+                        position: { x: chain1X, y: centerY, radius: radius },
                         type: 'N13',
                         time: currentTime
                     });
@@ -1597,7 +1597,7 @@ function initializeCanvas3(canvasId){
             const visitedKey = `leftCredit-${currentTime}`;
             if (!recentVisitedPositions1.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
                 pendingLineCreations1.push({
-                    position: { x: circle1X, y: centerY, radius: radius },
+                    position: { x: chain1X, y: centerY, radius: radius },
                     type: 'random',
                     time: currentTime
                 });
@@ -1610,7 +1610,7 @@ function initializeCanvas3(canvasId){
             const visitedKey = `rightToken-${currentTime}`;
             if (!recentVisitedPositions2.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
                 pendingLineCreations2.push({
-                    position: { x: circle2X, y: centerY, radius: radius },
+                    position: { x: chain2X, y: centerY, radius: radius },
                     type: 'N5',
                     time: currentTime
                 });
@@ -1621,7 +1621,7 @@ function initializeCanvas3(canvasId){
             const visitedKey = `rightCredit-${currentTime}`;
             if (!recentVisitedPositions2.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
                 pendingLineCreations2.push({
-                    position: { x: circle2X, y: centerY, radius: radius },
+                    position: { x: chain2X, y: centerY, radius: radius },
                     type: 'random',
                     time: currentTime
                 });
@@ -1662,25 +1662,25 @@ function initializeCanvas3(canvasId){
     function calculateAnimationPath(step) {
         const centerY = canvas.height / 2;
         const radius = canvas.height * 0.45;
-        const circle1X = canvas.width/2 - radius * 2;
-        const circle2X = canvas.width/2 + radius * 2;
+        const chain1X = canvas.width/2 - radius * 2;
+        const chain2X = canvas.width/2 + radius * 2;
     
         const creditMetrics = getTextDimensions("Carbon Credit", true);
         const notaryMetrics = getTextDimensions("Notary Bridge", true);
         const tokenMetrics = getTextDimensions("TOKEN", true);
 
         const positions = {
-            dataLeft: { x: circle1X + radius, y: centerY },
-            dataRight: { x: circle2X - radius, y: centerY },
-            notary: { x: (circle1X + circle2X) / 2, y: centerY },
-            token: { x: circle2X, y: centerY + 100 }
+            dataLeft: { x: chain1X + radius, y: centerY },
+            dataRight: { x: chain2X - radius, y: centerY },
+            notary: { x: (chain1X + chain2X) / 2, y: centerY },
+            token: { x: chain2X, y: centerY + 100 }
         };
     
         let points = [];
         switch(step) {
             case 0:
                 points = [
-                    { x: circle1X + creditMetrics.width/2 , y: positions.dataLeft.y },
+                    { x: chain1X + creditMetrics.width/2 , y: positions.dataLeft.y },
                     { x: positions.dataLeft.x - tokenMetrics.width/2 , y: positions.dataLeft.y }
                 ];
                 break;
@@ -1731,7 +1731,7 @@ function initializeCanvas3(canvasId){
             case 7:
                 points = [
                     { x: positions.dataLeft.x - tokenMetrics.width/2 , y: positions.dataLeft.y },
-                    { x: circle1X + creditMetrics.width/2 , y: positions.dataLeft.y }
+                    { x: chain1X + creditMetrics.width/2 , y: positions.dataLeft.y }
                 ];
                 break;
             default:
@@ -1750,11 +1750,11 @@ function initializeCanvas3(canvasId){
     // 원의 크기를 캔버스 높이의 45%로 유지
     const radius = canvas.height * 0.45;
     // 원 사이 간격을 지름 하나만큼으로 조정
-    const circle1X = canvas.width/2 - radius * 2;
-    const circle2X = canvas.width/2 + radius * 2;
+    const chain1X = canvas.width/2 - radius * 2;
+    const chain2X = canvas.width/2 + radius * 2;
         
-            drawCircle(circle1X, centerY, radius);
-            drawCircle(circle2X, centerY, radius);
+            drawCircle(chain1X, centerY, radius);
+            drawCircle(chain2X, centerY, radius);
         
     // 체인 포인트와 라인 그리기
     activeLines.forEach(line => {
@@ -1763,7 +1763,7 @@ function initializeCanvas3(canvasId){
 
     // 왼쪽 원의 체인 포인트
     chainPoints1.forEach(point => {
-        const pos = calculatePointPosition(point, circle1X, centerY, radius);
+        const pos = calculatePointPosition(point, chain1X, centerY, radius);
         
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
@@ -1771,7 +1771,7 @@ function initializeCanvas3(canvasId){
         ctx.fill();
         
         const textRadius = radius + 15;
-        const textPos = calculatePointPosition(point, circle1X, centerY, textRadius);
+        const textPos = calculatePointPosition(point, chain1X, centerY, textRadius);
         ctx.fillStyle = 'rgba(50,50,50,1)';
         ctx.font = '11px Times New Roman';
         ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
@@ -1779,7 +1779,7 @@ function initializeCanvas3(canvasId){
 
     // 오른쪽 원의 체인 포인트
     chainPoints2.forEach(point => {
-        const pos = calculatePointPosition(point, circle2X, centerY, radius);
+        const pos = calculatePointPosition(point, chain2X, centerY, radius);
         
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
@@ -1787,23 +1787,23 @@ function initializeCanvas3(canvasId){
         ctx.fill();
         
         const textRadius = radius + 15;
-        const textPos = calculatePointPosition(point, circle2X, centerY, textRadius);
+        const textPos = calculatePointPosition(point, chain2X, centerY, textRadius);
         ctx.fillStyle = 'rgba(50,50,50,1)';
         ctx.font = '11px Times New Roman';
         ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
     });
             // 타이틀과 내부 텍스트
-            drawText("Carbon Offset Chain", circle1X, centerY - radius + radius/2, false, true);
-            drawText("Carbon Credit", circle1X, centerY );
+            drawText("Carbon Offset Chain", chain1X, centerY - radius + radius/2, false, true);
+            drawText("Carbon Credit", chain1X, centerY );
         
-            drawText("Net-Zero Chain", circle2X, centerY - radius + radius/2, false, true);
-            drawText("Carbon Credit", circle2X, centerY, true, false);
+            drawText("Net-Zero Chain", chain2X, centerY - radius + radius/2, false, true);
+            drawText("Carbon Credit", chain2X, centerY, true, false);
         
             // 중앙 텍스트들
-            drawText("Notarized Multi-Signature Bridge", (circle1X + circle2X) / 2,  centerY - radius + radius/2, true);
-            drawText("Notary Bridge", (circle1X + circle2X) / 2, centerY);
-            drawText("TOKEN", circle1X + radius, centerY);
-            drawText("TOKEN", circle2X - radius, centerY);
+            drawText("Notarized Multi-Signature Bridge", (chain1X + chain2X) / 2,  centerY - radius + radius/2, true);
+            drawText("Notary Bridge", (chain1X + chain2X) / 2, centerY);
+            drawText("TOKEN", chain1X + radius, centerY);
+            drawText("TOKEN", chain2X - radius, centerY);
         
         // 각 이동 선의 중앙점 계산
     const path1 = calculateAnimationPath(1);
