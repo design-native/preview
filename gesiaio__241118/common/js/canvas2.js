@@ -271,9 +271,6 @@ function resizeCanvas() {
    canvas.height = height;
    draw();
 }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
         function drawCircle(x, y, radius) {
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -663,7 +660,10 @@ function animate() {
     
     requestAnimationFrame(animate);
 }
+    window.addEventListener('resize', resizeCanvas);
     initializeChainPoints();
+    resizeCanvas();
+
     animate();
 
 }
@@ -917,9 +917,6 @@ function initializeCanvas2(canvasId){
     }
 
 
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
         function drawCircle(x, y, radius) {
         ctx.beginPath();
@@ -1260,8 +1257,11 @@ function initializeCanvas2(canvasId){
         
         requestAnimationFrame(animate);
     }
-        initializeChainPoints();
-        animate();
+    window.addEventListener('resize', resizeCanvas);
+    initializeChainPoints();
+    resizeCanvas();
+
+    animate();
 
 }
 
@@ -1291,6 +1291,18 @@ function initializeCanvas3(canvasId){
         init: false
     };
 
+    let chainPoints1 = []; // 왼쪽 원의 점들
+    let chainPoints2 = []; // 오른쪽 원의 점들
+    let activeLines = [];
+    let currentSource = null;
+    
+    // 선 애니메이션을 위한 상태
+    const lineAnimationState = {
+        duration: 1500,
+        interval: 0,
+        lastCreateTime: 0
+    };
+
     function resizeCanvas() {
         const vh = window.innerHeight;
         const vw = window.innerWidth;
@@ -1312,9 +1324,6 @@ function initializeCanvas3(canvasId){
         canvas.height = height;
         draw();
      }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
         function drawCircle(x, y, radius) {
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -1419,97 +1428,320 @@ function initializeCanvas3(canvasId){
                 height: textHeight
             };
         }
-    
-        function calculateAnimationPath(step) {
-            const centerY = canvas.height / 2;
-            const radius = canvas.height * 0.45;
-            const circle1X = canvas.width/2 - radius * 2;
-            const circle2X = canvas.width/2 + radius * 2;
+
         
-            // 실시간 텍스트 크기 계산
-            const font = `normal 30px "Times New Roman"`;
-            const creditMetrics = getTextDimensions("Carbon Credit", true);
-            const notaryMetrics = getTextDimensions("Notary Bridge", true);
-            const tokenMetrics = getTextDimensions("TOKEN", true);
-
-
-            // 텍스트 위치 계산
-            const positions = {
-                dataLeft: { x: circle1X + radius, y: centerY },
-                dataRight: { x: circle2X - radius, y: centerY },
-                notary: { x: (circle1X + circle2X) / 2, y: centerY },
-                token: { x: circle2X, y: centerY + 100 }
+    // Chain 점 초기화 함수
+    function initializeChainPoints() {
+        chainPoints1 = [];
+        chainPoints2 = [];
+        const angleStep = (Math.PI * 2) / 16;
+        
+        for (let i = 0; i < 16; i++) {
+            const point = {
+                angle: -i * angleStep - Math.PI/2,
+                number: i + 1
             };
-        
-            switch(step) {
-                case 0:
-                    return {
-                        points: [
-                            { x: circle1X + creditMetrics.width/2 , y: positions.dataLeft.y },
-                            { x: positions.dataLeft.x - tokenMetrics.width/2 , y: positions.dataLeft.y }
-                        ]
-                    };
-                case 1:
-                    return {
-                        points: [
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y + tokenMetrics.height/2 },
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y + radius/3 },
-                            { x: positions.notary.x, y: positions.notary.y + radius/3 },
-                            { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 }
-                        ]
-                    };
-                case 2:
-                    return {
-                        points: [
-                            { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 },
-                            { x: positions.notary.x, y: positions.notary.y - radius/4 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y - radius/4 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y - tokenMetrics.height/2 }
-                        ]
-                    };
-                case 3:
-                    return {
-                        points: [
-                            { x: positions.dataRight.x + tokenMetrics.width/2, y:positions.dataRight.y },
-                            { x: positions.token.x - creditMetrics.width/2, y: positions.dataRight.y }
-                        ]
-                    };
-                case 4:
-                    return {
-                        points: [
-                            { x: positions.token.x - creditMetrics.width/2, y: positions.dataRight.y },
-                            { x: positions.dataRight.x + tokenMetrics.width/2, y:positions.dataRight.y }
-                        ]
-                    };
-                case 5:
-                    return {
-                        points: [
-                            { x: positions.dataRight.x, y: positions.dataRight.y - tokenMetrics.height/2 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y - radius/4 },
-                            { x: positions.notary.x, y: positions.notary.y - radius/4 },
-                            { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 },
-                        ]
-                    };
-                    
-                case 6:
-                    return {
-                        points: [
-                            { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 },
-                            { x: positions.notary.x, y: positions.notary.y + radius/3 },
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y + radius/3 },
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y + tokenMetrics.height/2 }
-                        ]
-                    };
+            chainPoints1.push({...point});
+            chainPoints2.push({...point});
+        }
+    }
 
-                case 7:
-                    return {
-                        points: [
-                            { x: positions.dataLeft.x - tokenMetrics.width/2 , y: positions.dataLeft.y },
-                            { x: circle1X + creditMetrics.width/2 , y: positions.dataLeft.y }
-                        ]
-                    };
+    // 점의 위치 계산 함수
+    function calculatePointPosition(point, centerX, centerY, radius) {
+        return {
+            x: centerX + radius * Math.cos(point.angle),
+            y: centerY + radius * Math.sin(point.angle)
+        };
+    }
+
+    // 선 그리기 함수
+    function drawLine(line) {
+        if (!line.start || !line.end) return;
+
+        const actualProgress = Math.min(line.progress, line.maxLength);
+        const currentX = line.start.x + (line.end.x - line.start.x) * actualProgress;
+        const currentY = line.start.y + (line.end.y - line.start.y) * actualProgress;
+
+        ctx.beginPath();
+        ctx.moveTo(line.start.x, line.start.y);
+        ctx.lineTo(currentX, currentY);
+        ctx.strokeStyle = `rgba(50, 50, 50, ${line.opacity})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+    }
+
+    // 선 생성 함수
+    function createLines(sourcePoint, centerX, centerY, radius, chainPoints, currentTime) {
+        const lines = [];
+        const startPos = calculatePointPosition(sourcePoint, centerX, centerY, radius);
+        
+        chainPoints.forEach(targetPoint => {
+            if (targetPoint.number !== sourcePoint.number) {
+                const endPos = calculatePointPosition(targetPoint, centerX, centerY, radius);
+                
+                lines.push({
+                    start: startPos,
+                    end: endPos,
+                    progress: 0,
+                    opacity: 1,
+                    startTime: currentTime,
+                    duration: lineAnimationState.duration,
+                    maxLength: 1
+                });
+            }
+        });
+        
+        return lines;
+    }
+
+    // 선 업데이트 함수
+    function updateLines(currentTime) {
+        activeLines = activeLines.filter(line => {
+            const elapsed = currentTime - line.startTime;
+            const duration = lineAnimationState.duration;
+            
+            line.progress = Math.min(elapsed / duration, 1);
+            
+            if (line.progress >= line.maxLength) {
+                line.opacity = 0;
+            }
+            
+            return line.progress < 1;
+        });
+    }
+
+    function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTime) {
+        let sourcePoint;
+        
+        if (sourceType === 'N5') {
+            sourcePoint = chainPoints.find(p => p.number === 5);
+        } else if (sourceType === 'N13') {
+            sourcePoint = chainPoints.find(p => p.number === 13);
+        } else {
+            sourcePoint = chainPoints[Math.floor(Math.random() * chainPoints.length)];
+        }
+
+        const newLines = createLines(sourcePoint, x, y, radius, chainPoints, currentTime);
+        activeLines = activeLines.concat(newLines);
+    }
+
+    let recentVisitedPositions1 = []; // 왼쪽 원의 방문 기록
+    let recentVisitedPositions2 = []; // 오른쪽 원의 방문 기록
+    const RECENT_VISITED_DURATION = 500;
+    let pendingLineCreations1 = []; // 왼쪽 원의 대기열
+    let pendingLineCreations2 = []; // 오른쪽 원의 대기열
+    function updateAnimationState(movePoint, step) {
+        const centerY = canvas.height / 2;
+        const radius = canvas.height * 0.45;
+        const circle1X = canvas.width/2 - radius * 2;
+        const circle2X = canvas.width/2 + radius * 2;
+
+        const tokenMetrics = getTextDimensions("TOKEN", true);
+        const creditMetrics = getTextDimensions("Carbon Credit", true);
+        
+        const positions = {
+            leftToken: {
+                x: circle1X + radius,
+                y: centerY + tokenMetrics.height/2
+            },
+            rightToken: {
+                x: circle2X - radius,
+                y: centerY - tokenMetrics.height/2
+            },
+            leftCredit: {
+                x: circle1X + creditMetrics.width/2,
+                y: centerY
+            },
+            rightCredit: {
+                x: circle2X - creditMetrics.width/2,
+                y: centerY
+            }
+        };
+
+        const threshold = 5;
+        const currentTime = performance.now();
+        // 선의 완료 상태를 체크
+        const allLinesReachedTarget = activeLines.length === 0 || 
+            activeLines.every(line => line.progress >= 1 || line.opacity === 0);
+    
+
+        // TOKEN 위치 도달 감지 및 선 생성
+        const distanceLeftToken = Math.hypot(movePoint.x - positions.leftToken.x, movePoint.y - positions.leftToken.y);
+        const distanceRightToken = Math.hypot(movePoint.x - positions.rightToken.x, movePoint.y - positions.rightToken.y);
+        const distanceLeftCredit = Math.hypot(movePoint.x - positions.leftCredit.x, movePoint.y - positions.leftCredit.y);
+        const distanceRightCredit = Math.hypot(movePoint.x - positions.rightCredit.x, movePoint.y - positions.rightCredit.y);
+
+        // if (step === 0) {
+        //     pendingLineCreations1 = [];
+        //     pendingLineCreations2 = [];
+        //     recentVisitedPositions1 = [];
+        //     recentVisitedPositions2 = [];
+        //     activeLines = [];
+        // }
+    
+        // 왼쪽 원의 위치 체크 및 대기열 추가
+        if (distanceLeftToken < threshold) {
+            const visitedKey = `leftToken-${currentTime}`;
+            if (step !== 1) {
+                if (!recentVisitedPositions1.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
+                    pendingLineCreations1.push({
+                        position: { x: circle1X, y: centerY, radius: radius },
+                        type: 'N13',
+                        time: currentTime
+                    });
+                    recentVisitedPositions1.push({ key: visitedKey, time: currentTime });
+                }
             }
         }
+        else if (distanceLeftCredit < threshold) {
+            const visitedKey = `leftCredit-${currentTime}`;
+            if (!recentVisitedPositions1.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
+                pendingLineCreations1.push({
+                    position: { x: circle1X, y: centerY, radius: radius },
+                    type: 'random',
+                    time: currentTime
+                });
+                recentVisitedPositions1.push({ key: visitedKey, time: currentTime });
+            }
+        }
+    
+        // 오른쪽 원의 위치 체크 및 대기열 추가
+        if (distanceRightToken < threshold) {
+            const visitedKey = `rightToken-${currentTime}`;
+            if (!recentVisitedPositions2.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
+                pendingLineCreations2.push({
+                    position: { x: circle2X, y: centerY, radius: radius },
+                    type: 'N5',
+                    time: currentTime
+                });
+                recentVisitedPositions2.push({ key: visitedKey, time: currentTime });
+            }
+        }
+        else if (distanceRightCredit < threshold) {
+            const visitedKey = `rightCredit-${currentTime}`;
+            if (!recentVisitedPositions2.some(pos => currentTime - pos.time < RECENT_VISITED_DURATION)) {
+                pendingLineCreations2.push({
+                    position: { x: circle2X, y: centerY, radius: radius },
+                    type: 'random',
+                    time: currentTime
+                });
+                recentVisitedPositions2.push({ key: visitedKey, time: currentTime });
+            }
+        }
+    
+        // 대기열에서 선 생성 처리 (왼쪽 원)
+        if (pendingLineCreations1.length > 0 && allLinesReachedTarget) {
+            const nextCreation = pendingLineCreations1.shift();
+            createLinesAtPosition(
+                nextCreation.position.x,
+                nextCreation.position.y,
+                nextCreation.position.radius,
+                nextCreation.type,
+                chainPoints1,
+                currentTime
+            );
+        }
+    
+        // 대기열에서 선 생성 처리 (오른쪽 원)
+        if (pendingLineCreations2.length > 0 && allLinesReachedTarget) {
+            const nextCreation = pendingLineCreations2.shift();
+            createLinesAtPosition(
+                nextCreation.position.x,
+                nextCreation.position.y,
+                nextCreation.position.radius,
+                nextCreation.type,
+                chainPoints2,
+                currentTime
+            );
+        }
+
+        updateLines(currentTime);
+    }
+    
+        
+    function calculateAnimationPath(step) {
+        const centerY = canvas.height / 2;
+        const radius = canvas.height * 0.45;
+        const circle1X = canvas.width/2 - radius * 2;
+        const circle2X = canvas.width/2 + radius * 2;
+    
+        const creditMetrics = getTextDimensions("Carbon Credit", true);
+        const notaryMetrics = getTextDimensions("Notary Bridge", true);
+        const tokenMetrics = getTextDimensions("TOKEN", true);
+
+        const positions = {
+            dataLeft: { x: circle1X + radius, y: centerY },
+            dataRight: { x: circle2X - radius, y: centerY },
+            notary: { x: (circle1X + circle2X) / 2, y: centerY },
+            token: { x: circle2X, y: centerY + 100 }
+        };
+    
+        let points = [];
+        switch(step) {
+            case 0:
+                points = [
+                    { x: circle1X + creditMetrics.width/2 , y: positions.dataLeft.y },
+                    { x: positions.dataLeft.x - tokenMetrics.width/2 , y: positions.dataLeft.y }
+                ];
+                break;
+            case 1:
+                points = [
+                    { x: positions.dataLeft.x, y: positions.dataLeft.y + tokenMetrics.height/2 },
+                    { x: positions.dataLeft.x, y: positions.dataLeft.y + radius/3 },
+                    { x: positions.notary.x, y: positions.notary.y + radius/3 },
+                    { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 }
+                ];
+                break;
+            case 2:
+                points = [
+                    { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 },
+                    { x: positions.notary.x, y: positions.notary.y - radius/4 },
+                    { x: positions.dataRight.x, y: positions.dataRight.y - radius/4 },
+                    { x: positions.dataRight.x, y: positions.dataRight.y - tokenMetrics.height/2 }
+                ];
+                break;
+            case 3:
+                points = [
+                    { x: positions.dataRight.x + tokenMetrics.width/2, y:positions.dataRight.y },
+                    { x: positions.token.x - creditMetrics.width/2, y: positions.dataRight.y }
+                ];
+                break;
+            case 4:
+                points = [
+                    { x: positions.token.x - creditMetrics.width/2, y: positions.dataRight.y },
+                    { x: positions.dataRight.x + tokenMetrics.width/2, y:positions.dataRight.y }
+                ];
+                break;
+            case 5:
+                points = [
+                    { x: positions.dataRight.x, y: positions.dataRight.y - tokenMetrics.height/2 },
+                    { x: positions.dataRight.x, y: positions.dataRight.y - radius/4 },
+                    { x: positions.notary.x, y: positions.notary.y - radius/4 },
+                    { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 }
+                ];
+                break;
+            case 6:
+                points = [
+                    { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 },
+                    { x: positions.notary.x, y: positions.notary.y + radius/3 },
+                    { x: positions.dataLeft.x, y: positions.dataLeft.y + radius/3 },
+                    { x: positions.dataLeft.x, y: positions.dataLeft.y + tokenMetrics.height/2 }
+                ];
+                break;
+            case 7:
+                points = [
+                    { x: positions.dataLeft.x - tokenMetrics.width/2 , y: positions.dataLeft.y },
+                    { x: circle1X + creditMetrics.width/2 , y: positions.dataLeft.y }
+                ];
+                break;
+            default:
+                points = [
+                    { x: positions.dataLeft.x, y: positions.dataLeft.y },
+                    { x: positions.dataLeft.x, y: positions.dataLeft.y }
+                ];
+        }
+        return points;
+    }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1524,6 +1756,42 @@ function initializeCanvas3(canvasId){
             drawCircle(circle1X, centerY, radius);
             drawCircle(circle2X, centerY, radius);
         
+    // 체인 포인트와 라인 그리기
+    activeLines.forEach(line => {
+        drawLine(line);
+    });
+
+    // 왼쪽 원의 체인 포인트
+    chainPoints1.forEach(point => {
+        const pos = calculatePointPosition(point, circle1X, centerY, radius);
+        
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(50,50,50,1)';
+        ctx.fill();
+        
+        const textRadius = radius + 15;
+        const textPos = calculatePointPosition(point, circle1X, centerY, textRadius);
+        ctx.fillStyle = 'rgba(50,50,50,1)';
+        ctx.font = '11px Times New Roman';
+        ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
+    });
+
+    // 오른쪽 원의 체인 포인트
+    chainPoints2.forEach(point => {
+        const pos = calculatePointPosition(point, circle2X, centerY, radius);
+        
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(50,50,50,1)';
+        ctx.fill();
+        
+        const textRadius = radius + 15;
+        const textPos = calculatePointPosition(point, circle2X, centerY, textRadius);
+        ctx.fillStyle = 'rgba(50,50,50,1)';
+        ctx.font = '11px Times New Roman';
+        ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
+    });
             // 타이틀과 내부 텍스트
             drawText("Carbon Offset Chain", circle1X, centerY - radius + radius/2, false, true);
             drawText("Carbon Credit", circle1X, centerY );
@@ -1541,13 +1809,14 @@ function initializeCanvas3(canvasId){
     const path1 = calculateAnimationPath(1);
     const path2 = calculateAnimationPath(2);
     
-    // data to notary 이동선의 중앙점 (첫 번째 점선의 x 위치)
-    const midPoint1X = (path1.points[1].x + path1.points[2].x) / 2;
-    const midPoint1Y = path1.points[2].y;
-    
-    // notary to data 이동선의 중앙점 (두 번째 점선의 x 위치)
-    const midPoint2X = (path2.points[1].x + path2.points[2].x) / 2;
-    const midPoint2Y = path2.points[1].y;
+    // 점선 그리기 부분을 다음과 같이 수정
+// data to notary 이동선의 중앙점 (첫 번째 점선의 x 위치)
+const midPoint1X = (path1[1].x + path1[2].x) / 2;
+const midPoint1Y = path1[2].y;
+
+// notary to data 이동선의 중앙점 (두 번째 점선의 x 위치)
+const midPoint2X = (path2[1].x + path2[2].x) / 2;
+const midPoint2Y = path2[2].y;
 
     // Notarized Multi-Signature Oracle 텍스트 높이 계산
     const multiSignatureMetrics = getTextDimensions("Notarized Multi-Signature Oracle", true);
@@ -1582,9 +1851,11 @@ function initializeCanvas3(canvasId){
         ];
         
         // 선 먼저 그리기
-        paths.forEach(path => {
-            drawArrow(path.points);
-        });
+       paths.forEach(path => {
+        if (path && path.length > 0) {
+            drawArrow(path);
+        }
+    });
 
     // 이동 점 그리기
     if (movePoint.init) {
@@ -1592,7 +1863,8 @@ function initializeCanvas3(canvasId){
     }
     }
     function animate() {
-        const currentPath = calculateAnimationPath(currentStep).points;
+        const currentTime = performance.now();
+        const currentPath = calculateAnimationPath(currentStep);
         
         if (!movePoint.init) {
             movePoint = {
@@ -1622,11 +1894,18 @@ function initializeCanvas3(canvasId){
                 movePoint.y += dy * ratio;
             }
         }
+ 
+        if (movePoint.init) {
+            updateAnimationState(movePoint, currentStep);
+        }
         
         draw();
         requestAnimationFrame(animate);
     }
 
+    window.addEventListener('resize', resizeCanvas);
+    initializeChainPoints();
+    resizeCanvas();
     animate();
 
 }
