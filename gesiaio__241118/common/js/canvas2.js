@@ -24,8 +24,8 @@ function initializeCanvas1(canvasId){
 
     // 선 애니메이션을 위한 상태
     const lineAnimationState = {
-        duration: 1200,    // 더 빠른 선 애니메이션
-        interval: 1000,   // 더 빠른 생성 간격
+        duration: 1500,    // 더 빠른 선 애니메이션
+        interval: 0,   // 더 빠른 생성 간격
         lastCreateTime: 0
     };
 
@@ -68,73 +68,7 @@ function initializeCanvas1(canvasId){
         };
     }
 
-    // 랜덤 점 선택 및 선 생성 테스트 함수
-    // function testRandomLines() {
-    //     const centerY = canvas.height / 2;
-    //     const radius = canvas.height * 0.45;
-    //     const circle2X = canvas.width/2 + radius * 2;
-
-    //     // 랜덤하게 점 선택
-    //     currentSource = chainPoints[Math.floor(Math.random() * chainPoints.length)];
-    //     console.log("Selected point:", currentSource.number);
-
-    //     // 선택된 점에서 다른 모든 점으로 선 생성
-    //     const newLines = createLines(currentSource, circle2X, centerY, radius);
-        
-    //     // 이전 선들 제거하고 새로운 선들로 교체
-    //     activeLines = newLines;
-    //     lineAnimationState.lastCreateTime = performance.now();
-    // }
-
-    // // 1초마다 테스트 실행
-    // setInterval(testRandomLines, 1000);
-    // 선 생성 함수 단순화
-function createLines(sourcePoint, circle2X, centerY, radius, currentTime) {
-    const lines = [];
     
-    const startPos = calculatePointPosition(sourcePoint, circle2X, centerY, radius);
-    
-    chainPoints.forEach(targetPoint => {
-        if (targetPoint.number !== sourcePoint.number) {
-            const endPos = calculatePointPosition(targetPoint, circle2X, centerY, radius);
-            
-            lines.push({
-                start: startPos,
-                end: endPos,
-                progress: 0,
-                opacity: 1,
-                startTime: currentTime,
-                duration: lineAnimationState.duration,
-                maxLength: 1  // 선의 최대 길이를 15%로 증가
-            });
-        }
-    });
-    
-    return lines;
-}
-
-    // updateLines 함수 단순화
-function updateLines(currentTime) {
-    activeLines = activeLines.filter(line => {
-        const elapsed = currentTime - line.startTime;
-        const duration = line.duration;
-        
-        // 진행도 업데이트
-        line.progress = Math.min(elapsed / duration, 1);
-        
-        // 선이 최대 길이에 도달한 후 페이드 아웃 시작 시점 조정
-        if (line.progress >= line.maxLength) {
-            // 페이드 아웃 구간을 더 길게 조정
-            const fadeOutStart = line.maxLength;
-            const fadeOutDuration = 0.3; // 전체 진행도의 30%를 페이드 아웃에 사용
-            const fadeProgress = (line.progress - fadeOutStart) / fadeOutDuration;
-            line.opacity = Math.max(0, 1 - fadeProgress);
-        }
-        
-        return line.opacity > 0;
-    });
-}
-
     // 선 그리기 함수 수정
 function drawLine(line) {
     if (!line.start || !line.end) return;
@@ -153,18 +87,24 @@ function drawLine(line) {
 
 let recentVisitedPositions = [];
 const RECENT_VISITED_DURATION = 500; // 1초 동안 기억
+// 도달한 포인트를 기억하기 위한 상태 추가
+let pendingLineCreation = {
+    shouldCreate: false,
+    position: null,
+    type: null
+};
+let pendingLineCreations = [];
 
-// updateAnimationState 함수 수정
-function updateAnimationState(movePoint) {
+
+function updateAnimationState(movePoint, step) {
     const centerY = canvas.height / 2;
     const radius = canvas.height * 0.45;
     const circle2X = canvas.width/2 + radius * 2;
 
-    // DATA 텍스트 크기 계산
     const dataMetrics = getTextDimensions("DATA", true);
     const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator");
     const tokenMetrics = getTextDimensions("TOKEN", true);
-    // 각 위치 정밀하게 계산
+    
     const positions = {
         data: {
             x: circle2X - radius,
@@ -180,49 +120,130 @@ function updateAnimationState(movePoint) {
         }
     };
 
-    // 위치 체크 여유 범위
-    const threshold = 10;
+    const threshold = 5;
     const currentTime = performance.now();
 
-    // 각 위치와의 거리 계산
     const distances = {
         data: Math.hypot(movePoint.x - positions.data.x, movePoint.y - positions.data.y),
         calculator: Math.hypot(movePoint.x - positions.calculator.x, movePoint.y - positions.calculator.y),
         token: Math.hypot(movePoint.x - positions.token.x, movePoint.y - positions.token.y)
     };
 
+    // 선의 완료 상태를 더 정확하게 체크
+    const activeLineStates = activeLines.map(line => ({
+        progress: line.progress,
+        maxLength: line.maxLength,
+        opacity: line.opacity
+    }));
+    console.log('Active Line States:', activeLineStates);
 
-    // DATA 위치 체크
-    if (distances.data < threshold) {
-        createLinesAtPosition(circle2X, centerY, radius, 'N5', currentTime);
-    }
-    // Calculator 위치 체크
-    else if (distances.calculator < threshold) {
-        createLinesAtPosition(circle2X, centerY, radius, 'random', currentTime);
-    }
-    // Token 위치 체크
-    else if (distances.token < threshold) {
-        createLinesAtPosition(circle2X, centerY, radius, 'random', currentTime);
-    }
-    // 중간 지점에서는 선 제거
-    else {
+    // 모든 선이 완료되었는지 체크 (진행도가 1에 도달했거나 opacity가 0인 경우)
+    const allLinesReachedTarget = activeLines.length === 0 || 
+        activeLines.every(line => 
+            line.progress >= 1 || line.opacity === 0
+        );
+
+    console.log('All Lines Reached:', allLinesReachedTarget);
+    console.log('Pending Creations:', pendingLineCreations);
+    if (step === 0) {
+        console.log('Step 0: Resetting all states');
+        activeLines = [];
+        pendingLineCreations = [];
+        recentVisitedPositions = [];
         currentSource = null;
         lastAnimationStep = null;
-        activeLines = activeLines.filter(line => line.startTime + line.duration > currentTime);
-
-        // 최근 방문 기록 정리
-        recentVisitedPositions = recentVisitedPositions.filter(pos => currentTime - pos.time < RECENT_VISITED_DURATION);
+    }
+    if (step !== 4) {
+        // 새로운 선 생성 예약
+        // DATA 위치 (첫 번째 점)에서는 즉시 생성하고 기록하지 않음
+        if (distances.data < threshold && activeLines.length === 0) {
+            console.log('Creating first N5 line');
+            createLinesAtPosition(circle2X, centerY, radius, 'N5', currentTime);
+        }
+        // Calculator와 Token 위치는 대기열에 기록
+        else if (distances.calculator < threshold) {
+            if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY)) {
+                console.log('Recording Calculator point for later');
+                pendingLineCreations.push({
+                    position: { x: circle2X, y: centerY, radius: radius },
+                    type: 'random'
+                });
+            }
+        }
+        else if (distances.token < threshold) {
+            if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY + 120)) {
+                console.log('Recording Token point for later');
+                pendingLineCreations.push({
+                    position: { x: circle2X, y: centerY, radius: radius },
+                    type: 'random'
+                });
+            }
+        }
+    }
+    // 다음 선 생성 처리
+    if (pendingLineCreations.length > 0 && allLinesReachedTarget && activeLines.length === 0) {
+        console.log('Creating next line from queue');
+        console.log('Queue before creation:', JSON.stringify(pendingLineCreations));
+        const nextCreation = pendingLineCreations.shift();
+        createLinesAtPosition(nextCreation.position.x, nextCreation.position.y, nextCreation.position.radius, nextCreation.type, currentTime);
+        console.log('Queue after creation:', JSON.stringify(pendingLineCreations));
     }
 
-    // 선 애니메이션 업데이트
+    // 기존 선 업데이트
     updateLines(currentTime);
 }
 
+// updateLines 함수 수정
+function updateLines(currentTime) {
+    const oldLength = activeLines.length;
+    activeLines = activeLines.filter(line => {
+        const elapsed = currentTime - line.startTime;
+        const duration = lineAnimationState.duration;
+        
+        // 진행도 업데이트
+        line.progress = Math.min(elapsed / duration, 1);
+        
+        // 선이 목표에 도달했을 때의 처리
+        if (line.progress >= line.maxLength) {
+            line.opacity = 0;
+        }
+        
+        return line.progress < 1; // 완전히 끝난 선은 제거
+    });
 
+    if (oldLength !== activeLines.length) {
+        console.log(`Lines updated: ${oldLength} -> ${activeLines.length}`);
+    }
+}
+
+// createLines 함수도 수정
+function createLines(sourcePoint, circle2X, centerY, radius, currentTime) {
+    const lines = [];
+    
+    const startPos = calculatePointPosition(sourcePoint, circle2X, centerY, radius);
+    
+    chainPoints.forEach(targetPoint => {
+        if (targetPoint.number !== sourcePoint.number) {
+            const endPos = calculatePointPosition(targetPoint, circle2X, centerY, radius);
+            
+            lines.push({
+                start: startPos,
+                end: endPos,
+                progress: 0,
+                opacity: 1,
+                startTime: currentTime,
+                duration: lineAnimationState.duration,  // 1.5초 적용
+                maxLength: 1
+            });
+        }
+    });
+    
+    return lines;
+}
 function createLinesAtPosition(x, y, radius, sourceType, currentTime) {
     // 최근 방문 기록 체크
     const visitedKey = `${x.toFixed(2)}-${y.toFixed(2)}`;
-    const recentlyVisited = recentVisitedPositions.some(pos => pos.key === visitedKey && currentTime - pos.time < 100); // 0.5초 이내
+    const recentlyVisited = recentVisitedPositions.some(pos => pos.key === visitedKey && currentTime - pos.time < 500); // 0.5초 이내
     if (recentlyVisited) return;
 
     if (sourceType === 'N5') {
@@ -232,6 +253,7 @@ function createLinesAtPosition(x, y, radius, sourceType, currentTime) {
     }
     const newLines = createLines(currentSource, x, y, radius, currentTime);
     activeLines = activeLines.concat(newLines);
+    console.log(sourceType);
 
     // 최근 방문 기록 추가
     recentVisitedPositions.push({
@@ -456,6 +478,13 @@ function resizeCanvas() {
                             { x: positions.token.x, y: positions.token.y - dataMetrics.height/2 }
                         ]
                     };
+                case 4:
+                    return {
+                        points: [
+                            { x: positions.token.x, y: positions.token.y - dataMetrics.height/2 },
+                            { x: positions.token.x, y: positions.token.y + dataMetrics.height/2 }
+                        ]
+                    };
             }
         }
 
@@ -563,7 +592,6 @@ function resizeCanvas() {
         
             // 이동하는 점 그리기
             if (movePoint.init) {
-                updateAnimationState(movePoint);
                 drawDataPoint(movePoint.x, movePoint.y);
             }
         }
@@ -587,51 +615,58 @@ function animate() {
     // 다음 목표 지점
     const target = currentPath[segmentIndex + 1];
     
-        if (target) {
-            const dx = target.x - movePoint.x;
-            const dy = target.y - movePoint.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance <= MOVE_SPEED) {
-                segmentIndex++;
-                if (segmentIndex >= currentPath.length - 1) {
-                    // Handle path completion
-                    if (currentStep === 0) {
-                        dashedLines.line1 = true;
-                        currentStep = 1;
-                    } else if (currentStep === 1) {
-                        dashedLines.line2 = true;
-                        currentStep = 2;
-                    } else if (currentStep === 2) {
-                        dashedLines.line1 = true;
-                        dashedLines.line2 = true;
-                        currentStep = 3;
-                    } else if (currentStep === 3) {
-                        // Reset everything for the next cycle
+    if (target) {
+        const dx = target.x - movePoint.x;
+        const dy = target.y - movePoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance <= MOVE_SPEED) {
+            segmentIndex++;
+            if (segmentIndex >= currentPath.length - 1) {
+                // Handle path completion
+                if (currentStep === 0) {
+                    dashedLines.line1 = true;
+                    currentStep = 1;
+                } else if (currentStep === 1) {
+                    dashedLines.line2 = true;
+                    currentStep = 2;
+                } else if (currentStep === 2) {
+                    dashedLines.line1 = true;
+                    dashedLines.line2 = true;
+                    currentStep = 3;
+                } else if (currentStep === 3) {
+                    // Reset everything for the next cycle after 4.5s delay
+                    setTimeout(function() {
                         currentStep = 0;
-                        setTimeout(function(){
-                            dashedLines.line1 = false;
-                            dashedLines.line2 = false;
-                            shouldClearDashedLines = false;
-                        }, 20);
-                    }
+                        dashedLines.line1 = false;
+                        dashedLines.line2 = false;
+                        shouldClearDashedLines = false;
+                        movePoint.init = false;
+                        segmentIndex = 0;
+                    }, 4000); // 4.5초 지연
                     
-                    // Reset segment and movement for next path
+                    // Prevent further animation during the delay
+                    currentStep = 4; // 임시 상태로 설정하여 대기 중임을 표시
+                }
+                
+                // Reset segment and movement for next path only if not in waiting state
+                if (currentStep !== 4) {
                     segmentIndex = 0;
                     movePoint.init = false;
                 }
-            } else {
-                const ratio = MOVE_SPEED / distance;
-                movePoint.x += dx * ratio;
-                movePoint.y += dy * ratio;
             }
+        } else {
+            const ratio = MOVE_SPEED / distance;
+            movePoint.x += dx * ratio;
+            movePoint.y += dy * ratio;
         }
+    }
     // 선 애니메이션 업데이트
     updateLines(currentTime);
     
     // 위치 체크 및 상태 업데이트
     if (movePoint.init) {
-        updateAnimationState(movePoint);
+        updateAnimationState(movePoint, currentStep);
     }
     
     // 캔버스 다시 그리기
