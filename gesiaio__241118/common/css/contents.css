@@ -269,6 +269,10 @@ body.loading .secItem:not(.active){
   width: fit-content;
   margin: 0 auto;
 }
+.secItem[class*="sec-detail"] .titleBox h3 {
+  border-left: 3px solid #000;
+  padding-left: 20px;
+}
 .secItem[class*="sec-detail"] .contentBox {
   width: 25%;
 }
@@ -302,7 +306,7 @@ body.loading .secItem:not(.active){
 }
 
 .secItem[class*="sec-detail"] .titleBox:nth-child(1) > *:nth-child(n+2){
-  margin-top: 6px;
+  margin-top: 12px;
 }
 .canvasBox {
   width: 100%;
