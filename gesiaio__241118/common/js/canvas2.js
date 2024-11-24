@@ -35,17 +35,16 @@ function initializeCanvas1(canvasId){
     };
     let shouldClearDashedLines = false;
 
-    function resetAnimation() {
-        // Reset animation state
-        currentStep = 0;
-        segmentIndex = 0;
-        movePoint.init = false;
-        
-        // Reset dashed lines state
-        dashedLines.line1 = false;
-        dashedLines.line2 = false;
-        shouldClearDashedLines = false;
-    }
+    let recentVisitedPositions = [];
+    const RECENT_VISITED_DURATION = 500; // 1초 동안 기억
+    // 도달한 포인트를 기억하기 위한 상태 추가
+    let pendingLineCreation = {
+        shouldCreate: false,
+        position: null,
+        type: null
+    };
+    let pendingLineCreations = [];
+    
     
     // 점 초기화 함수
     function initializeChainPoints() {
@@ -84,16 +83,6 @@ function drawLine(line) {
     ctx.lineWidth = 0.5;
     ctx.stroke();
 }
-
-let recentVisitedPositions = [];
-const RECENT_VISITED_DURATION = 500; // 1초 동안 기억
-// 도달한 포인트를 기억하기 위한 상태 추가
-let pendingLineCreation = {
-    shouldCreate: false,
-    position: null,
-    type: null
-};
-let pendingLineCreations = [];
 
 
 function updateAnimationState(movePoint, step) {
@@ -135,7 +124,7 @@ function updateAnimationState(movePoint, step) {
         maxLength: line.maxLength,
         opacity: line.opacity
     }));
-    console.log('Active Line States:', activeLineStates);
+    // console.log('Active Line States:', activeLineStates);
 
     // 모든 선이 완료되었는지 체크 (진행도가 1에 도달했거나 opacity가 0인 경우)
     const allLinesReachedTarget = activeLines.length === 0 || 
@@ -143,10 +132,10 @@ function updateAnimationState(movePoint, step) {
             line.progress >= 1 || line.opacity === 0
         );
 
-    console.log('All Lines Reached:', allLinesReachedTarget);
-    console.log('Pending Creations:', pendingLineCreations);
+    // console.log('All Lines Reached:', allLinesReachedTarget);
+    // console.log('Pending Creations:', pendingLineCreations);
     if (step === 0) {
-        console.log('Step 0: Resetting all states');
+        // console.log('Step 0: Resetting all states');
         activeLines = [];
         pendingLineCreations = [];
         recentVisitedPositions = [];
@@ -157,13 +146,13 @@ function updateAnimationState(movePoint, step) {
         // 새로운 선 생성 예약
         // DATA 위치 (첫 번째 점)에서는 즉시 생성하고 기록하지 않음
         if (distances.data < threshold && activeLines.length === 0) {
-            console.log('Creating first N5 line');
+            // console.log('Creating first N5 line');
             createLinesAtPosition(circle2X, centerY, radius, 'N5', currentTime);
         }
         // Calculator와 Token 위치는 대기열에 기록
         else if (distances.calculator < threshold) {
             if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY)) {
-                console.log('Recording Calculator point for later');
+                // console.log('Recording Calculator point for later');
                 pendingLineCreations.push({
                     position: { x: circle2X, y: centerY, radius: radius },
                     type: 'random'
@@ -172,7 +161,7 @@ function updateAnimationState(movePoint, step) {
         }
         else if (distances.token < threshold) {
             if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY + 120)) {
-                console.log('Recording Token point for later');
+                // console.log('Recording Token point for later');
                 pendingLineCreations.push({
                     position: { x: circle2X, y: centerY, radius: radius },
                     type: 'random'
@@ -182,11 +171,11 @@ function updateAnimationState(movePoint, step) {
     }
     // 다음 선 생성 처리
     if (pendingLineCreations.length > 0 && allLinesReachedTarget && activeLines.length === 0) {
-        console.log('Creating next line from queue');
-        console.log('Queue before creation:', JSON.stringify(pendingLineCreations));
+        // console.log('Creating next line from queue');
+        // console.log('Queue before creation:', JSON.stringify(pendingLineCreations));
         const nextCreation = pendingLineCreations.shift();
         createLinesAtPosition(nextCreation.position.x, nextCreation.position.y, nextCreation.position.radius, nextCreation.type, currentTime);
-        console.log('Queue after creation:', JSON.stringify(pendingLineCreations));
+        // console.log('Queue after creation:', JSON.stringify(pendingLineCreations));
     }
 
     // 기존 선 업데이트
@@ -212,7 +201,7 @@ function updateLines(currentTime) {
     });
 
     if (oldLength !== activeLines.length) {
-        console.log(`Lines updated: ${oldLength} -> ${activeLines.length}`);
+        // console.log(`Lines updated: ${oldLength} -> ${activeLines.length}`);
     }
 }
 
@@ -253,7 +242,7 @@ function createLinesAtPosition(x, y, radius, sourceType, currentTime) {
     }
     const newLines = createLines(currentSource, x, y, radius, currentTime);
     activeLines = activeLines.concat(newLines);
-    console.log(sourceType);
+    // console.log(sourceType);
 
     // 최근 방문 기록 추가
     recentVisitedPositions.push({
@@ -690,7 +679,6 @@ function animate() {
 
 
 function initializeCanvas2(canvasId){
-
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
 
@@ -707,28 +695,229 @@ function initializeCanvas2(canvasId){
         y: 0,
         init: false
     };
+
+    let chainPoints = [];
+    let activeLines = [];
+    let currentSource = null;
+    let lastAnimationStep = null;
+
+    // 선 애니메이션을 위한 상태
+    const lineAnimationState = {
+        duration: 1500,    // 더 빠른 선 애니메이션
+        interval: 0,   // 더 빠른 생성 간격
+        lastCreateTime: 0
+    };
+
+    let dashedLines = {
+        line1: false,
+        line2: false
+    };
+    let shouldClearDashedLines = false;
+    let recentVisitedPositions = [];
+    const RECENT_VISITED_DURATION = 500;
+    let pendingLineCreations = [];
+
     
-function resizeCanvas() {
-    const vh = window.innerHeight;
-    const vw = window.innerWidth;
-    const aspectRatio = 25/9;
-    const minWidth = 1280; // 최소 너비 설정
-    const maxWidth = 1600; // 최소 너비 설정
-    
-    // 너비를 먼저 계산 - 화면의 90% 사용하되 최소값 보장
-    let width = Math.min(Math.max(minWidth, vw * 0.9), maxWidth);
-    let height = width / aspectRatio;
-    
-    // 높이가 화면의 90%를 넘으면 높이 기준으로 다시 계산
-    if (height > vh * 0.9) {
-        height = vh * 0.9;
-        width = Math.max(minWidth, height * aspectRatio);
+
+    // Chain 점 초기화 함수
+    function initializeChainPoints() {
+        chainPoints = [];
+        const angleStep = (Math.PI * 2) / 16;
+        
+        for (let i = 0; i < 16; i++) {
+            chainPoints.push({
+                angle: -i * angleStep - Math.PI/2,
+                number: i + 1
+            });
+        }
     }
+
+    // 점의 위치 계산 함수
+    function calculatePointPosition(point, centerX, centerY, radius) {
+        return {
+            x: centerX + radius * Math.cos(point.angle),
+            y: centerY + radius * Math.sin(point.angle)
+        };
+    }
+
+    // 선 그리기 함수
+    function drawLine(line) {
+        if (!line.start || !line.end) return;
+
+        const actualProgress = Math.min(line.progress, line.maxLength);
+        const currentX = line.start.x + (line.end.x - line.start.x) * actualProgress;
+        const currentY = line.start.y + (line.end.y - line.start.y) * actualProgress;
+
+        ctx.beginPath();
+        ctx.moveTo(line.start.x, line.start.y);
+        ctx.lineTo(currentX, currentY);
+        ctx.strokeStyle = `rgba(50, 50, 50, ${line.opacity})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+    }
+
+    // 선 생성 함수
+    function createLines(sourcePoint, circle1X, centerY, radius, currentTime) {
+        const lines = [];
+        const startPos = calculatePointPosition(sourcePoint, circle1X, centerY, radius);
+        
+        chainPoints.forEach(targetPoint => {
+            if (targetPoint.number !== sourcePoint.number) {
+                const endPos = calculatePointPosition(targetPoint, circle1X, centerY, radius);
+                
+                lines.push({
+                    start: startPos,
+                    end: endPos,
+                    progress: 0,
+                    opacity: 1,
+                    startTime: currentTime,
+                    duration: lineAnimationState.duration,
+                    maxLength: 1
+                });
+            }
+        });
+        
+        return lines;
+    }
+
+    function createLinesAtPosition(x, y, radius, sourceType, currentTime) {
+        const visitedKey = `${x.toFixed(2)}-${y.toFixed(2)}`;
+        const recentlyVisited = recentVisitedPositions.some(pos => 
+            pos.key === visitedKey && currentTime - pos.time < RECENT_VISITED_DURATION
+        );
+        if (recentlyVisited) return;
+
+        if (sourceType === 'N13') {
+            currentSource = chainPoints.find(p => p.number === 13);
+        } else {
+            currentSource = chainPoints[Math.floor(Math.random() * chainPoints.length)];
+        }
+        const newLines = createLines(currentSource, x, y, radius, currentTime);
+        activeLines = activeLines.concat(newLines);
+
+        recentVisitedPositions.push({
+            key: visitedKey,
+            time: currentTime
+        });
+    }
+
+    function updateLines(currentTime) {
+        activeLines = activeLines.filter(line => {
+            const elapsed = currentTime - line.startTime;
+            const duration = lineAnimationState.duration;
+            
+            line.progress = Math.min(elapsed / duration, 1);
+            
+            if (line.progress >= line.maxLength) {
+                line.opacity = 0;
+            }
+            
+            return line.progress < 1;
+        });
+    }
+
+    function updateAnimationState(movePoint, step) {
+        const centerY = canvas.height / 2;
+        const radius = canvas.height * 0.45;
+        const circle1X = canvas.width/2 - radius * 2;
+
+        const dataMetrics = getTextDimensions("DATA", true);
+        const calculatorMetrics = getMultilineTextDimensions("Carbon Credits\nRegistry");
+        const tokenMetrics = getTextDimensions("TOKEN", true);
+        
+        const positions = {
+            data: {
+                x: circle1X + radius,
+                y: centerY + dataMetrics.height/2
+            },
+            calculator: {
+                x: circle1X,
+                y: centerY + calculatorMetrics.height/2
+            },
+            token: {
+                x: circle1X,
+                y: centerY + 120 - tokenMetrics.height/2
+            }
+        };
+
+        const threshold = 5;
+        const currentTime = performance.now();
     
-    canvas.width = width;
-    canvas.height = height;
-    draw();
- }
+        const distances = {
+            data: Math.hypot(movePoint.x - positions.data.x, movePoint.y - positions.data.y),
+            calculator: Math.hypot(movePoint.x - positions.calculator.x, movePoint.y - positions.calculator.y),
+            token: Math.hypot(movePoint.x - positions.token.x, movePoint.y - positions.token.y)
+        };
+    
+        // 선의 완료 상태를 체크
+        const allLinesReachedTarget = activeLines.length === 0 || 
+            activeLines.every(line => line.progress >= 1 || line.opacity === 0);
+    
+        if (step === 0) {
+            activeLines = [];
+            pendingLineCreations = [];
+            recentVisitedPositions = [];
+            currentSource = null;
+            lastAnimationStep = null;
+        }
+    
+        if (step !== 3) {
+            // DATA 위치에서는 즉시 선 생성
+            if (distances.data < threshold && activeLines.length === 0) {
+                createLinesAtPosition(circle1X, centerY, radius, 'N13', currentTime);
+            }
+            // Calculator와 Token 위치는 대기열에 기록
+            else if (distances.calculator < threshold) {
+                if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY)) {
+                    pendingLineCreations.push({
+                        position: { x: circle1X, y: centerY, radius: radius },
+                        type: 'random'
+                    });
+                }
+            }
+            else if (distances.token < threshold) {
+                if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY + 120)) {
+                    pendingLineCreations.push({
+                        position: { x: circle1X, y: centerY, radius: radius },
+                        type: 'random'
+                    });
+                }
+            }
+        }
+    
+        // 다음 선 생성 처리
+        if (pendingLineCreations.length > 0 && allLinesReachedTarget && activeLines.length === 0) {
+            const nextCreation = pendingLineCreations.shift();
+            createLinesAtPosition(nextCreation.position.x, nextCreation.position.y, nextCreation.position.radius, nextCreation.type, currentTime);
+        }
+    
+        // 기존 선 업데이트
+        updateLines(currentTime);
+    }
+
+    // 캔버스 리사이징 함수
+    function resizeCanvas() {
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        const aspectRatio = 25/9;
+        const minWidth = 1280;
+        const maxWidth = 1600;
+        
+        let width = Math.min(Math.max(minWidth, vw * 0.9), maxWidth);
+        let height = width / aspectRatio;
+        
+        if (height > vh * 0.9) {
+            height = vh * 0.9;
+            width = Math.max(minWidth, height * aspectRatio);
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        draw();
+    }
+
+
+
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
@@ -863,131 +1052,156 @@ function resizeCanvas() {
             const radius = canvas.height * 0.45;
             const circle1X = canvas.width/2 - radius * 2;
             const circle2X = canvas.width/2 + radius * 2;
-         
-            // 실시간 텍스트 크기 계산
-            const font = `normal 30px "Times New Roman"`;
+        
             const dataMetrics = getTextDimensions("DATA", true);
             const notaryMetrics = getTextDimensions("Notary Oracle", true);
-            const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator");
+            const calculatorMetrics = getMultilineTextDimensions("Carbon Credits\nRegistry");
             const tokenMetrics = getTextDimensions("TOKEN", true);
-         
-            // 텍스트 위치 계산
+        
             const positions = {
-                dataLeft: { x: circle2X - radius, y: centerY }, // 오른쪽 원의 DATA
-                dataRight: { x: circle1X + radius, y: centerY }, // 왼쪽 원의 DATA  
-                notary: { x: (circle1X + circle2X) / 2, y: centerY }, // 중앙 Notary
-                calculator: { x: circle1X, y: centerY }, // 왼쪽 원의 Calculator
-                token: { x: circle1X, y: centerY + 100 } // 왼쪽 원의 TOKEN
+                dataLeft: { x: circle2X - radius, y: centerY },
+                dataRight: { x: circle1X + radius, y: centerY },
+                notary: { x: (circle1X + circle2X) / 2, y: centerY },
+                calculator: { x: circle1X, y: centerY },
+                token: { x: circle1X, y: centerY + 120 }
             };
-         
+        
+            let points = [];
+        
             switch(step) {
-                case 0: // 오른쪽 DATA에서 Notary로
-                    return {
-                        points: [
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y - dataMetrics.height/2 },
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y - radius/4 },
-                            { x: positions.notary.x, y: positions.notary.y - radius/4 },
-                            { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 }
-                        ]
-                    };
-                case 1: // Notary에서 왼쪽 DATA로
-                    return {
-                        points: [
-                            { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 },
-                            { x: positions.notary.x, y: positions.notary.y + radius/4 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y + radius/4 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y + dataMetrics.height/2 }
-                        ]
-                    };
-                case 2: // Calculator에서 TOKEN으로
-                    return {
-                        points: [
-                            { x: positions.calculator.x, y: positions.calculator.y + calculatorMetrics.height/2 },
-                            { x: positions.token.x, y: positions.token.y }
-                        ]
-                    };
+                case 0:
+                    points = [
+                        { x: positions.dataLeft.x, y: positions.dataLeft.y - dataMetrics.height/2 },
+                        { x: positions.dataLeft.x, y: positions.dataLeft.y - radius/4 },
+                        { x: positions.notary.x, y: positions.notary.y - radius/4 },
+                        { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 }
+                    ];
+                    break;
+                case 1:
+                    points = [
+                        { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 },
+                        { x: positions.notary.x, y: positions.notary.y + radius/4 },
+                        { x: positions.dataRight.x, y: positions.dataRight.y + radius/4 },
+                        { x: positions.dataRight.x, y: positions.dataRight.y + dataMetrics.height/2 }
+                    ];
+                    break;
+                case 2:
+                    points = [
+                        { x: positions.calculator.x, y: positions.calculator.y + calculatorMetrics.height/2 },
+                        { x: positions.token.x, y: positions.token.y - tokenMetrics.height/2 }
+                    ];
+                    break;
+                default:
+                    points = [
+                        { x: positions.dataLeft.x, y: positions.dataLeft.y },
+                        { x: positions.dataLeft.x, y: positions.dataLeft.y }
+                    ];
             }
-         }
+        
+            return points;
+        }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // 기존의 draw 함수에 체인 포인트 그리기 추가
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const centerY = canvas.height / 2;
+        const radius = canvas.height * 0.45;
+        const circle1X = canvas.width/2 - radius * 2;
+        const circle2X = canvas.width/2 + radius * 2;
+    
+        drawCircle(circle1X, centerY, radius);
+        drawCircle(circle2X, centerY, radius);
+    
+        // 체인 포인트와 라인 그리기
+        activeLines.forEach(line => {
+            drawLine(line);
+        });
+    
+        chainPoints.forEach(point => {
+            const pos = calculatePointPosition(point, circle1X, centerY, radius);
             
-    const centerY = canvas.height / 2;
-    // 원의 크기를 캔버스 높이의 45%로 유지
-    const radius = canvas.height * 0.45;
-    // 원 사이 간격을 지름 하나만큼으로 조정
-    const circle1X = canvas.width/2 - radius * 2;
-    const circle2X = canvas.width/2 + radius * 2;
-        
-            drawCircle(circle1X, centerY, radius);
-            drawCircle(circle2X, centerY, radius);
-        
-            // 타이틀과 내부 텍스트
-            drawText("External Channel", circle2X, centerY - radius + radius/2, false, true);
-            drawText("Carbon Absorption", circle2X, centerY - 30);
-            drawText("Carbon Reduction", circle2X, centerY + 30);
-        
-            drawText("Carbon Offset Chain", circle1X, centerY - radius + radius/2, false, true);
-            drawText("Carbon Credits\nRegistry", circle1X, centerY, true, false);
-            drawText("TOKEN", circle1X, centerY + 120);
-        
-            // 중앙 텍스트들
-            drawText("Notarized Multi-Signature Oracle", (circle1X + circle2X) / 2,  centerY - radius + radius/2, true);
-            drawText("Notary Oracle", (circle1X + circle2X) / 2, centerY);
-            drawText("DATA", circle1X + radius, centerY);
-            drawText("DATA", circle2X - radius, centerY);
-        
-        // 각 이동 선의 중앙점 계산
-    const path1 = calculateAnimationPath(0);
-    const path2 = calculateAnimationPath(1);
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(50,50,50,1)';
+            ctx.fill();
+            
+            const textRadius = radius + 15;
+            const textPos = calculatePointPosition(point, circle1X, centerY, textRadius);
+            ctx.fillStyle = 'rgba(50,50,50,1)';
+            ctx.font = '11px Times New Roman';
+            ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
+        });
     
-    // data to notary 이동선의 중앙점 (첫 번째 점선의 x 위치)
-    const midPoint1X = (path1.points[1].x + path1.points[2].x) / 2;
-    const midPoint1Y = path1.points[2].y;
+        // 타이틀과 내부 텍스트
+        drawText("External Channel", circle2X, centerY - radius + radius/2, false, true);
+        drawText("Carbon Absorption", circle2X, centerY - 30);
+        drawText("Carbon Reduction", circle2X, centerY + 30);
     
-    // notary to data 이동선의 중앙점 (두 번째 점선의 x 위치)
-    const midPoint2X = (path2.points[1].x + path2.points[2].x) / 2;
-    const midPoint2Y = path2.points[1].y;
-
-    // Notarized Multi-Signature Oracle 텍스트 높이 계산
-    const multiSignatureMetrics = getTextDimensions("Notarized Multi-Signature Oracle", true);
-    const multiSignatureY = centerY - radius + radius/2;
-    const textBottomY = multiSignatureY + multiSignatureMetrics.height/2;
-
-    // 점선 그리기
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(50,50,50,1)';
-    ctx.setLineDash([5, 5]);
+        drawText("Carbon Offset Chain", circle1X, centerY - radius + radius/2, false, true);
+        drawText("Carbon Credits\nRegistry", circle1X, centerY, true, false);
+        drawText("TOKEN", circle1X, centerY + 120);
     
-    // 첫 번째 점선
-    ctx.moveTo(midPoint1X, textBottomY);
-    ctx.lineTo(midPoint1X, midPoint1Y);
-    
-    // 두 번째 점선
-    ctx.moveTo(midPoint2X, textBottomY);
-    ctx.lineTo(midPoint2X, midPoint2Y);
-    
-    ctx.stroke();
-    ctx.setLineDash([]);
+        // 중앙 텍스트들과 점선
+        const path1 = calculateAnimationPath(0);
+        const path2 = calculateAnimationPath(1);
         
+        const midPoint1X = (path1[1].x + path1[2].x) / 2;
+        const midPoint1Y = path1[2].y;
+        
+        const midPoint2X = (path2[1].x + path2[2].x) / 2;
+        const midPoint2Y = path2[1].y;
+    
+        const multiSignatureMetrics = getTextDimensions("Notarized Multi-Signature Oracle", true);
+        const multiSignatureY = centerY - radius + radius/2;
+        const textBottomY = multiSignatureY + multiSignatureMetrics.height/2;
+    
+        // Draw dashed lines based on animation state
+        if (!shouldClearDashedLines) {
+            ctx.beginPath();
+            ctx.strokeStyle = '#333';
+            ctx.setLineDash([5, 5]);
+            
+            if (dashedLines.line1) {
+                ctx.moveTo(midPoint1X, textBottomY);
+                ctx.lineTo(midPoint1X, midPoint1Y);
+            }
+            
+            if (dashedLines.line2) {
+                ctx.moveTo(midPoint2X, textBottomY);
+                ctx.lineTo(midPoint2X, midPoint2Y);
+            }
+            
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    
+        drawText("Notarized Multi-Signature Oracle", (circle1X + circle2X) / 2, centerY - radius + radius/2, true);
+        drawText("Notary Oracle", (circle1X + circle2X) / 2, centerY);
+        drawText("DATA", circle1X + radius, centerY);
+        drawText("DATA", circle2X - radius, centerY);
+    
+        // 화살표 그리기
         const paths = [
             calculateAnimationPath(0),
             calculateAnimationPath(1),
             calculateAnimationPath(2)
         ];
         
-        // 선 먼저 그리기
         paths.forEach(path => {
-            drawArrow(path.points);
+            if (path && path.length > 0) {
+                drawArrow(path);
+            }
         });
+    
+        if (movePoint.init) {
+            drawDataPoint(movePoint.x, movePoint.y);
+        }
+    }
 
-    // 이동 점 그리기
-    if (movePoint.init) {
-        drawDataPoint(movePoint.x, movePoint.y);
-    }
-    }
     function animate() {
-        const currentPath = calculateAnimationPath(currentStep).points;
+        const currentTime = performance.now();
+        const currentPath = calculateAnimationPath(currentStep);
         
         if (!movePoint.init) {
             movePoint = {
@@ -996,7 +1210,7 @@ function resizeCanvas() {
                 init: true
             };
         }
-    
+
         const target = currentPath[segmentIndex + 1];
         
         if (target) {
@@ -1007,9 +1221,28 @@ function resizeCanvas() {
             if (distance <= MOVE_SPEED) {
                 segmentIndex++;
                 if (segmentIndex >= currentPath.length - 1) {
-                    segmentIndex = 0;
-                    currentStep = (currentStep + 1) % steps;
-                    movePoint.init = false;
+                    if (currentStep === 0) {
+                        dashedLines.line1 = true;
+                        currentStep = 1;
+                    } else if (currentStep === 1) {
+                        dashedLines.line2 = true;
+                        currentStep = 2;
+                    } else if (currentStep === 2) {
+                        setTimeout(function() {
+                            currentStep = 0;
+                            dashedLines.line1 = false;
+                            dashedLines.line2 = false;
+                            shouldClearDashedLines = false;
+                            movePoint.init = false;
+                            segmentIndex = 0;
+                        }, 4000);
+                        currentStep = 3;
+                    }
+                    
+                    if (currentStep !== 3) {
+                        segmentIndex = 0;
+                        movePoint.init = false;
+                    }
                 }
             } else {
                 const ratio = MOVE_SPEED / distance;
@@ -1017,12 +1250,18 @@ function resizeCanvas() {
                 movePoint.y += dy * ratio;
             }
         }
+
+        if (movePoint.init) {
+            updateAnimationState(movePoint, currentStep);
+        }
         
+        // 캔버스 다시 그리기
         draw();
+        
         requestAnimationFrame(animate);
     }
-
-    animate();
+        initializeChainPoints();
+        animate();
 
 }
 
