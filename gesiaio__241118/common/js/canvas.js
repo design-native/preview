@@ -325,7 +325,7 @@ drawStatusText() {
         this.ctx.fillStyle = `rgba(40, 40, 40, ${this.statusText.fadeOpacity})`;
         
         this.ctx.font = `${mainFontSize} Times New Roman`;
-        const baseY = this.chainA.y * 1.85;
+        const baseY = this.chainA.y * 2;
         
         // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
         this.ctx.textAlign = 'center';
@@ -367,7 +367,7 @@ drawStatusText() {
             
             this.ctx.font = `${mainFontSize} Times New Roman`;
 
-            const baseY = this.chainA.y * 1.85;
+            const baseY = this.chainA.y * 2;
             
             // 진행 텍스트와 ... 사이를 단일 스페이스로 설정
             this.ctx.textAlign = 'center';
@@ -780,7 +780,7 @@ resize() {
     initChainPositions() {
         const spacing = this.calculateTargetDistance(this.state);
         const centerX = this.canvas.width / 2;
-        const centerY = this.canvas.height / 2;
+        const centerY = this.canvas.height / 2.2;
         
         // B원을 중앙에 고정
         this.chainB = {
@@ -851,29 +851,29 @@ setState(newState) {
         // step2에서는 모든 원이 B원 위치로 이동
         this.animation.targetPosA = {
             x: centerX,
-            y: this.canvas.height / 2
+            y: this.canvas.height / 2.2
         };
         this.animation.targetPosB = {
             x: centerX,
-            y: this.canvas.height / 2
+            y: this.canvas.height / 2.2
         };
         this.animation.targetPosC = {
             x: centerX,
-            y: this.canvas.height / 2
+            y: this.canvas.height / 2.2
         };
     } else {
         // 다른 상태에서는 B원 중심으로 좌우에 배치
         this.animation.targetPosA = {
             x: centerX - targetDistance,
-            y: this.canvas.height / 2
+            y: this.canvas.height / 2.2
         };
         this.animation.targetPosB = {
             x: centerX,
-            y: this.canvas.height / 2
+            y: this.canvas.height / 2.2
         };
         this.animation.targetPosC = {
             x: centerX + targetDistance,
-            y: this.canvas.height / 2
+            y: this.canvas.height / 2.2
         };
     }
 

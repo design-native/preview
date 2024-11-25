@@ -87,7 +87,11 @@ body {
 
 
 @media (orientation: landscape )  {
-    @media only screen and (min-width:900px) {
+    @media only screen and (max-height:900px) {
+        .secItem[class*="sec-intro"] > .fp-tableCell > .wrap,
+        .secItem[class*="sec-point"] > .fp-tableCell, .secItem[class*="sec-detail"] > .fp-tableCell, .secItem[class*="sec-product"] > .fp-tableCell{
+            padding-top: calc(63px + 30px);
+        }
     }
 
     
