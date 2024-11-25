@@ -1,13 +1,50 @@
-function initializeCanvas1(canvasId){
+
+const ICON_CONFIG = {
+    images: {},
+    loaded: false,
+    width: 45,          // 아이콘 너비
+    height: 45,         // 아이콘 높이
+    topPadding: 10,     // 박스 상단에서의 간격
+    spacing: 42,        // 아이콘과 텍스트 사이 간격
+    paths: {
+        emissionC: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_emissionC.png',
+        emissionT: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_emissionT.png',
+
+        externalE: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_externalE.png',
+        externalG: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_externalG.png',
+        externalO: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_externalO.png',
+        externalW: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_externalW.png'
+    }
+};
+// 모든 아이콘 이미지 프리로드
+function loadICON_CONFIG() {
+    if (ICON_CONFIG.loaded) return Promise.resolve();
+
+    const loadPromises = Object.entries(ICON_CONFIG.paths).map(([key, path]) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                ICON_CONFIG.images[key] = img;
+                resolve();
+            };
+            img.onerror = reject;
+            img.src = path;
+        });
+    });
+
+    return Promise.all(loadPromises).then(() => {
+        ICON_CONFIG.loaded = true;
+    });
+}
+
+
+async function initializeCanvas1(canvasId){
 
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
 
-    let animationPoints = [];
     let currentStep = 0;
     let segmentIndex = 0;
-    let currentX = 0;
-    let currentY = 0;
 
     const steps = 4;
     const MOVE_SPEED = 3;
@@ -20,13 +57,10 @@ function initializeCanvas1(canvasId){
     let chainPoints = [];
     let activeLines = [];
     let currentSource = null;
-    let lastAnimationStep = null;
 
     // 선 애니메이션을 위한 상태
     const lineAnimationState = {
         duration: 1500,    // 더 빠른 선 애니메이션
-        interval: 0,   // 더 빠른 생성 간격
-        lastCreateTime: 0
     };
 
     let dashedLines = {
@@ -44,7 +78,178 @@ function initializeCanvas1(canvasId){
         type: null
     };
     let pendingLineCreations = [];
+    // Tree structure constants
+const TREE_NODE_RADIUS = 3;
+const NODE_DISTANCE = 35;
+const BRANCH_ANGLE = Math.PI / 4;
+const TREE_LEVELS = 6;
+
+// Tree node structure
+let treeNodes = [];
+const consumptionLabels = [
+    { text: "Electricity consumption", icon: "externalE" },
+    { text: "Gas consumption", icon: "externalG" },
+    { text: "Oil consumption", icon: "externalO" },
+    { text: "　", icon: "" },
+    { text: "···", icon: "" },
+    { text: "　", icon: "" },
+    { text: "Water consumption", icon: "externalW" }
+];
+let treeAnimationPoint = {
+    x: 0,
+    y: 0,
+    init: false,
+    currentNodeIndex: 0
+};
+const ANIMATION_SPEEDS = {
+    tree: 1,      // 트리 애니메이션용 느린 속도
+    regular: 3    // 기존 애니메이션 속도
+};
+
+    // 먼저 아이콘들을 로드
+    try {
+        await loadICON_CONFIG();
+    } catch (error) {
+        console.error('Failed to load ICON_CONFIG:', error);
+    }
+// 트리 경로 계산 함수 추가
+function calculateTreePath() {
+    let path = [];
+    // 마지막 레벨의 노드들
+    const lastLevelNodes = treeNodes.slice(-Math.pow(2, TREE_LEVELS));
+    // 시작 노드 (마지막 레벨의 첫 번째 노드)
+    let currentNode = lastLevelNodes[0];
+    let currentIndex = treeNodes.indexOf(currentNode);
     
+    while (currentIndex > 0) {
+        path.push({x: currentNode.x, y: currentNode.y});
+        // 부모 노드의 인덱스 계산
+        const parentIndex = Math.floor((currentIndex - 1) / 2);
+        currentNode = treeNodes[parentIndex];
+        currentIndex = parentIndex;
+    }
+    // 루트 노드 추가
+    path.push({x: currentNode.x, y: currentNode.y});
+    
+    return path;
+}
+
+function calculateTreeNodes(startX, startY) {
+    treeNodes = [];
+    let currentLevel = [{ x: startX, y: startY }];
+    treeNodes.push(...currentLevel);
+
+    for (let level = 0; level < TREE_LEVELS; level++) {
+        const nextLevel = [];
+        currentLevel.forEach(node => {
+            // Calculate two child nodes with adjusted angles for flatter tree
+            const upNode = {
+                x: node.x - NODE_DISTANCE * Math.cos(BRANCH_ANGLE * 0.8), // 각도를 줄여서 더 평평하게
+                y: node.y - NODE_DISTANCE * Math.sin(BRANCH_ANGLE * 0.8)
+            };
+            const downNode = {
+                x: node.x - NODE_DISTANCE * Math.cos(BRANCH_ANGLE * 0.8),
+                y: node.y + NODE_DISTANCE * Math.sin(BRANCH_ANGLE * 0.8)
+            };
+            nextLevel.push(upNode, downNode);
+            treeNodes.push(upNode, downNode);
+        });
+        currentLevel = nextLevel;
+    }
+}
+function getMaxTextDimensions(labels) {
+    ctx.font = '18px "Times New Roman"';
+    let maxWidth = 0;
+    let maxHeight = 0;
+    
+    labels.forEach(label => {
+        if (label.text) {
+            const metrics = ctx.measureText(label.text);
+            maxWidth = Math.max(maxWidth, metrics.width);
+            
+            // 텍스트 높이 계산
+            const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+            maxHeight = Math.max(maxHeight, height);
+        }
+    });
+    
+    return {
+        width: maxWidth,
+        height: maxHeight,
+        lineHeight: maxHeight * 1.2 // 줄 간격을 위한 lineHeight 추가 (보통 1.2배)
+    };
+}
+function getLabelSpacing() {
+    // 마지막 레벨의 노드들을 선택
+    const lastLevelNodes = treeNodes.slice(-Math.pow(2, TREE_LEVELS));
+    
+    // 연속된 두 노드 사이의 y값 차이 계산
+    let totalSpacing = 0;
+    let spacingCount = 0;
+    
+    for (let i = 0; i < lastLevelNodes.length - 1; i++) {
+        const spacing = Math.abs(lastLevelNodes[i + 1].y - lastLevelNodes[i].y);
+        totalSpacing += spacing;
+        spacingCount++;
+    }
+    
+    // 평균 간격 반환
+    return totalSpacing / spacingCount;
+}
+
+function drawTree() {
+    // 선 먼저 그리기 (모든 선을 하나의 path로)
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(50,50,50,1)';
+    ctx.lineWidth = 1;
+    
+    treeNodes.forEach((node, index) => {
+        if (index > 0) {
+            const parentIndex = Math.floor((index - 1) / 2);
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(treeNodes[parentIndex].x, treeNodes[parentIndex].y);
+        }
+    });
+    ctx.stroke();
+
+    // 노드 그리기
+    treeNodes.forEach(node => {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, TREE_NODE_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(50,50,50,1)';
+        ctx.fill();
+    });
+
+    // 가장 긴 텍스트의 너비 계산
+    // 텍스트의 최대 크기 계산
+    const textDimensions = getMaxTextDimensions(consumptionLabels);
+    const labelSpacing = getLabelSpacing() + 3; // 노드 간격으로 라벨 간격 설정
+    
+    // 라벨 시작 위치 계산
+    const labelStartX = treeNodes[treeNodes.length - 1].x - 20;
+    const baseY = canvas.height / 2.2 - ((consumptionLabels.length - 1) * labelSpacing) / 2 + 3;
+    const iconWidth = ICON_CONFIG.width/2;
+
+    consumptionLabels.forEach((label, index) => {
+        if (label.text) {
+            const y = baseY + (index * labelSpacing);
+            
+            ctx.font = '18px "Times New Roman"';
+            ctx.fillStyle = 'rgba(50,50,50,1)';
+            ctx.textAlign = 'left';
+            // Icon
+            if (label.icon && ICON_CONFIG.images[label.icon]) {
+                const icon = ICON_CONFIG.images[label.icon];
+                ctx.drawImage(icon, labelStartX - textDimensions.width - iconWidth - 14, y - ICON_CONFIG.height/2, ICON_CONFIG.width/2, ICON_CONFIG.height/2);
+            } else {
+                ctx.fillText(label.icon, labelStartX - textDimensions.width - iconWidth - 6, y - textDimensions.height/2);
+            }
+            
+            // Text
+            ctx.fillText(label.text, labelStartX - textDimensions.width - 5, y - textDimensions.height/2);
+        }
+    });
+}
     
     // 점 초기화 함수
     function initializeChainPoints() {
@@ -86,18 +291,18 @@ function drawLine(line) {
 
 
 function updateAnimationState(movePoint, step) {
-    const centerY = canvas.height / 2;
-    const radius = canvas.height * 0.45;
+    const centerY = canvas.height / 2.2;
+    const radius = canvas.height * 0.4;
     const chain2X = canvas.width/2 + radius * 2;
 
-    const dataMetrics = getTextDimensions("DATA", true);
-    const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator");
-    const tokenMetrics = getTextDimensions("TOKEN", true);
+    const dataMetrics = getMultilineTextDimensions("Original\nData");
+    const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator",true);
+    const tokenMetrics = getMultilineTextDimensions("Carbon Emission\nTOKEN",true);
     
     const positions = {
         data: {
-            x: chain2X - radius,
-            y: centerY - dataMetrics.height/2
+            x: chain2X - radius - dataMetrics.width/2,
+            y: centerY
         },
         calculator: {
             x: chain2X - calculatorMetrics.width/2,
@@ -134,7 +339,7 @@ function updateAnimationState(movePoint, step) {
 
     // console.log('All Lines Reached:', allLinesReachedTarget);
     // console.log('Pending Creations:', pendingLineCreations);
-    if (step === 0) {
+    if (step === 1 || step === 0) {
         // console.log('Step 0: Resetting all states');
         activeLines = [];
         pendingLineCreations = [];
@@ -142,7 +347,7 @@ function updateAnimationState(movePoint, step) {
         currentSource = null;
         lastAnimationStep = null;
     }
-    if (step !== 4) {
+    if (step !== 5 || step !== 0) {
         // 새로운 선 생성 예약
         // DATA 위치 (첫 번째 점)에서는 즉시 생성하고 기록하지 않음
         if (distances.data < threshold && activeLines.length === 0) {
@@ -280,52 +485,80 @@ function resizeCanvas() {
         }
 
         
-    function drawText(text, x, y, hasBox = true, isBold = false) {
-        const lines = text.split('\n');
-        ctx.font = `${isBold ? 'bold' : 'normal'} 30px "Times New Roman"`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+
+        function drawText(text, x, y, hasBox = true, isBold = false, iconType = null) {
+            const lines = text.split('\n');
+            ctx.font = `${isBold ? 'bold' : 'normal'} 16px "Times New Roman"`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            if (hasBox) {
+                let maxWidth = 0;
+                lines.forEach(line => {
+                    const metrics = ctx.measureText(line);
+                    maxWidth = Math.max(maxWidth, metrics.width);
+                });
+                
+                const padding = { x: 12, y: 6 };
+                const width = maxWidth + padding.x * 2.2;
+                const iconHeight = iconType ? ICON_CONFIG.spacing : 0;  // 아이콘용 공간
+                const height = 40 + (lines.length - 1) * 18 + iconHeight;
+                const radius = 40 / 2;
+                
+                // 배경 및 테두리
+                ctx.fillStyle = 'rgba(255,255,255,1)';
+                ctx.beginPath();
+                ctx.roundRect(x - width/2, y - height/2, width, height, radius);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(50,50,50,1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // 아이콘 그리기
+                if (iconType && ICON_CONFIG.images[iconType]) {
+                    const iconY = y - height/2 + ICON_CONFIG.topPadding;
+                    const icon = ICON_CONFIG.images[iconType];
+                    // 아이콘 중앙 정렬을 위한 x 위치 계산
+                    const iconX = x - (ICON_CONFIG.width / 2);
+                    ctx.drawImage(
+                        icon, 
+                        iconX, 
+                        iconY, 
+                        ICON_CONFIG.width, 
+                        ICON_CONFIG.height
+                    );
+                }
+                
+                // 텍스트 그리기
+                lines.forEach((line, i) => {
+                    const lineY = y + (i - (lines.length-1)/2) * 18;
+                    const adjustedY = iconType ? lineY + iconHeight/2 : lineY;
+                    ctx.fillStyle = 'rgba(50,50,50,1)';
+                    ctx.fillText(line, x, adjustedY);
+                });
+            } else {
+                // 박스 없는 경우
+                if (iconType && ICON_CONFIG.images[iconType]) {
+                    const iconY = y - ICON_CONFIG.spacing;
+                    const icon = ICON_CONFIG.images[iconType];
+                    const iconX = x - (ICON_CONFIG.width / 2);
+                    ctx.drawImage(
+                        icon, 
+                        iconX, 
+                        iconY, 
+                        ICON_CONFIG.width, 
+                        ICON_CONFIG.height
+                    );
+                }
         
-        if (hasBox) {
-            let maxWidth = 0;
-            lines.forEach(line => {
-                const metrics = ctx.measureText(line);
-                maxWidth = Math.max(maxWidth, metrics.width);
-            });
-            
-            const padding = { x: 12, y: 6 };
-            const width = maxWidth + padding.x * 2.2;
-            const height = 45 + (lines.length - 1) * 35;
-            const radius = 45 / 2;
-            
-            // Determine background and border colors based on dashed line states
-            let backgroundColor = 'rgba(255,255,255,1)';
-            let borderColor = 'rgba(50,50,50,1)';
-            let textColor = 'rgba(50,50,50,1)';
-            
-            ctx.fillStyle = backgroundColor;
-            ctx.beginPath();
-            ctx.roundRect(x - width/2, y - height/2, width, height, radius);
-            ctx.fill();
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            
-            // Draw text with appropriate color
-            lines.forEach((line, i) => {
-                const lineY = y + (i - (lines.length-1)/2) * 35;
-                ctx.fillStyle = textColor;
-                ctx.fillText(line, x, lineY);
-            });
-        } else {
-            // Non-box text remains unchanged
-            lines.forEach((line, i) => {
-                const lineY = y + (i - (lines.length-1)/2) * 35;
-                ctx.fillStyle = 'rgba(50,50,50,1)';
-                ctx.fillText(line, x, lineY);
-            });
+                lines.forEach((line, i) => {
+                    const lineY = y + (i - (lines.length-1)/2) * 18;
+                    const adjustedY = iconType ? lineY + ICON_CONFIG.spacing/2 : lineY;
+                    ctx.fillStyle = 'rgba(50,50,50,1)';
+                    ctx.fillText(line, x, adjustedY);
+                });
+            }
         }
-    }
 
 
     function drawArrow(points) {
@@ -348,7 +581,7 @@ function resizeCanvas() {
         const angle = Math.atan2(lastPoint.y - secondLastPoint.y, lastPoint.x - secondLastPoint.x);
         
         // 화살표 크기 조정
-        const arrowLength = 10;
+        const arrowLength = 8;
         const arrowWidth = 6;
         
         ctx.beginPath();
@@ -367,12 +600,9 @@ function resizeCanvas() {
         ctx.fillStyle = 'rgba(50,50,50,1)';
         ctx.fill();
         }
+        // getTextDimensions 함수가 정확한 박스 크기를 반환하는지 확인
         function getTextDimensions(text, hasBox = true) {
-            // 기본 폰트 설정
-            ctx.font = `normal 30px "Times New Roman"`;
             const metrics = ctx.measureText(text);
-            
-            // 텍스트 기본 크기
             const textWidth = metrics.width;
             const textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
             
@@ -380,7 +610,7 @@ function resizeCanvas() {
                 const padding = { x: 12, y: 6 };
                 return {
                     width: textWidth + (padding.x * 2.2),
-                    height: Math.max(45, textHeight + (padding.y * 2)) // 최소 높이 45px
+                    height: Math.max(40, textHeight + (padding.y * 2))
                 };
             }
             
@@ -389,105 +619,170 @@ function resizeCanvas() {
                 height: textHeight
             };
         }
-        function getMultilineTextDimensions(text) {
-            const lines = text.split('\n');
-            const lineHeight = 35;
-            let maxWidth = 0;
-            
-            lines.forEach(line => {
-                const metrics = ctx.measureText(line);
-                const textWidth = metrics.width;
-                const textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-                
-                const padding = { x: 12, y: 6 };
-                const width = textWidth + (padding.x * 2.2);
-                const height = Math.max(45, textHeight + (padding.y * 2));
-                
-                maxWidth = Math.max(maxWidth, width);
-            });
-            
-            return {
-                width: maxWidth,
-                height: lines.length * lineHeight + 12 // 여백 포함
-            };
-        }
+        
+// getMultilineTextDimensions도 정확한 높이 계산하도록 수정
+function getMultilineTextDimensions(text, hasIcon = false, hasBox = false) {
+    const lines = text.split('\n');
+    const lineHeight = 18;
+    let maxWidth = 0;
     
-        function calculateAnimationPath(step) {
-            const centerY = canvas.height / 2;
-            const radius = canvas.height * 0.45;
-            const chain1X = canvas.width/2 - radius * 2;
-            const chain2X = canvas.width/2 + radius * 2;
+    const padding = { x: 12, y: 6 };
+    const iconSpace = hasIcon ? {
+        height: ICON_CONFIG.height + ICON_CONFIG.spacing - padding.y * 2,
+        width: Math.max(ICON_CONFIG.width - padding.x * 2.2, 0)
+    } : {
+        height: 0,
+        width: 0
+    };
 
-            const dataMetrics = getTextDimensions("DATA", true);
-            const notaryMetrics = getTextDimensions("Notary Oracle", true);
-            const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator");
+    lines.forEach(line => {
+        const metrics = ctx.measureText(line);
+        const width = metrics.width + (padding.x * 2.2) + iconSpace.width;
+        maxWidth = Math.max(maxWidth, width);
+    });
 
-            // 정확한 위치 계산을 위해 수정
-            const positions = {
-                dataLeft: { x: chain1X + radius, y: centerY },
-                dataRight: { x: chain2X - radius, y: centerY },
-                notary: { x: (chain1X + chain2X) / 2, y: centerY },
-                calculator: { x: chain2X, y: centerY },
-                token: { x: chain2X, y: centerY + 120 }
-            };
-                
-            switch(step) {
-                case 0:
-                    return {
-                        points: [
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y + dataMetrics.height/2 },
-                            { x: positions.dataLeft.x, y: positions.dataLeft.y + radius/3 },
-                            { x: positions.notary.x, y: positions.notary.y + radius/3 },
-                            { x: positions.notary.x, y: positions.notary.y + notaryMetrics.height/2 }
-                        ]
-                    };
-                case 1:
-                    return {
-                        points: [
-                            { x: positions.notary.x, y: positions.notary.y - notaryMetrics.height/2 },
-                            { x: positions.notary.x, y: positions.notary.y - radius/4 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y - radius/4 },
-                            { x: positions.dataRight.x, y: positions.dataRight.y- dataMetrics.height/2 }
-                        ]
-                    };
-                case 2:
-                    return {
-                        points: [
-                            { x: positions.dataRight.x + dataMetrics.width/2, y: positions.dataRight.y },
-                            { x: positions.calculator.x - calculatorMetrics.width/2, y: positions.calculator.y }
-                        ]
-                    };
-                case 3:
-                    return {
-                        points: [
-                            { x: positions.calculator.x, y: positions.calculator.y + calculatorMetrics.height/2 },
-                            { x: positions.token.x, y: positions.token.y - dataMetrics.height/2 }
-                        ]
-                    };
-                case 4:
-                    return {
-                        points: [
-                            { x: positions.token.x, y: positions.token.y - dataMetrics.height/2 },
-                            { x: positions.token.x, y: positions.token.y + dataMetrics.height/2 }
-                        ]
-                    };
-            }
+    if (hasBox) {
+        return {
+            width: maxWidth,
+            height: (lines.length * lineHeight) + (padding.y * 2) + iconSpace.height
+        };
+    }
+    
+    return {
+        width: maxWidth,
+        height: (lines.length * lineHeight) + ICON_CONFIG.height + ICON_CONFIG.topPadding
+    };
+}
+    // 여러 데이터 포인트를 추적하기 위한 구조
+let treeAnimationPoints = [];
+
+// 트리 경로 계산 함수 수정
+function calculateAllTreePaths() {
+    const paths = [];
+    // 마지막 레벨의 노드들
+    const lastLevelNodes = treeNodes.slice(-Math.pow(2, TREE_LEVELS));
+    
+    // 각 마지막 레벨 노드에 대해 경로 생성
+    lastLevelNodes.forEach(startNode => {
+        let path = [];
+        let currentNode = startNode;
+        let currentIndex = treeNodes.indexOf(currentNode);
+        
+        while (currentIndex > 0) {
+            path.push({x: currentNode.x, y: currentNode.y});
+            // 부모 노드의 인덱스 계산
+            const parentIndex = Math.floor((currentIndex - 1) / 2);
+            currentNode = treeNodes[parentIndex];
+            currentIndex = parentIndex;
         }
+        // 루트 노드 추가
+        path.push({x: currentNode.x, y: currentNode.y});
+        paths.push(path);
+    });
+    
+    return paths;
+}
+
+// movePoints 초기화 함수
+function initializeTreeAnimationPoints(paths) {
+    treeAnimationPoints = paths.map(path => ({
+        x: path[0].x,
+        y: path[0].y,
+        currentSegment: 0,
+        path: path,
+        active: true
+    }));
+}
+        
+function calculateAnimationPath(step) {
+    const centerY = canvas.height / 2.2;
+    const radius = canvas.height * 0.4;
+    const chain1X = canvas.width/2 - radius * 2;
+    const chain2X = canvas.width/2 + radius * 2;
+
+    const dataMetrics = getMultilineTextDimensions("Original\nAggregated Data", false);
+    const data2Metrics = getMultilineTextDimensions("Original\nData", false);
+    const notaryMetrics = getTextDimensions("Notary Oracle", true);
+    const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator", true);
+
+    const positions = {
+        dataLeft: { x: chain1X + radius, y: centerY },
+        dataRight: { x: chain2X - radius, y: centerY },
+        notary: { x: (chain1X + chain2X) / 2, y: centerY },
+        calculator: { x: chain2X, y: centerY },
+        token: { x: chain2X, y: centerY + 120 }
+    };
+            
+    if (step === 0) {
+        return {
+            points: [],  // 빈 배열 반환 - 트리 애니메이션은 별도 처리
+            isTreeAnimation: true
+        };
+    }
+    switch(step) {
+        case 0:
+            return {
+                points: calculateTreePath()
+            };
+        case 1:
+            return {
+                points: [
+                    { x: positions.dataLeft.x + dataMetrics.width/2, y: positions.dataLeft.y},
+                    { x: positions.notary.x - notaryMetrics.width/2, y: positions.dataLeft.y }
+                ]
+            };
+        // ... 기존 케이스들을 한 단계씩 밀어서 재정의
+        case 2:
+            return {
+                points: [
+                    { x: positions.notary.x + notaryMetrics.width/2, y: positions.dataRight.y },
+                    { x: positions.dataRight.x - data2Metrics.width/2, y: positions.dataRight.y}
+                ]
+            };
+        case 3:
+            return {
+                points: [
+                    { x: positions.dataRight.x + data2Metrics.width/2, y: positions.dataRight.y },
+                    { x: positions.calculator.x - calculatorMetrics.width/2, y: positions.calculator.y }
+                ]
+            };
+        case 4:
+            return {
+                points: [
+                    { x: positions.calculator.x, y: positions.calculator.y + calculatorMetrics.height/2 },
+                    { x: positions.calculator.x, y: positions.token.y - calculatorMetrics.height/2 }
+                ]
+            };
+        case 5:
+            return {
+                points: [
+                    { x: positions.token.x, y: positions.token.y + calculatorMetrics.height/2 },
+                    { x: positions.token.x, y: positions.token.y + calculatorMetrics.height/2 }
+                ]
+            };
+    }
+}
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            const centerY = canvas.height / 2;
-            // 원의 크기를 캔버스 높이의 45%로 유지
-            const radius = canvas.height * 0.45;
+            const centerY = canvas.height / 2.2;
+            // 원의 크기를 캔버스 높이의 40%로 유지
+            const radius = canvas.height * 0.4;
             // 원 사이 간격을 지름 하나만큼으로 조정
             const chain1X = canvas.width/2 - radius * 2;
             const chain2X = canvas.width/2 + radius * 2;
             
             // 기본 원 그리기
-            drawCircle(chain1X, centerY, radius);
             drawCircle(chain2X, centerY, radius);
         
+            // Calculate and draw tree structure
+            const dataMetrics = getMultilineTextDimensions("Original\nAggregated Data", false);
+            const dataTextX = chain1X + radius - dataMetrics.width/2 ;
+            drawText("Original\nAggregated Data", chain1X + radius, centerY, true, false);
+            calculateTreeNodes(dataTextX, centerY);
+            drawTree();
+
             // 활성화된 선 그리기
             activeLines.forEach(line => {
                 drawLine(line);
@@ -508,36 +803,33 @@ function resizeCanvas() {
                 const textPos = calculatePointPosition(point, chain2X, centerY, textRadius);
                 ctx.fillStyle = 'rgba(50,50,50,1)';
                 ctx.font = '11px Times New Roman';
-                ctx.fillText(`N${point.number}`, textPos.x, textPos.y);
+                ctx.fillText(`N${point.number}`, textPos.x - 6, textPos.y);
             });
         
             // 타이틀과 내부 텍스트
-            drawText("External Channel", chain1X, centerY - radius + radius/2, false, true);
-            drawText("Electricity Usage", chain1X, centerY - 30);
-            drawText("Gas Usage", chain1X, centerY + 30);
-            drawText("...", chain1X, centerY + 90, false, true);
+            const nameMetrics = getTextDimensions("Channel", true);
+            drawText("External Channel", chain1X, canvas.height - nameMetrics.height/2,false, true);
         
-            drawText("Carbon Emission Chain", chain2X, centerY - radius + radius/2, false, true);
-            drawText("Carbon Emission\nCalculator", chain2X, centerY, true, false);
-            drawText("TOKEN", chain2X, centerY + 120);
+            drawText("Carbon Emission Chain", chain2X, canvas.height - nameMetrics.height/2, false, true);
+            drawText("Carbon Emission\nCalculator", chain2X, centerY, false, false,'emissionC');
+            drawText("Carbon Emission\nTOKEN",  chain2X, centerY + 120, false, false,'emissionT');
         
             // 중앙 텍스트들
-            drawText("Notarized Multi-Signature Oracle", (chain1X + chain2X) / 2, centerY - radius + radius/2, true);
+            drawText("Notarized Multi-Signature Oracle", (chain1X + chain2X) / 2, centerY - radius + radius/2, false);
             drawText("Notary Oracle", (chain1X + chain2X) / 2, centerY);
-            drawText("DATA", chain1X + radius, centerY);
-            drawText("DATA", chain2X - radius, centerY);
+            drawText("Original\nData", chain2X - radius, centerY);
         
             // 각 이동 선의 중앙점 계산
-            const path1 = calculateAnimationPath(0);
-            const path2 = calculateAnimationPath(1);
+            const path1 = calculateAnimationPath(1);
+            const path2 = calculateAnimationPath(2);
             
             // data to notary 이동선의 중앙점 (첫 번째 점선의 x 위치)
-            const midPoint1X = (path1.points[1].x + path1.points[2].x) / 2;
-            const midPoint1Y = path1.points[2].y;
+            const midPoint1X = (path1.points[0].x + path1.points[1].x) / 2;
+            const midPoint1Y = path1.points[0].y;
             
             // notary to data 이동선의 중앙점 (두 번째 점선의 x 위치)
-            const midPoint2X = (path2.points[1].x + path2.points[2].x) / 2;
-            const midPoint2Y = path2.points[1].y;
+            const midPoint2X = (path2.points[0].x + path2.points[1].x) / 2;
+            const midPoint2Y = path2.points[0].y;
         
             // Notarized Multi-Signature Oracle 텍스트 높이 계산
             const multiSignatureMetrics = getTextDimensions("Notarized Multi-Signature Oracle", true);
@@ -550,14 +842,14 @@ function resizeCanvas() {
                 ctx.strokeStyle = '#333';
                 ctx.setLineDash([5, 5]);
                 
-                if (dashedLines.line1) {
-                    ctx.moveTo(midPoint1X, textBottomY);
-                    ctx.lineTo(midPoint1X, midPoint1Y);
-                }
-                
                 if (dashedLines.line2) {
                     ctx.moveTo(midPoint2X, textBottomY);
                     ctx.lineTo(midPoint2X, midPoint2Y);
+                }
+                
+                if (dashedLines.line1) {
+                    ctx.moveTo(midPoint1X, textBottomY);
+                    ctx.lineTo(midPoint1X, midPoint1Y);
                 }
                 
                 ctx.stroke();
@@ -566,12 +858,34 @@ function resizeCanvas() {
         
             // 모든 경로 화살표 그리기
             const paths = [
-                calculateAnimationPath(0),
                 calculateAnimationPath(1),
                 calculateAnimationPath(2),
-                calculateAnimationPath(3)
+                calculateAnimationPath(3),
+                calculateAnimationPath(4),
+
             ];
             
+            // 트리 애니메이션 포인트 그리기
+            treeAnimationPoints.forEach(point => {
+                if (point.active) {
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(50,50,50,1)';
+                    ctx.fill();
+                    
+                    // 현재 세그먼트의 선 그리기
+                    if (point.currentSegment < point.path.length - 1) {
+                        const nextPoint = point.path[point.currentSegment + 1];
+                        ctx.beginPath();
+                        ctx.moveTo(point.path[point.currentSegment].x, point.path[point.currentSegment].y);
+                        ctx.lineTo(nextPoint.x, nextPoint.y);
+                        ctx.strokeStyle = 'rgba(50,50,50,0.5)';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            });
+
             paths.forEach(path => {
                 drawArrow(path.points);
             });
@@ -586,75 +900,121 @@ function resizeCanvas() {
 function animate() {
     const currentTime = performance.now();
     
-    // 현재 이동 경로 계산
-    const currentPath = calculateAnimationPath(currentStep).points;
-    
-    // 이동점 초기화
-    if (!movePoint.init) {
-        movePoint = {
-            x: currentPath[0].x,
-            y: currentPath[0].y,
-            init: true
-        };
-    }
-
-    // 다음 목표 지점
-    const target = currentPath[segmentIndex + 1];
-    
-    if (target) {
-        const dx = target.x - movePoint.x;
-        const dy = target.y - movePoint.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+    if (currentStep === 0) {
+        // 트리 애니메이션
+        if (treeAnimationPoints.length === 0) {
+            const paths = calculateAllTreePaths();
+            initializeTreeAnimationPoints(paths);
+        }
         
-        if (distance <= MOVE_SPEED) {
-            segmentIndex++;
-            if (segmentIndex >= currentPath.length - 1) {
-                // Handle path completion
-                if (currentStep === 0) {
-                    dashedLines.line1 = true;
-                    currentStep = 1;
-                } else if (currentStep === 1) {
-                    dashedLines.line2 = true;
-                    currentStep = 2;
-                } else if (currentStep === 2) {
-                    dashedLines.line1 = true;
-                    dashedLines.line2 = true;
-                    currentStep = 3;
-                } else if (currentStep === 3) {
-                    // Reset everything for the next cycle after 4.5s delay
-                    setTimeout(function() {
-                        currentStep = 0;
-                        dashedLines.line1 = false;
-                        dashedLines.line2 = false;
-                        shouldClearDashedLines = false;
-                        movePoint.init = false;
-                        segmentIndex = 0;
-                    }, 4000); // 4.5초 지연
-                    
-                    // Prevent further animation during the delay
-                    currentStep = 4; // 임시 상태로 설정하여 대기 중임을 표시
-                }
+        let allFinished = true;
+        treeAnimationPoints.forEach(point => {
+            if (!point.active) return;
+            
+            const nextPoint = point.path[point.currentSegment + 1];
+            if (nextPoint) {
+                const dx = nextPoint.x - point.x;
+                const dy = nextPoint.y - point.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                // Reset segment and movement for next path only if not in waiting state
-                if (currentStep !== 4) {
-                    segmentIndex = 0;
-                    movePoint.init = false;
+                // 트리 애니메이션 전용 속도 사용
+                if (distance <= ANIMATION_SPEEDS.tree) {
+                    point.currentSegment++;
+                    point.x = nextPoint.x;
+                    point.y = nextPoint.y;
+                } else {
+                    const ratio = ANIMATION_SPEEDS.tree / distance;
+                    point.x += dx * ratio;
+                    point.y += dy * ratio;
+                    allFinished = false;
                 }
             }
-        } else {
-            const ratio = MOVE_SPEED / distance;
-            movePoint.x += dx * ratio;
-            movePoint.y += dy * ratio;
+            
+            if (point.currentSegment >= point.path.length - 1) {
+                point.active = false;
+            } else {
+                allFinished = false;
+            }
+        });
+        
+        if (allFinished) {
+            // 트리 애니메이션 완료 후 잠시 대기
+            currentStep = 1;
+            treeAnimationPoints = [];
+            movePoint.init = false;
+            segmentIndex = 0;
         }
+    } else {
+
+        // 현재 이동 경로 계산
+        const currentPath = calculateAnimationPath(currentStep).points;
+        
+        // 이동점 초기화
+        if (!movePoint.init) {
+            movePoint = {
+                x: currentPath[0].x,
+                y: currentPath[0].y,
+                init: true
+            };
+        }
+
+        // 다음 목표 지점
+        const target = currentPath[segmentIndex + 1];
+        
+        if (target) {
+            const dx = target.x - movePoint.x;
+            const dy = target.y - movePoint.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance <= ANIMATION_SPEEDS.regular) {
+                segmentIndex++;
+                
+        if (segmentIndex >= currentPath.length - 1) {
+            if (currentStep === 0) {
+                currentStep = 1;
+            } else if (currentStep === 1) {
+                currentStep = 2;
+                dashedLines.line1 = true;
+            } else if (currentStep === 2) {
+                currentStep = 3;
+                dashedLines.line2 = true;
+            } else if (currentStep === 3) {
+                currentStep = 4;
+                dashedLines.line1 = true;
+                dashedLines.line2 = true;
+            } else if (currentStep === 4) {
+                // 마지막 단계에서 리셋
+                setTimeout(function() {
+                    currentStep = 0;
+                    dashedLines.line1 = false;
+                    dashedLines.line2 = false;
+                    shouldClearDashedLines = false;
+                    movePoint.init = false;
+                    segmentIndex = 0;
+                }, 4130);
+                currentStep = 5;
+            }
+            
+            if (currentStep !== 5) {
+                segmentIndex = 0;
+                movePoint.init = false;
+            }
+        }
+            } else {
+                const ratio = ANIMATION_SPEEDS.regular / distance;
+                movePoint.x += dx * ratio;
+                movePoint.y += dy * ratio;
+            }
+        }
+        // 선 애니메이션 업데이트
+        updateLines(currentTime);
+        
+        // 위치 체크 및 상태 업데이트
+        if (movePoint.init) {
+            updateAnimationState(movePoint, currentStep);
+        }
+        
     }
-    // 선 애니메이션 업데이트
-    updateLines(currentTime);
-    
-    // 위치 체크 및 상태 업데이트
-    if (movePoint.init) {
-        updateAnimationState(movePoint, currentStep);
-    }
-    
     // 캔버스 다시 그리기
     draw();
     
@@ -682,11 +1042,8 @@ function initializeCanvas2(canvasId){
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
 
-    let animationPoints = [];
     let currentStep = 0;
     let segmentIndex = 0;
-    let currentX = 0;
-    let currentY = 0;
     
     const steps = 3;
     const MOVE_SPEED = 3;
@@ -699,13 +1056,10 @@ function initializeCanvas2(canvasId){
     let chainPoints = [];
     let activeLines = [];
     let currentSource = null;
-    let lastAnimationStep = null;
 
     // 선 애니메이션을 위한 상태
     const lineAnimationState = {
         duration: 1500,    // 더 빠른 선 애니메이션
-        interval: 0,   // 더 빠른 생성 간격
-        lastCreateTime: 0
     };
 
     let dashedLines = {
@@ -817,8 +1171,8 @@ function initializeCanvas2(canvasId){
     }
 
     function updateAnimationState(movePoint, step) {
-        const centerY = canvas.height / 2;
-        const radius = canvas.height * 0.45;
+        const centerY = canvas.height / 2.2;
+        const radius = canvas.height * 0.4;
         const chain1X = canvas.width/2 - radius * 2;
 
         const dataMetrics = getTextDimensions("DATA", true);
@@ -928,7 +1282,7 @@ function initializeCanvas2(canvasId){
 
         function drawText(text, x, y, hasBox = true, isBold = false) {
             const lines = text.split('\n');
-            ctx.font = `${isBold ? 'bold' : 'normal'} 30px "Times New Roman"`;
+            ctx.font = `${isBold ? 'bold' : 'normal'} 16px "Times New Roman"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
@@ -941,8 +1295,8 @@ function initializeCanvas2(canvasId){
                 
                 const padding = { x: 12, y: 6 };
                 const width = maxWidth + padding.x * 2.2;
-                const height = 45 + (lines.length - 1) * 35;
-                const radius = 45 / 2;
+                const height = 40 + (lines.length - 1) * 18;
+                const radius = 40 / 2;
                 
                 ctx.fillStyle = 'rgba(255,255,255,1)';
                 ctx.beginPath();
@@ -954,7 +1308,7 @@ function initializeCanvas2(canvasId){
             }
             
             lines.forEach((line, i) => {
-                const lineY = y + (i - (lines.length-1)/2) * 35;
+                const lineY = y + (i - (lines.length-1)/2) * 18;
                 ctx.fillStyle = 'rgba(50,50,50,1)';
                 ctx.fillText(line, x, lineY);
             });
@@ -1002,7 +1356,7 @@ function initializeCanvas2(canvasId){
         }
         function getTextDimensions(text, hasBox = true) {
             // 기본 폰트 설정
-            ctx.font = `normal 30px "Times New Roman"`;
+            ctx.font = `normal 16px "Times New Roman"`;
             const metrics = ctx.measureText(text);
             
             // 텍스트 기본 크기
@@ -1013,7 +1367,7 @@ function initializeCanvas2(canvasId){
                 const padding = { x: 12, y: 6 };
                 return {
                     width: textWidth + (padding.x * 2.2),
-                    height: Math.max(45, textHeight + (padding.y * 2)) // 최소 높이 45px
+                    height: Math.max(40, textHeight + (padding.y * 2)) // 최소 높이 40px
                 };
             }
             
@@ -1024,7 +1378,7 @@ function initializeCanvas2(canvasId){
         }
         function getMultilineTextDimensions(text) {
             const lines = text.split('\n');
-            const lineHeight = 35;
+            const lineHeight = 18;
             let maxWidth = 0;
             
             lines.forEach(line => {
@@ -1034,7 +1388,7 @@ function initializeCanvas2(canvasId){
                 
                 const padding = { x: 12, y: 6 };
                 const width = textWidth + (padding.x * 2.2);
-                const height = Math.max(45, textHeight + (padding.y * 2));
+                const height = Math.max(40, textHeight + (padding.y * 2));
                 
                 maxWidth = Math.max(maxWidth, width);
             });
@@ -1045,8 +1399,8 @@ function initializeCanvas2(canvasId){
             };
         }
         function calculateAnimationPath(step) {
-            const centerY = canvas.height / 2;
-            const radius = canvas.height * 0.45;
+            const centerY = canvas.height / 2.2;
+            const radius = canvas.height * 0.4;
             const chain1X = canvas.width/2 - radius * 2;
             const chain2X = canvas.width/2 + radius * 2;
         
@@ -1102,8 +1456,8 @@ function initializeCanvas2(canvasId){
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        const centerY = canvas.height / 2;
-        const radius = canvas.height * 0.45;
+        const centerY = canvas.height / 2.2;
+        const radius = canvas.height * 0.4;
         const chain1X = canvas.width/2 - radius * 2;
         const chain2X = canvas.width/2 + radius * 2;
     
@@ -1132,8 +1486,8 @@ function initializeCanvas2(canvasId){
     
         // 타이틀과 내부 텍스트
         drawText("External Channel", chain2X, centerY - radius + radius/2, false, true);
-        drawText("Carbon Absorption", chain2X, centerY - 30);
-        drawText("Carbon Reduction", chain2X, centerY + 30);
+        drawText("Carbon Absorption", chain2X, centerY - 16);
+        drawText("Carbon Reduction", chain2X, centerY + 16);
     
         drawText("Carbon Offset Chain", chain1X, centerY - radius + radius/2, false, true);
         drawText("Carbon Credits\nRegistry", chain1X, centerY, true, false);
@@ -1277,11 +1631,8 @@ function initializeCanvas3(canvasId){
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
 
-    let animationPoints = [];
     let currentStep = 0;
     let segmentIndex = 0;
-    let currentX = 0;
-    let currentY = 0;
 
     const steps = 8;
     const MOVE_SPEED = 3;
@@ -1300,7 +1651,6 @@ function initializeCanvas3(canvasId){
     const lineAnimationState = {
         duration: 1500,
         interval: 0,
-        lastCreateTime: 0
     };
 
     function resizeCanvas() {
@@ -1334,7 +1684,7 @@ function initializeCanvas3(canvasId){
 
         function drawText(text, x, y, hasBox = true, isBold = false) {
             const lines = text.split('\n');
-            ctx.font = `${isBold ? 'bold' : 'normal'} 30px "Times New Roman"`;
+            ctx.font = `${isBold ? 'bold' : 'normal'} 16px "Times New Roman"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
@@ -1347,8 +1697,8 @@ function initializeCanvas3(canvasId){
                 
                 const padding = { x: 12, y: 6 };
                 const width = maxWidth + padding.x * 2.2;
-                const height = 45 + (lines.length - 1) * 35;
-                const radius = 45 / 2;
+                const height = 40 + (lines.length - 1) * 18;
+                const radius = 40 / 2;
                 
                 ctx.fillStyle = 'rgba(255,255,255,1)';
                 ctx.beginPath();
@@ -1360,7 +1710,7 @@ function initializeCanvas3(canvasId){
             }
             
             lines.forEach((line, i) => {
-                const lineY = y + (i - (lines.length-1)/2) * 35;
+                const lineY = y + (i - (lines.length-1)/2) * 18;
                 ctx.fillStyle = 'rgba(50,50,50,1)';
                 ctx.fillText(line, x, lineY);
             });
@@ -1408,7 +1758,7 @@ function initializeCanvas3(canvasId){
         }
         function getTextDimensions(text, hasBox = true) {
             // 기본 폰트 설정
-            ctx.font = `normal 30px "Times New Roman"`;
+            ctx.font = `normal 16px "Times New Roman"`;
             const metrics = ctx.measureText(text);
             
             // 텍스트 기본 크기
@@ -1419,7 +1769,7 @@ function initializeCanvas3(canvasId){
                 const padding = { x: 12, y: 6 };
                 return {
                     width: textWidth + (padding.x * 2.2),
-                    height: Math.max(45, textHeight + (padding.y * 2)) // 최소 높이 45px
+                    height: Math.max(40, textHeight + (padding.y * 2)) // 최소 높이 40px
                 };
             }
             
@@ -1531,8 +1881,8 @@ function initializeCanvas3(canvasId){
     let pendingLineCreations1 = []; // 왼쪽 원의 대기열
     let pendingLineCreations2 = []; // 오른쪽 원의 대기열
     function updateAnimationState(movePoint, step) {
-        const centerY = canvas.height / 2;
-        const radius = canvas.height * 0.45;
+        const centerY = canvas.height / 2.2;
+        const radius = canvas.height * 0.4;
         const chain1X = canvas.width/2 - radius * 2;
         const chain2X = canvas.width/2 + radius * 2;
 
@@ -1660,8 +2010,8 @@ function initializeCanvas3(canvasId){
     
         
     function calculateAnimationPath(step) {
-        const centerY = canvas.height / 2;
-        const radius = canvas.height * 0.45;
+        const centerY = canvas.height / 2.2;
+        const radius = canvas.height * 0.4;
         const chain1X = canvas.width/2 - radius * 2;
         const chain2X = canvas.width/2 + radius * 2;
     
@@ -1746,9 +2096,9 @@ function initializeCanvas3(canvasId){
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-    const centerY = canvas.height / 2;
-    // 원의 크기를 캔버스 높이의 45%로 유지
-    const radius = canvas.height * 0.45;
+    const centerY = canvas.height / 2.2;
+    // 원의 크기를 캔버스 높이의 40%로 유지
+    const radius = canvas.height * 0.4;
     // 원 사이 간격을 지름 하나만큼으로 조정
     const chain1X = canvas.width/2 - radius * 2;
     const chain2X = canvas.width/2 + radius * 2;
