@@ -815,8 +815,8 @@ function calculateAnimationPath(step) {
             drawText("Carbon Emission\nTOKEN",  chain2X, centerY + 120, false, false,'emissionT');
         
             // 중앙 텍스트들
-            drawText("Notarized Multi-Signature Oracle", (chain1X + chain2X) / 2, centerY - radius + radius/2, false);
-            drawText("Notary Oracle", (chain1X + chain2X) / 2, centerY);
+            drawText("Notarized Multi-Signature Oracle", (chain1X + chain2X) / 2, centerY - radius + radius/2,false,true);
+            drawText("Notary Oracle", (chain1X + chain2X) / 2, centerY,true,true);
             drawText("Original\nData", chain2X - radius, centerY);
         
             // 각 이동 선의 중앙점 계산
