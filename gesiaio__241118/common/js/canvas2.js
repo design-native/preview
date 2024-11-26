@@ -9,6 +9,7 @@ const ICON_CONFIG = {
     paths: {
         emissionC: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_emissionC.png',
         emissionT: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_emissionT.png',
+        emissionO: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_emissionO.png',
 
         externalE: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_externalE.png',
         externalG: 'https://design-native.github.io/preview/gesiaio__241118/common/resources/icon-canvas_externalG.png',
@@ -1896,7 +1897,7 @@ function drawTree() {
         drawText("External Channel", chain2X, canvas.height - nameMetrics.height/2, false, true);
     
         drawText("Carbon Offset Chain", chain1X, canvas.height - nameMetrics.height/2, false, true);
-        drawText("Carbon Credits\nRegistry", chain1X, centerY,  false, false,'emissionC');
+        drawText("Carbon Credits\nRegistry", chain1X, centerY,  false, false,'emissionO');
         drawText("Carbon Credits\nTOKEN", chain1X, centerY + 120, false, false,'emissionT');
     
         // 중앙 텍스트들과 점선
