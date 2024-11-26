@@ -189,7 +189,7 @@ body.loading .secItem:not(.active){
 }
 
 .sec-intro .titleBox {
-  max-width: 1100px;
+  max-width: 1200px;
   flex: 0 0 auto;
   margin: 0 auto;
 }
@@ -261,6 +261,10 @@ body.loading .secItem:not(.active){
   background-color: unset;
   padding: unset;
 }
+.secItem[class*="sec-detail"] .titleBox {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 .secItem[class*="sec-detail"] .titleBox .desc {
   border-radius: 12px;
   background-color: #f5f5f5;
@@ -322,7 +326,7 @@ body.loading .secItem:not(.active){
   height: auto;
   display: block;
   margin: 0 auto;
-  max-width: 1600px
+  max-width: 1200px
 }
 .canvasBox .canvasWrap {
   order: 2;
@@ -336,7 +340,7 @@ body.loading .secItem:not(.active){
 .secItem[class*="sec-product"] > .fp-tableCell > .wrap{
   background-color: unset;
   padding: unset;
-  max-width: 1600px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 .secItem[class*="sec-point"] .titleBox,
