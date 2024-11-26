@@ -30,7 +30,7 @@ header .logo {
 header .category {
     display: flex;
     flex-direction: row;
-    gap: 60px;
+    gap: 40px;
     flex: 1;
     justify-content: center;
 }
@@ -192,7 +192,7 @@ footer,footer .fp-tableCell {
   footer .category {
     display: flex;
     flex-direction: row;
-    gap: 60px;
+    gap: 40px;
  
     white-space: nowrap;
    }

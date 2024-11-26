@@ -587,39 +587,48 @@ function resizeCanvas() {
         }
 
 
-    function drawArrow(points) {
-        // 선 그리기
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(50,50,50,1)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([]);
-        
-        ctx.moveTo(points[0].x, points[0].y);
-        for(let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
+        function drawArrow(points, isInChain = false) {
+            // 선 그리기
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(50,50,50,1)';
+            ctx.lineWidth = 1;
+            
+            // Chain 내부의 선인 경우 dash 스타일 적용
+            if (isInChain) {
+                ctx.setLineDash([4, 4]); // dash 패턴 설정
+            } else {
+                ctx.setLineDash([]); // 실선
+            }
+            
+            ctx.moveTo(points[0].x, points[0].y);
+            for(let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.stroke();
+            
+            // dash 스타일 초기화 (화살표는 항상 실선)
+            ctx.setLineDash([]);
+            
+            // 화살표 (마지막 점에만)
+            const lastPoint = points[points.length - 1];
+            const secondLastPoint = points[points.length - 2];
+            
+            const angle = Math.atan2(lastPoint.y - secondLastPoint.y, lastPoint.x - secondLastPoint.x);
+            
+            // 화살표 크기 조정
+            const arrowLength = 8;
+            const arrowWidth = 6;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastPoint.x, lastPoint.y);
+            ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle - Math.PI/6), 
+                    lastPoint.y - arrowLength * Math.sin(angle - Math.PI/6));
+            ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle + Math.PI/6),
+                    lastPoint.y - arrowLength * Math.sin(angle + Math.PI/6));
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(50,50,50,1)';
+            ctx.fill();
         }
-        ctx.stroke();
-        
-        // 화살표 (마지막 점에만)
-        const lastPoint = points[points.length - 1];
-        const secondLastPoint = points[points.length - 2];
-        
-        const angle = Math.atan2(lastPoint.y - secondLastPoint.y, lastPoint.x - secondLastPoint.x);
-        
-        // 화살표 크기 조정
-        const arrowLength = 8;
-        const arrowWidth = 6;
-        
-        ctx.beginPath();
-        ctx.moveTo(lastPoint.x, lastPoint.y);
-        ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle - Math.PI/6), 
-                lastPoint.y - arrowLength * Math.sin(angle - Math.PI/6));
-        ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle + Math.PI/6),
-                lastPoint.y - arrowLength * Math.sin(angle + Math.PI/6));
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(50,50,50,1)';
-        ctx.fill();
-    }
         function drawDataPoint(x, y) {
         ctx.beginPath();
         ctx.arc(x, y, 3, 0, Math.PI * 2);
@@ -750,7 +759,7 @@ function calculateAnimationPath(step) {
     const data2Metrics = getMultilineTextDimensions("Original\nData", false);
     const notaryMetrics = getTextDimensions("Notary Oracle", true);
     const calculatorMetrics = getMultilineTextDimensions("Carbon Emission\nCalculator", true);
-
+    let isInChain = false;
     const positions = {
         dataLeft: { x: chain1X + radius, y: centerY },
         dataRight: { x: chain2X - radius, y: centerY },
@@ -790,21 +799,24 @@ function calculateAnimationPath(step) {
                 points: [
                     { x: positions.dataRight.x + data2Metrics.width/2, y: positions.dataRight.y },
                     { x: positions.calculator.x - calculatorMetrics.width/2, y: positions.calculator.y }
-                ]
+                ],
+                isInChain: true  // 체인 내부 선
             };
         case 4:
             return {
                 points: [
                     { x: positions.calculator.x, y: positions.calculator.y + calculatorMetrics.height/2 },
                     { x: positions.calculator.x, y: positions.token.y - calculatorMetrics.height/2 }
-                ]
+                ],
+                isInChain: true
             };
         case 5:
             return {
                 points: [
                     { x: positions.token.x, y: positions.token.y + calculatorMetrics.height/2 },
                     { x: positions.token.x, y: positions.token.y + calculatorMetrics.height/2 }
-                ]
+                ],
+                isInChain: true
             };
     }
 }
@@ -934,7 +946,7 @@ function calculateAnimationPath(step) {
             });
 
             paths.forEach(path => {
-                drawArrow(path.points);
+                drawArrow(path.points, path.isInChain); 
             });
         
             // 이동하는 점 그리기
@@ -1600,39 +1612,48 @@ function drawTree() {
         }
 
 
-    function drawArrow(points) {
-        // 선 그리기
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(50,50,50,1)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([]);
-        
-        ctx.moveTo(points[0].x, points[0].y);
-        for(let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
+        function drawArrow(points, isInChain = false) {
+            // 선 그리기
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(50,50,50,1)';
+            ctx.lineWidth = 1;
+            
+            // Chain 내부의 선인 경우 dash 스타일 적용
+            if (isInChain) {
+                ctx.setLineDash([4, 4]); // dash 패턴 설정
+            } else {
+                ctx.setLineDash([]); // 실선
+            }
+            
+            ctx.moveTo(points[0].x, points[0].y);
+            for(let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.stroke();
+            
+            // dash 스타일 초기화 (화살표는 항상 실선)
+            ctx.setLineDash([]);
+            
+            // 화살표 (마지막 점에만)
+            const lastPoint = points[points.length - 1];
+            const secondLastPoint = points[points.length - 2];
+            
+            const angle = Math.atan2(lastPoint.y - secondLastPoint.y, lastPoint.x - secondLastPoint.x);
+            
+            // 화살표 크기 조정
+            const arrowLength = 8;
+            const arrowWidth = 6;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastPoint.x, lastPoint.y);
+            ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle - Math.PI/6), 
+                    lastPoint.y - arrowLength * Math.sin(angle - Math.PI/6));
+            ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle + Math.PI/6),
+                    lastPoint.y - arrowLength * Math.sin(angle + Math.PI/6));
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(50,50,50,1)';
+            ctx.fill();
         }
-        ctx.stroke();
-        
-        // 화살표 (마지막 점에만)
-        const lastPoint = points[points.length - 1];
-        const secondLastPoint = points[points.length - 2];
-        
-        const angle = Math.atan2(lastPoint.y - secondLastPoint.y, lastPoint.x - secondLastPoint.x);
-        
-        // 화살표 크기 조정
-        const arrowLength = 10;
-        const arrowWidth = 6;
-        
-        ctx.beginPath();
-        ctx.moveTo(lastPoint.x, lastPoint.y);
-        ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle - Math.PI/6), 
-                lastPoint.y - arrowLength * Math.sin(angle - Math.PI/6));
-        ctx.lineTo(lastPoint.x - arrowLength * Math.cos(angle + Math.PI/6),
-                lastPoint.y - arrowLength * Math.sin(angle + Math.PI/6));
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(50,50,50,1)';
-        ctx.fill();
-    }
         function drawDataPoint(x, y) {
         ctx.beginPath();
         ctx.arc(x, y, 3, 0, Math.PI * 2);
@@ -1761,6 +1782,7 @@ function drawTree() {
             const notaryMetrics = getTextDimensions("Notary Oracle", true);
             const calculatorMetrics = getMultilineTextDimensions("Carbon Credits\nRegistry",true);
             const tokenMetrics = getMultilineTextDimensions("Carbon Credits\nTOKEN",true);
+            let isInChain = false;
         
             const positions = {
                 dataLeft: { x: chain1X + radius, y: centerY },
@@ -1781,7 +1803,9 @@ function drawTree() {
             switch(step) {
                 case 0:
                     return {
-                        points: calculateTreePath()
+                        points: calculateTreePath() || [],  // calculateTreePath가 undefined를 반환할 경우 빈 배열 사용
+                        isInChain: false,
+                        isTreeAnimation: true
                     };
                 case 1:
                     points = [
@@ -1800,20 +1824,30 @@ function drawTree() {
                         { x: positions.dataLeft.x - dataMetrics.width/2, y: positions.dataLeft.y  },
                         { x: positions.calculator.x + calculatorMetrics.width/2, y: positions.calculator.y  }
                     ];
+                    isInChain = true;
                     break;
                 case 4:
                     points = [
                         { x: positions.calculator.x, y: positions.calculator.y + calculatorMetrics.height/2 },
                         { x: positions.calculator.x, y: positions.token.y - tokenMetrics.height/2 }
                     ];
+                    isInChain = true;
                     break;
                 case 5:
                     points = [
                         { x: positions.dataLeft.x, y: positions.dataLeft.y },
                         { x: positions.dataLeft.x, y: positions.dataLeft.y }
                     ];
+                    isInChain = true;
             }
         
+            // points가 있는 경우 객체로 반환
+            if (points) {
+                return {
+                    points: points,
+                    isInChain: isInChain
+                };
+            }
             return points;
         }
 
@@ -1869,11 +1903,11 @@ function drawTree() {
         const path1 = calculateAnimationPath(1);
         const path2 = calculateAnimationPath(2);
         
-        const midPoint1X = (path1[0].x + path1[1].x) / 2;
-        const midPoint1Y = path1[0].y;
-        
-        const midPoint2X = (path2[0].x + path2[1].x) / 2;
-        const midPoint2Y = path2[0].y;
+    const midPoint1X = (path1.points[0].x + path1.points[1].x) / 2;
+    const midPoint1Y = path1.points[0].y;
+
+    const midPoint2X = (path2.points[0].x + path2.points[1].x) / 2;
+    const midPoint2Y = path2.points[0].y;
     
         const multiSignatureMetrics = getTextDimensions("Notarized Multi-Signature Oracle", true);
         const multiSignatureY = centerY - radius + radius/2;
@@ -1930,12 +1964,12 @@ function drawTree() {
                     }
                 }
             });
-        paths.forEach(path => {
-            if (path && path.length > 0) {
-                drawArrow(path);
-            }
-        });
-    
+            paths.forEach(path => {
+                // case 0의 특수한 경우와 나머지 경우 모두 처리
+                if (path && path.points && path.points.length > 0) {
+                    drawArrow(path.points, path.isInChain);
+                }
+            });
         if (movePoint.init) {
             drawDataPoint(movePoint.x, movePoint.y);
         }
@@ -1991,64 +2025,65 @@ function drawTree() {
         }
     } else {
         const currentPath = calculateAnimationPath(currentStep);
-        
-        if (!movePoint.init) {
-            movePoint = {
-                x: currentPath[0].x,
-                y: currentPath[0].y,
-                init: true
-            };
-        }
 
-        const target = currentPath[segmentIndex + 1];
-        
-        if (target) {
-            const dx = target.x - movePoint.x;
-            const dy = target.y - movePoint.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+if (!movePoint.init && currentPath.points && currentPath.points.length > 0) {
+    movePoint = {
+        x: currentPath.points[0].x,
+        y: currentPath.points[0].y,
+        init: true
+    };
+}
+
+const target = currentPath.points ? currentPath.points[segmentIndex + 1] : null;
+
+if (target) {
+    const dx = target.x - movePoint.x;
+    const dy = target.y - movePoint.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance <= MOVE_SPEED) {
+        segmentIndex++;
+        if (segmentIndex >= currentPath.points.length - 1) {
+            if (currentStep === 0) {
+                currentStep = 1;
+            } else if (currentStep === 1) {
+                dashedLines.line1 = true;
+                currentStep = 2;
+            } else if (currentStep === 2) {
+                dashedLines.line2 = true;
+                currentStep = 3;
+            } else if (currentStep === 3) {
+                dashedLines.line1 = true;
+                dashedLines.line2 = true;
+                currentStep = 4;
+            } else if (currentStep === 4) {
+                setTimeout(function() {
+                    currentStep = 0;
+                    dashedLines.line1 = false;
+                    dashedLines.line2 = false;
+                    shouldClearDashedLines = false;
+                    movePoint.init = false;
+                    segmentIndex = 0;
+                }, 4080);
+                currentStep = 5;
+            }
             
-            if (distance <= MOVE_SPEED) {
-                segmentIndex++;
-                if (segmentIndex >= currentPath.length - 1) {
-                    if (currentStep === 0) {
-                        currentStep = 1;
-                    } else if (currentStep === 1) {
-                        dashedLines.line1 = true;
-                        currentStep = 2;
-                    } else if (currentStep === 2) {
-                        dashedLines.line2 = true;
-                        currentStep = 3;
-                    }  else if (currentStep === 3) {
-                        dashedLines.line1 = true;
-                        dashedLines.line2 = true;
-                        currentStep = 4;
-                    } else if (currentStep === 4) {
-                        setTimeout(function() {
-                            currentStep = 0;
-                            dashedLines.line1 = false;
-                            dashedLines.line2 = false;
-                            shouldClearDashedLines = false;
-                            movePoint.init = false;
-                            segmentIndex = 0;
-                        }, 4080);
-                        currentStep = 5;
-                    }
-                    
-                    if (currentStep !== 5) {
-                        segmentIndex = 0;
-                        movePoint.init = false;
-                    }
-                }
-            } else {
-                const ratio = MOVE_SPEED / distance;
-                movePoint.x += dx * ratio;
-                movePoint.y += dy * ratio;
+            if (currentStep !== 5) {
+                segmentIndex = 0;
+                movePoint.init = false;
             }
         }
+    } else {
+        const ratio = MOVE_SPEED / distance;
+        movePoint.x += dx * ratio;
+        movePoint.y += dy * ratio;
+    }
+}
 
-        if (movePoint.init) {
-            updateAnimationState(movePoint, currentStep);
-        }
+// 트리 애니메이션이 아닌 경우에만 updateAnimationState 호출
+if (movePoint.init && !currentPath.isTreeAnimation) {
+    updateAnimationState(movePoint, currentStep);
+}
     }
         // 캔버스 다시 그리기
         draw();
@@ -2293,18 +2328,27 @@ async function initializeCanvas3(canvasId){
         // ...
     }
 
-    function drawArrow(points) {
+    function drawArrow(points, isInChain = false) {
         // 선 그리기
         ctx.beginPath();
         ctx.strokeStyle = 'rgba(50,50,50,1)';
         ctx.lineWidth = 1;
-        ctx.setLineDash([]);
+        
+        // Chain 내부의 선인 경우 dash 스타일 적용
+        if (isInChain) {
+            ctx.setLineDash([4, 4]); // dash 패턴 설정
+        } else {
+            ctx.setLineDash([]); // 실선
+        }
         
         ctx.moveTo(points[0].x, points[0].y);
         for(let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
+            ctx.lineTo(points[i].x, points[i].y);
         }
         ctx.stroke();
+        
+        // dash 스타일 초기화 (화살표는 항상 실선)
+        ctx.setLineDash([]);
         
         // 화살표 (마지막 점에만)
         const lastPoint = points[points.length - 1];
@@ -2313,8 +2357,8 @@ async function initializeCanvas3(canvasId){
         const angle = Math.atan2(lastPoint.y - secondLastPoint.y, lastPoint.x - secondLastPoint.x);
         
         // 화살표 크기 조정
-        const arrowLength = 0;
-        const arrowWidth = 0;
+        const arrowLength = 8;
+        const arrowWidth = 6;
         
         ctx.beginPath();
         ctx.moveTo(lastPoint.x, lastPoint.y);
@@ -2405,7 +2449,7 @@ function createLines(sourcePoint, centerX, centerY, radius, chainPoints, current
     
     // 타원인 경우의 시작점 계산
     if (isEllipse) {
-        const ellipseRadius = {x: radius *0.9, y: radius * 0.32};
+        const ellipseRadius = {x: radius * 1.45, y: radius * 0.4};
         startPos = {
             x: centerX + ellipseRadius.x * Math.cos(sourcePoint.angle),
             y: centerY + ellipseRadius.y * Math.sin(sourcePoint.angle)
@@ -2419,7 +2463,7 @@ function createLines(sourcePoint, centerX, centerY, radius, chainPoints, current
             let endPos;
             // 타원인 경우의 끝점 계산
             if (isEllipse) {
-                const ellipseRadius = {x: radius *0.9, y: radius * 0.32};
+                const ellipseRadius = {x: radius * 1.45, y: radius * 0.4};
                 endPos = {
                     x: centerX + ellipseRadius.x * Math.cos(targetPoint.angle),
                     y: centerY + ellipseRadius.y * Math.sin(targetPoint.angle)
@@ -2483,14 +2527,14 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
     function updateAnimationState(movePoint, step) {
         const currentTime = performance.now();
 
-        const centerY = canvas.height / 2.05;
-        const radius = canvas.height * 0.4;
-        const chain1X = canvas.width/2 - radius * 2;
-        const chain2X = canvas.width/2 + radius * 2;
+        const centerY = canvas.height / 1.8;
+        const radius = canvas.height * 0.3;
+        const chain1X = canvas.width/2 - radius * 2.5;
+        const chain2X = canvas.width/2 + radius * 2.5;
         const bridgeX = (chain1X + chain2X) / 2;
-        const consensusY = centerY - radius * 0.64;
+        const consensusY = centerY - radius * 1.15;
         const radius2 = canvas.height * 0.35;
-        const ellipseRadius = {x: radius * 0.9, y: radius * 0.32}; // 타원의 반지름
+        const ellipseRadius = {x: radius * 1.45, y: radius * 0.4}; // 타원의 반지름
     
         // 선의 완료 상태를 체크
         const allLinesReachedTarget = activeLines.length === 0 || 
@@ -2550,52 +2594,66 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
     }
     
         
-
     function calculateAnimationPath(step) {
-        const centerY = canvas.height / 2.05;
-        const radius = canvas.height * 0.4;
-        const chain1X = canvas.width/2 - radius * 2;
-        const chain2X = canvas.width/2 + radius * 2;
+        const centerY = canvas.height / 1.8;
+        const radius = canvas.height * 0.3;
+        const chain1X = canvas.width/2 - radius * 2.5;
+        const chain2X = canvas.width/2 + radius * 2.5;
         const bridgeX = (chain1X + chain2X) / 2;
-        const consensusY = centerY - radius * 0.64;
-        const radius2 = canvas.height * 0.4 * 0.32;
+        const consensusY = centerY - radius * 1.15;
+        const radius2 = canvas.height * 0.3 * 0.4;
         
-        const tokenMetrics = getMultilineTextDimensions("Carbon Emission\nToken",true);
+        const tokenMetrics = getMultilineTextDimensions("Carbon Emission\nToken",false);
         const dataMetrics = getMultilineTextDimensions("Carbon Emission\nToken Aggregation",true);
         const notaryMetrics = getTextDimensions("Notary Bridge", true);
         const netMetrics = getMultilineTextDimensions("Carbon Credit Burning\nConsensus",false,false);
         
         let pathArray = [];
+    let isInChain = false;
         
         switch(step) {
             case 0: // 초기 동시 이동
                 pathArray = [
-                    [{ x: chain1X + tokenMetrics.width/2, y: centerY },
-                     { x: chain1X + radius - dataMetrics.width/2, y: centerY }],
-                    [{ x: chain2X - tokenMetrics.width/2, y: centerY },
-                     { x: chain2X - radius + dataMetrics.width/2, y: centerY }]
+                    {
+                        points: [
+                            { x: chain1X + tokenMetrics.width/2, y: centerY },
+                            { x: chain1X + radius - dataMetrics.width/2 + 10, y: centerY }
+                        ],
+                        isInChain: true
+                    },
+                    {
+                        points: [
+                            { x: chain2X - tokenMetrics.width/2, y: centerY },
+                            { x: chain2X - radius + dataMetrics.width/2 - 10, y: centerY }
+                        ],
+                        isInChain: true
+                    }
                 ];
                 break;
             case 1: // 브릿지로 이동
                 pathArray = [
-                    [{ x: chain1X + radius + dataMetrics.width/2, y: centerY },
-                     { x: bridgeX - notaryMetrics.width/2, y: centerY }],
-                    [{ x: chain2X - radius - dataMetrics.width/2, y: centerY },
-                     { x: bridgeX + notaryMetrics.width/2, y: centerY }]
+                    {
+                        points: [
+                            { x: chain1X + radius + dataMetrics.width/2 - 10, y: centerY },
+                            { x: bridgeX - notaryMetrics.width/2, y: centerY }
+                        ],
+                    },
+                    {
+                        points: [
+                            { x: chain2X - radius - dataMetrics.width/2 + 10, y: centerY },
+                            { x: bridgeX + notaryMetrics.width/2, y: centerY }
+                        ],
+                    }
                 ];
                 break;
             case 2: // 수직 이동
-                pathArray = [[
-                    { x: bridgeX, y: centerY - notaryMetrics.height/2 },
-                    { x: bridgeX, y: consensusY + radius2 + notaryMetrics.height/2 }
-                ]];
-                break;
-            case 3: // 분기 이동
                 pathArray = [
-                    [{ x: bridgeX, y: consensusY + radius2 - notaryMetrics.height/2 },
-                     { x: bridgeX - radius2, y: consensusY + netMetrics.height/2.5 }],
-                    [{ x: bridgeX, y: consensusY + radius2 - notaryMetrics.height/2 },
-                     { x: bridgeX + radius2, y: consensusY + netMetrics.height/2.5 }]
+                    {
+                        points: [
+                            { x: bridgeX, y: centerY - notaryMetrics.height/2 },
+                            { x: bridgeX, y: consensusY + radius2 + notaryMetrics.height/2 }
+                        ],
+                    }
                 ];
                 break;
         }
@@ -2605,14 +2663,14 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-        const centerY = canvas.height / 2.05;
-        const radius = canvas.height * 0.4;
-        const chain1X = canvas.width/2 - radius * 2;
-        const chain2X = canvas.width/2 + radius * 2;
+        const centerY = canvas.height / 1.8;
+        const radius = canvas.height * 0.3;
+        const chain1X = canvas.width/2 - radius * 2.5;
+        const chain2X = canvas.width/2 + radius * 2.5;
         const bridgeX = (chain1X + chain2X) / 2;
-        const consensusY = centerY - radius * 0.64;
-        const radius2 = canvas.height * 0.4 * 0.35;
-        const ellipseRadius = {x: radius * 0.9, y: radius * 0.32}; // 타원의 반지름
+        const consensusY = centerY - radius * 1.15;
+        const radius2 = canvas.height * 0.3 * 0.4;
+        const ellipseRadius = {x: radius * 1.45, y: radius * 0.4}; // 타원의 반지름
         
         
         const nameMetrics = getTextDimensions("Channel", true);
@@ -2623,7 +2681,7 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
         drawCircle(chain1X, centerY, radius);
         drawCircle(chain2X, centerY, radius);
         // 새로운 타원 그리기
-        const ellipseY = centerY - radius * 0.64;
+        const ellipseY = centerY - radius * 1.15;
         drawEllipse(bridgeX, ellipseY, ellipseRadius.x, ellipseRadius.y);
         
         // 체인 포인트와 라인 그리기
@@ -2700,9 +2758,9 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
         // 기울어진 Consensus 텍스트와 선
 
         drawText("Carbon Credit Burning\nConsensus", 
-            bridgeX - radius2, consensusY - 20, false, false,'netB');
+            bridgeX - radius2*1.4, consensusY - 20, false, false,'netB');
         drawText("Carbon Reduction\nConsensus",
-            bridgeX + radius2, consensusY - 20, false, false,'netR');
+            bridgeX + radius2*1.4, consensusY - 20, false, false,'netR');
 
         // 타이틀과 내부 텍스트
         drawText("Carbon Emission Chain", chain1X,  canvas.height - nameMetrics.height/2, false, true);
@@ -2724,10 +2782,10 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
 
         // 점선 그리기 부분을 다음과 같이 수정
         // data to notary 이동선의 중앙점 (첫 번째 점선의 x 위치)
-        const midPoint1X = (paths1[0][0].x + paths1[0][1].x) / 2;
-        const midPoint1Y = paths1[0][0].y;
-        const midPoint2X = (paths2[1][0].x + paths2[1][1].x) / 2;
-        const midPoint2Y = paths2[1][0].y;
+        const midPoint1X = (paths1[0].points[0].x + paths1[0].points[1].x) / 2;
+        const midPoint1Y = paths1[0].points[0].y;
+        const midPoint2X = (paths2[1].points[0].x + paths2[1].points[1].x) / 2;
+        const midPoint2Y = paths2[1].points[0].y;
         // Notarized Multi-Signature Oracle 텍스트 높이 계산
         const multiSignatureMetrics = getTextDimensions("Notarized Multi-Signature Oracle", true);
         const multiSignatureY = centerY + radius - radius/2;
@@ -2753,20 +2811,18 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
             ...calculateAnimationPath(0), // spread operator로 두 경로를 모두 포함
             ...calculateAnimationPath(1),
             ...calculateAnimationPath(2),
-            ...calculateAnimationPath(3),
         ];
         
     // 화살표 그리기
-    paths.forEach(path => {
-        if (path && path.length > 0) {
-            drawArrow(path);
-        }
-    });
+paths.forEach(path => {
+    if (path && path.points && path.points.length > 0) {
+        drawArrow(path.points, path.isInChain);
+    }
+});
         // 이동 점 그리기
     if (movePoint1.init) drawDataPoint(movePoint1.x, movePoint1.y);
     if (movePoint2.init) drawDataPoint(movePoint2.x, movePoint2.y);
     if (movePoint3.init) drawDataPoint(movePoint3.x, movePoint3.y);
-    if (movePoint4 && movePoint4.init) drawDataPoint(movePoint4.x, movePoint4.y);
 }
     
 // movePointToTarget 함수 추가
@@ -2793,24 +2849,23 @@ function animate() {
     const currentTime = performance.now();
     const allPaths = calculateAnimationPath(currentStep);
     
-    const centerY = canvas.height / 2.05;
-    const radius = canvas.height * 0.4;
-    const chain1X = canvas.width/2 - radius * 2;
-    const chain2X = canvas.width/2 + radius * 2;
+    const centerY = canvas.height / 1.8;
+    const radius = canvas.height * 0.3;
+    const chain1X = canvas.width/2 - radius * 2.5;
+    const chain2X = canvas.width/2 + radius * 2.5;
     const bridgeX = (chain1X + chain2X) / 2;
     const nameMetrics = getTextDimensions("Channel", true);
     
     if (!allPaths || allPaths.length === 0) return;
-    
     switch(currentStep) {
         case 0: // 양쪽에서 동시에 시작
             if (!movePoint1.init && !movePoint2.init) {
-                movePoint1 = { ...allPaths[0][0], init: true };
-                movePoint2 = { ...allPaths[1][0], init: true };
+                movePoint1 = { ...allPaths[0].points[0], init: true };
+                movePoint2 = { ...allPaths[1].points[0], init: true };
             }
             
-            let reachedTarget1 = movePoint1.init && movePointToTarget(movePoint1, allPaths[0][1]);
-            let reachedTarget2 = movePoint2.init && movePointToTarget(movePoint2, allPaths[1][1]);
+            let reachedTarget1 = movePoint1.init && movePointToTarget(movePoint1, allPaths[0].points[1]);
+            let reachedTarget2 = movePoint2.init && movePointToTarget(movePoint2, allPaths[1].points[1]);
             
             if (reachedTarget1 && reachedTarget2) {
                 currentStep = 1;
@@ -2821,30 +2876,26 @@ function animate() {
             
         case 1: // 브릿지로 이동
             if (!movePoint1.init && !movePoint2.init) {
-                movePoint1 = { ...allPaths[0][0], init: true };
-                movePoint2 = { ...allPaths[1][0], init: true };
+                movePoint1 = { ...allPaths[0].points[0], init: true };
+                movePoint2 = { ...allPaths[1].points[0], init: true };
             }
             
-            let bridgeTarget1 = movePoint1.init && movePointToTarget(movePoint1, allPaths[0][1]);
-            let bridgeTarget2 = movePoint2.init && movePointToTarget(movePoint2, allPaths[1][1]);
+            let bridgeTarget1 = movePoint1.init && movePointToTarget(movePoint1, allPaths[0].points[1]);
+            let bridgeTarget2 = movePoint2.init && movePointToTarget(movePoint2, allPaths[1].points[1]);
             
             if (bridgeTarget1 && bridgeTarget2) {
                 currentStep = 2;
                 movePoint1.init = false;
                 movePoint2.init = false;
-                // case 1의 도착점을 case 2의 시작점으로 사용
-                const path2 = calculateAnimationPath(2)[0];
                 movePoint3 = { 
                     x: bridgeX, 
-                    y: centerY - nameMetrics.height/2,  // case 1의 도착 높이를 사용
+                    y: centerY - nameMetrics.height/2,
                     init: true 
                 };
             }
             break;
             
         case 2: // 수직 이동
-            const path2 = allPaths[0];
-            // movePoint3가 초기화되지 않은 경우에만 초기화 (이미 움직이고 있다면 초기화하지 않음)
             if (!movePoint3.init) {
                 movePoint3 = { 
                     x: bridgeX, 
@@ -2853,32 +2904,19 @@ function animate() {
                 };
             }
             
-            if (movePointToTarget(movePoint3, path2[1])) {
-                currentStep = 3;
-                const paths3 = calculateAnimationPath(3);
-                movePoint3 = { ...paths3[0][0], init: true };
-                movePoint4 = { ...paths3[1][0], init: true };
-            }
-            break;
-            
-        case 3: // 분기 이동
-            const paths3 = allPaths;
-            if (!movePoint3.init || !movePoint4.init) {
-                movePoint3 = { ...paths3[0][0], init: true };
-                movePoint4 = { ...paths3[1][0], init: true };
-            }
-            
-            let leftReached = movePointToTarget(movePoint3, paths3[0][1]);
-            let rightReached = movePointToTarget(movePoint4, paths3[1][1]);
-            
-            if (leftReached && rightReached) {
+            if (movePointToTarget(movePoint3, allPaths[0].points[1])) {
                 currentStep = 0;
+                // 여기서 movePoint3를 초기화
                 movePoint3.init = false;
-                movePoint4.init = false;
+                movePoint3 = {
+                    x: 0,
+                    y: 0,
+                    init: false
+                };
             }
             break;
+            
     }
-
     updateLines(currentTime);
     
     if (movePoint1.init) {
@@ -2895,6 +2933,7 @@ function animate() {
     animate();
 
 }
+
 
 
 
