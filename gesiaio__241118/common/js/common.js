@@ -284,13 +284,20 @@ function mobileHeaderControll(){
 
 
 
-function langToggle(){
-    if($('body').attr('data-lang') == 'kr'){
-        changeLang('en');
-        $('.btnLang').html('<b class="langNow">EN</b>');
-    }else{
-        changeLang('kr')
-        $('.btnLang').html('<b class="langNow">KR</b>');
+function langToggle(target){
+    if(target == null || target == undefined){
+
+        if($('body').attr('data-lang') == 'kr'){
+            changeLang('en');
+            $('.btnLang').html('<b class="langNow">EN</b>');
+        }else{
+            changeLang('kr')
+            $('.btnLang').html('<b class="langNow">KR</b>');
+        }
+    }else {
+        changeLang(target)
+        $('.btnLang').removeClass('ACTIVE');
+        $('.btnLang[data-lang="'+target+'"]').addClass('ACTIVE');
     }
 }
 

@@ -373,7 +373,7 @@ body.loading .secItem:not(.active){
   max-height: 800px;
 }
 .secItem[class*="sec-product"] .contentBox li{
-  justify-content: normal;
+  justify-content: flex-start;
 }
 .secItem[class*="sec-product"] .contentBox li h3 {
   margin-bottom: 20px;

@@ -98,9 +98,9 @@ const consumptionLabels = [
     { text: "Electricity consumption", icon: "externalE" },
     { text: "Gas consumption", icon: "externalG" },
     { text: "Oil consumption", icon: "externalO" },
-    { text: "　", icon: "" },
-    { text: "···", icon: "" },
-    { text: "　", icon: "" },
+    { text: "·", icon: "" },
+    { text: "·", icon: "" },
+    { text: "·", icon: "" },
     { text: "Water consumption", icon: "externalW" }
 ];
 let treeAnimationPoint = {
@@ -264,17 +264,27 @@ function drawTree() {
             
             ctx.font = '18px "Times New Roman"';
             ctx.fillStyle = 'rgba(50,50,50,1)';
-            ctx.textAlign = 'left';
-            // Icon
-            if (label.icon && ICON_CONFIG.images[label.icon]) {
-                const icon = ICON_CONFIG.images[label.icon];
-                ctx.drawImage(icon, labelStartX - textDimensions.width - iconWidth - 14, y - ICON_CONFIG.height/2, ICON_CONFIG.width/2, ICON_CONFIG.height/2);
-            } else {
-                ctx.fillText(label.icon, labelStartX - textDimensions.width - iconWidth - 6, y - textDimensions.height/2);
-            }
             
-            // Text
-            ctx.fillText(label.text, labelStartX - textDimensions.width - 5, y - textDimensions.height/2);
+            // 특수 문자(···)일 경우 중앙 정렬로 처리
+            if (label.text === '·') {
+                ctx.textAlign = 'center';
+                // labelStartX에서 전체 width의 절반만큼 왼쪽으로 이동한 지점을 중앙으로 설정
+                const centerX = labelStartX - textDimensions.width/2;
+                ctx.fillText(label.text, centerX, y - textDimensions.height/2);
+            } else {
+                // 일반 텍스트는 기존대로 왼쪽 정렬
+                ctx.textAlign = 'left';
+                // Icon
+                if (label.icon && ICON_CONFIG.images[label.icon]) {
+                    const icon = ICON_CONFIG.images[label.icon];
+                    ctx.drawImage(icon, labelStartX - textDimensions.width - iconWidth - 14, y - ICON_CONFIG.height/2, ICON_CONFIG.width/2, ICON_CONFIG.height/2);
+                } else {
+                    ctx.fillText(label.icon, labelStartX - textDimensions.width - iconWidth - 6, y - textDimensions.height/2);
+                }
+                
+                // Text
+                ctx.fillText(label.text, labelStartX - textDimensions.width - 5, y - textDimensions.height/2);
+            }
         }
     });
 }
@@ -1122,9 +1132,9 @@ let treeNodes = [];
 const consumptionLabels = [
     { text: "Carbon Absorption", icon: "externalA" },
     { text: "　", icon: "" },
-    { text: "　", icon: "" },
-    { text: "···", icon: "" },
-    { text: "　", icon: "" },
+    { text: "·", icon: "" },
+    { text: "·", icon: "" },
+    { text: "·", icon: "" },
     { text: "　", icon: "" },
     { text: "Carbon Reduction", icon: "externalR" }
 ];
@@ -1288,15 +1298,22 @@ function drawTree() {
             
             ctx.font = '18px "Times New Roman"';
             ctx.fillStyle = 'rgba(50,50,50,1)';
-            ctx.textAlign = 'left';
-            // Icon
-            if (label.icon && ICON_CONFIG.images[label.icon]) {
-                const icon = ICON_CONFIG.images[label.icon];
-                ctx.drawImage(icon, labelStartX, y - ICON_CONFIG.height/4, ICON_CONFIG.width/2, ICON_CONFIG.height/2);
+            if (label.text === '·') {
+                ctx.textAlign = 'center';
+                // labelStartX에서 전체 width의 절반만큼 왼쪽으로 이동한 지점을 중앙으로 설정
+                const centerX = labelStartX + iconWidth*2 + textDimensions.width/2;
+                ctx.fillText(label.text, centerX, y - textDimensions.height/2);
+            } else {
+                ctx.textAlign = 'left';
+                // Icon
+                if (label.icon && ICON_CONFIG.images[label.icon]) {
+                    const icon = ICON_CONFIG.images[label.icon];
+                    ctx.drawImage(icon, labelStartX, y - ICON_CONFIG.height/4, ICON_CONFIG.width/2, ICON_CONFIG.height/2);
+                }
+                
+                // Text - 아이콘 오른쪽에 텍스트 배치
+                ctx.fillText(label.text, labelStartX + iconWidth + 10, y);
             }
-            
-            // Text - 아이콘 오른쪽에 텍스트 배치
-            ctx.fillText(label.text, labelStartX + iconWidth + 10, y);
         }
     });
 }
@@ -2688,7 +2705,7 @@ function createLinesAtPosition(x, y, radius, sourceType, chainPoints, currentTim
             bridgeX + radius2, consensusY - 20, false, false,'netR');
 
         // 타이틀과 내부 텍스트
-        drawText("Carbon Offset Chain", chain1X,  canvas.height - nameMetrics.height/2, false, true);
+        drawText("Carbon Emission Chain", chain1X,  canvas.height - nameMetrics.height/2, false, true);
         drawText("Carbon Emission\nToken", chain1X, centerY , false, false,'emissionT');
     
         drawText("Carbon Offset Chain", chain2X,  canvas.height - nameMetrics.height/2, false, true);
