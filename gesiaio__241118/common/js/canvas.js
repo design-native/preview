@@ -220,6 +220,8 @@ setupLabelEvents() {
             }
         }
     });
+    this.hoveredLabel = { id: 'gesia' };
+
 }
 
 // Update drawLabels method to use the class property
@@ -388,14 +390,14 @@ drawImages() {
     this.ctx.textBaseconsensus = 'middle';
     this.ctx.fillStyle = 'rgba(40, 40, 40, 1)';
  
-    const transitionThreshold = 0.65;
+    const transitionThreshold = 0.7;
     
     // 더 작은 폰트 크기와 간격으로 조정
     const fontSize = Math.min(Math.max(Math.floor(this.chainRadius * 0.2), 16), 24); // 최대 24px로 제한
     const smallFontSize = Math.min(Math.max(Math.floor(this.chainRadius * 0.1), 10), 13); // 최대 14px로 제한
     
     // 텍스트 수직 간격을 더 좁게 조정
-    const verticalSpacing = fontSize * 0.8; // 0.8에서 0.6으로 감소
+    const verticalSpacing = fontSize * 0.65; // 0.8에서 0.6으로 감소
  
     if (ratio >= transitionThreshold) {
         const transition = (ratio - transitionThreshold) / (1 - transitionThreshold);
@@ -405,7 +407,7 @@ drawImages() {
         const centerY = this.chainA.y;
         
         // 최소 간격 보장하면서 수평 간격 조정
-        const minSpacing = Math.max(this.chainRadius * 0.55, 50); // 간격을 더 좁게 조정
+        const minSpacing = Math.max(this.chainRadius * 0.6, 56); // 간격을 더 좁게 조정
         const spacing = Math.max(minSpacing, this.chainRadius * 0.3 * (1 - easing));
  
         const co2X = Math.min(centerX - spacing, centerX - minSpacing);
@@ -415,13 +417,13 @@ drawImages() {
         // 메인 텍스트 (위치 조정)
         this.ctx.font = `bold ${fontSize}px Times New Roman`;
         this.ctx.fillText('CO2', co2X, centerY - verticalSpacing/2);
-        this.ctx.fillText('0', zeroX, centerY - verticalSpacing/2);
+        this.ctx.fillText('0', zeroX +5, centerY - verticalSpacing/2);
         this.ctx.fillText('COC', cocX, centerY - verticalSpacing/2);
  
         // 설명 텍스트 (위치 조정)
         this.ctx.font = `${smallFontSize}px Times New Roman`;
         this.ctx.fillText('Carbon Emission', co2X, centerY + verticalSpacing/2);
-        this.ctx.fillText('Net-Zero', zeroX, centerY + verticalSpacing/2);
+        this.ctx.fillText('Net-Zero', zeroX +5, centerY + verticalSpacing/2);
         this.ctx.fillText('Carbon Offset', cocX, centerY + verticalSpacing/2);
     } else {
         // 기본 상태 텍스트 렌더링 (더 컴팩트하게)
