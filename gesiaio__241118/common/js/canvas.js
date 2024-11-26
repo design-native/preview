@@ -220,8 +220,7 @@ setupLabelEvents() {
             }
         }
     });
-    this.hoveredLabel = { id: 'gesia' };
-
+    
 }
 
 // Update drawLabels method to use the class property
