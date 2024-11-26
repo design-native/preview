@@ -151,6 +151,7 @@ function calculateTreePath() {
     
     return path;
 }
+let treeAnimationPoints = [];
 
 function initializeTreeAnimationPoints(paths) {
     treeAnimationPoints = paths.map(path => ({
@@ -356,7 +357,7 @@ function updateAnimationState(movePoint, step) {
         maxLength: line.maxLength,
         opacity: line.opacity
     }));
-    // console.log('Active Line States:', activeLineStates);
+    
 
     // 모든 선이 완료되었는지 체크 (진행도가 1에 도달했거나 opacity가 0인 경우)
     const allLinesReachedTarget = activeLines.length === 0 || 
@@ -364,10 +365,8 @@ function updateAnimationState(movePoint, step) {
             line.progress >= 1 || line.opacity === 0
         );
 
-    // console.log('All Lines Reached:', allLinesReachedTarget);
-    // console.log('Pending Creations:', pendingLineCreations);
+    
     if (step === 1 || step === 0) {
-        // console.log('Step 0: Resetting all states');
         activeLines = [];
         pendingLineCreations = [];
         recentVisitedPositions = [];
@@ -378,13 +377,11 @@ function updateAnimationState(movePoint, step) {
         // 새로운 선 생성 예약
         // DATA 위치 (첫 번째 점)에서는 즉시 생성하고 기록하지 않음
         if (distances.data < threshold && activeLines.length === 0) {
-            // console.log('Creating first N5 line');
             createLinesAtPosition(chain2X, centerY, radius, 'N5', currentTime);
         }
         // Calculator와 Token 위치는 대기열에 기록
         else if (distances.calculator < threshold) {
             if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY)) {
-                // console.log('Recording Calculator point for later');
                 pendingLineCreations.push({
                     position: { x: chain2X, y: centerY, radius: radius },
                     type: 'random'
@@ -393,7 +390,6 @@ function updateAnimationState(movePoint, step) {
         }
         else if (distances.token < threshold) {
             if (!pendingLineCreations.some(p => p.type === 'random' && p.position.y === centerY + 120)) {
-                // console.log('Recording Token point for later');
                 pendingLineCreations.push({
                     position: { x: chain2X, y: centerY, radius: radius },
                     type: 'random'
@@ -403,11 +399,8 @@ function updateAnimationState(movePoint, step) {
     }
     // 다음 선 생성 처리
     if (pendingLineCreations.length > 0 && allLinesReachedTarget && activeLines.length === 0) {
-        // console.log('Creating next line from queue');
-        // console.log('Queue before creation:', JSON.stringify(pendingLineCreations));
         const nextCreation = pendingLineCreations.shift();
         createLinesAtPosition(nextCreation.position.x, nextCreation.position.y, nextCreation.position.radius, nextCreation.type, currentTime);
-        // console.log('Queue after creation:', JSON.stringify(pendingLineCreations));
     }
 
     // 기존 선 업데이트
@@ -432,9 +425,6 @@ function updateLines(currentTime) {
         return line.progress < 1; // 완전히 끝난 선은 제거
     });
 
-    if (oldLength !== activeLines.length) {
-        // console.log(`Lines updated: ${oldLength} -> ${activeLines.length}`);
-    }
 }
 
 // createLines 함수도 수정
@@ -474,7 +464,6 @@ function createLinesAtPosition(x, y, radius, sourceType, currentTime) {
     }
     const newLines = createLines(currentSource, x, y, radius, currentTime);
     activeLines = activeLines.concat(newLines);
-    // console.log(sourceType);
 
     // 최근 방문 기록 추가
     recentVisitedPositions.push({
@@ -653,6 +642,9 @@ function getMultilineTextDimensions(text, hasIcon = false, hasBox = false) {
     const lineHeight = 18;
     let maxWidth = 0;
     
+    // 폰트 설정을 명시적으로 지정
+    ctx.font = '18px "Times New Roman"';
+    
     const padding = { x: 12, y: 6 };
     const iconSpace = hasIcon ? {
         height: ICON_CONFIG.height + ICON_CONFIG.spacing - padding.y * 2,
@@ -662,11 +654,15 @@ function getMultilineTextDimensions(text, hasIcon = false, hasBox = false) {
         width: 0
     };
 
+    
+    
+    // 각 라인의 너비 계산을 로깅
     lines.forEach(line => {
         const metrics = ctx.measureText(line);
         const width = metrics.width + (padding.x * 2.2) + iconSpace.width;
         maxWidth = Math.max(maxWidth, width);
     });
+
 
     if (hasBox) {
         return {
@@ -680,14 +676,27 @@ function getMultilineTextDimensions(text, hasIcon = false, hasBox = false) {
         height: (lines.length * lineHeight) + ICON_CONFIG.height + ICON_CONFIG.topPadding
     };
 }
+
+// draw 함수 내에서도 확인
+function draw() {
+    // ...
+    const dataMetrics = getMultilineTextDimensions("Original\nAggregated Data", false);
+    
+    const dataTextX = chain1X + radius - dataMetrics.width/2;
+    // ...
+}
     // 여러 데이터 포인트를 추적하기 위한 구조
-let treeAnimationPoints = [];
 
 // 트리 경로 계산 함수 수정
 function calculateAllTreePaths() {
     const paths = [];
+    // 마지막 레벨의 시작과 끝 인덱스 계산 수정
+    const levelSize = Math.pow(2, TREE_LEVELS);  // 마지막 레벨의 노드 수
+    const totalNodes = Math.pow(2, TREE_LEVELS + 1) - 1;  // 전체 노드 수
+    const lastLevelStart = totalNodes - levelSize;  // 마지막 레벨 시작 인덱스
+    
     // 마지막 레벨의 노드들
-    const lastLevelNodes = treeNodes.slice(-Math.pow(2, TREE_LEVELS));
+    const lastLevelNodes = treeNodes.slice(lastLevelStart, totalNodes);
     
     // 각 마지막 레벨 노드에 대해 경로 생성
     lastLevelNodes.forEach(startNode => {
@@ -695,9 +704,9 @@ function calculateAllTreePaths() {
         let currentNode = startNode;
         let currentIndex = treeNodes.indexOf(currentNode);
         
+        // 루트까지의 경로 생성
         while (currentIndex > 0) {
             path.push({x: currentNode.x, y: currentNode.y});
-            // 부모 노드의 인덱스 계산
             const parentIndex = Math.floor((currentIndex - 1) / 2);
             currentNode = treeNodes[parentIndex];
             currentIndex = parentIndex;
@@ -895,6 +904,7 @@ function calculateAnimationPath(step) {
             // 트리 애니메이션 포인트 그리기
             treeAnimationPoints.forEach(point => {
                 if (point.active) {
+                    // 현재 이동 중인 점 그리기
                     ctx.beginPath();
                     ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
                     ctx.fillStyle = 'rgba(50,50,50,1)';
@@ -904,7 +914,7 @@ function calculateAnimationPath(step) {
                     if (point.currentSegment < point.path.length - 1) {
                         const nextPoint = point.path[point.currentSegment + 1];
                         ctx.beginPath();
-                        ctx.moveTo(point.path[point.currentSegment].x, point.path[point.currentSegment].y);
+                        ctx.moveTo(point.x, point.y);  // point.path[point.currentSegment].x 대신 현재 위치 사용
                         ctx.lineTo(nextPoint.x, nextPoint.y);
                         ctx.strokeStyle = 'rgba(50,50,50,0.5)';
                         ctx.lineWidth = 1;
@@ -944,11 +954,10 @@ function animate() {
                 const dy = nextPoint.y - point.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                // 트리 애니메이션 전용 속도 사용
                 if (distance <= ANIMATION_SPEEDS.tree) {
-                    point.currentSegment++;
                     point.x = nextPoint.x;
                     point.y = nextPoint.y;
+                    point.currentSegment++;
                 } else {
                     const ratio = ANIMATION_SPEEDS.tree / distance;
                     point.x += dx * ratio;
@@ -1215,7 +1224,9 @@ function getLabelSpacing() {
     
     // 평균 간격 반환
     return totalSpacing / spacingCount;
-}function calculateTreeNodes(startX, startY) {
+}
+function calculateTreeNodes(startX, startY) {
+    
     treeNodes = [];
     let currentLevel = [{ x: startX, y: startY }];
     treeNodes.push(...currentLevel);
@@ -1424,7 +1435,6 @@ function drawTree() {
             activeLines.every(line => line.progress >= 1 || line.opacity === 0);
     
     if (step === 1 || step === 0) {
-        // console.log('Step 0: Resetting all states');
         activeLines = [];
         pendingLineCreations = [];
         recentVisitedPositions = [];
@@ -1640,6 +1650,9 @@ function drawTree() {
             const lineHeight = 18;
             let maxWidth = 0;
             
+            // 폰트 설정을 명시적으로 지정
+            ctx.font = '18px "Times New Roman"';
+            
             const padding = { x: 12, y: 6 };
             const iconSpace = hasIcon ? {
                 height: ICON_CONFIG.height + ICON_CONFIG.spacing - padding.y * 2,
@@ -1649,6 +1662,9 @@ function drawTree() {
                 width: 0
             };
         
+            
+            
+            // 각 라인의 너비 계산을 로깅
             lines.forEach(line => {
                 const metrics = ctx.measureText(line);
                 const width = metrics.width + (padding.x * 2.2) + iconSpace.width;
@@ -1666,6 +1682,15 @@ function drawTree() {
                 width: maxWidth,
                 height: (lines.length * lineHeight) + ICON_CONFIG.height + ICON_CONFIG.topPadding
             };
+        }
+        
+        // draw 함수 내에서도 확인
+        function draw() {
+            // ...
+            const dataMetrics = getMultilineTextDimensions("Original\nAggregated Data", false);
+            
+            const dataTextX = chain1X + radius - dataMetrics.width/2;
+            // ...
         }
             // 여러 데이터 포인트를 추적하기 위한 구조
         let treeAnimationPoints = [];
@@ -2205,6 +2230,9 @@ async function initializeCanvas3(canvasId){
         const lineHeight = 18;
         let maxWidth = 0;
         
+        // 폰트 설정을 명시적으로 지정
+        ctx.font = '18px "Times New Roman"';
+        
         const padding = { x: 12, y: 6 };
         const iconSpace = hasIcon ? {
             height: ICON_CONFIG.height + ICON_CONFIG.spacing - padding.y * 2,
@@ -2214,23 +2242,38 @@ async function initializeCanvas3(canvasId){
             width: 0
         };
     
+        
+        
+        // 각 라인의 너비 계산을 로깅
         lines.forEach(line => {
             const metrics = ctx.measureText(line);
             const width = metrics.width + (padding.x * 2.2) + iconSpace.width;
+            
             maxWidth = Math.max(maxWidth, width);
         });
     
+
+    
         if (hasBox) {
             return {
-                width: maxWidth ,
+                width: maxWidth,
                 height: (lines.length * lineHeight) + (padding.y * 2) + iconSpace.height
             };
         }
         
         return {
-            width: maxWidth - (padding.x * 1.6),
+            width: maxWidth,
             height: (lines.length * lineHeight) + ICON_CONFIG.height + ICON_CONFIG.topPadding
         };
+    }
+    
+    // draw 함수 내에서도 확인
+    function draw() {
+        // ...
+        const dataMetrics = getMultilineTextDimensions("Original\nAggregated Data", false);
+        
+        const dataTextX = chain1X + radius - dataMetrics.width/2;
+        // ...
     }
 
     function drawArrow(points) {
