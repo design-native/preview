@@ -52,6 +52,10 @@ body {
         max-height: calc((var(--vh, 1vh)* 100) - 20px) !important;
         display: block;
     }
+    .secItem[class*="sec-product"] .contentBox li h3{
+        min-height: calc(2.6rem * 3); /* 동적으로 계산 */
+
+    }
 }
 
 @media only screen and (max-width:900px) {

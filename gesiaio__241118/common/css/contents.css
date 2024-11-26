@@ -377,6 +377,7 @@ body.loading .secItem:not(.active){
 }
 .secItem[class*="sec-product"] .contentBox li h3 {
   margin-bottom: 20px;
+  
 }
 .secItem[class*="sec-product"] .contentBox .iconBox{
   width: 240px;
