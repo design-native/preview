@@ -120,7 +120,7 @@ let lang1 = ["CAuth", "CAuth"];
 let lang2 = ["Carbon Authentication", "탄소 인증"];
 let lang3 = ["Transaction Authentication", "거래 인증"];
 let lang4 = ["Exchange Authentication", "교환 인증"];
-let lang5 = ["Trader Authentication", "트레이더 인증"];
+let lang5 = ["Trader Authentication", "거래자 인증"];
 let lang6 = ["Emission Authentication", "배출 인증"];
 let lang7 = ["Emission Data Provider Authentication", "배출 데이터 제공자 인증"];
 let lang8 = ["Emission Data Administrator Authentication", "배출 데이터 관리자 인증"];
@@ -132,11 +132,11 @@ let lang13 = ["Carbon Platform", "탄소 플랫폼"];
 let lang14 = ["Net-Zero Dashboard", "넷제로 대시보드"];
 let lang15 = ["Emission Dashboard", "배출 대시보드"];
 let lang16 = ["Offset Dashboard", "상쇄 대시보드"];
-let lang17 = ["Explore", "탐색"];
-let lang18 = ["Carbon Explore", "탄소 탐색"];
-let lang19 = ["Net-Zero Explore", "넷제로 탐색"];
-let lang20 = ["Emission Explore", "배출 탐색"];
-let lang21 = ["Offset Explore", "상쇄 탐색"];
+let lang17 = ["Explore", "탐색기"];
+let lang18 = ["Carbon Explore", "탄소 탐색기"];
+let lang19 = ["Net-Zero Explore", "넷제로 탐색기"];
+let lang20 = ["Emission Explore", "배출 탐색기"];
+let lang21 = ["Offset Explore", "상쇄 탐색기"];
 let lang22 = ["Community", "커뮤니티"];
 let lang23 = ["Developer", "개발자"];
 let lang24 = ["Github", "Github"];
@@ -148,34 +148,76 @@ let lang29 = ["Communication", "커뮤니케이션"];
 let lang30 = ["Twitter", "트위터"];
 let lang31 = ["Telegram", "텔레그램"];
 let lang32 = ["<B>Net-Zero Layer 3 Platform</b>", "<B>넷제로 레이어 3 플랫폼</b>"];
-let lang33 = ["To tokenize centralized carbon emission data, the Notary Oracle verifies the data and certifies it through a multi-signature process between the sender and receiver, ensuring the reliability of the external data.", "중앙집중식 탄소 배출 데이터를 토큰화하기 위해, 노타리 오라클은 데이터를 검증하고 송신자와 수신자 간의 다중 서명 과정을 통해 인증하여 외부 데이터의 신뢰성을 보장합니다."];
+let lang33 = [
+    "To tokenize centralized carbon emission data, the Notary Oracle verifies the data and certifies it through a multi-signature process between the sender and receiver, ensuring the reliability of the external data.",
+    "중앙화된 탄소 배출 데이터를 토큰화하기 위해, 노터리 오라클은 데이터를 검증하고 송신자와 수신자 간의 다중 서명 과정을 통해 이를 인증하여 외부 데이터의 신뢰성을 보장합니다."
+];
 let lang34 = ["", ""];
 let lang35 = ["<b>Net-Zero Consensus</b>", "<b>넷제로 컨센서스</b>"];
-let lang36 = ["<B>Creating a digital carbon management platform<br/> that connects carbon emissions with reduction</b>", "<B>탄소 배출과 감축을 연결하는 <br/>디지털 탄소 관리 플랫폼을 구축</b>"];
-let lang37 = ["The Net-Zero Consensus is a mechanism designed to transparently manage and coordinate carbon emissions, reductions, and carbon credits. <Br/>It leverages blockchain technology to reliably verify and record carbon credits (emission rights and offset credits), reduction activities, and the burning process.", "넷제로 컨센서스(Net-Zero Consensus)는 탄소 배출, 감축, 그리고 탄소 크레딧의 관리 및 조정을 투명하게 수행하기 위해 설계된 메커니즘입니다. <Br/>이 메커니즘은 블록체인 기술을 활용하여 탄소 크레딧(배출권 및 상쇄 크레딧), 감축 활동, 소각 과정 등을 신뢰성 있게 검증하고 기록합니다."];
+let lang36 = [
+    "<B>Creating a digital carbon management platform<br/> that connects carbon emissions with reduction</b>",
+    "<B>탄소 배출과 감축을 연결하는 <br/>디지털 탄소 관리 플랫폼 구축</b>"
+];
+let lang37 = [
+    "The Net-Zero Consensus is a mechanism designed to transparently manage and coordinate carbon emissions, reductions, and carbon credits. <Br/>It leverages blockchain technology to reliably verify and record carbon credits (emission rights and offset credits), reduction activities, and the burning process.",
+    "넷제로 컨센서스(Net-Zero Consensus)는 탄소 배출, 감축, 그리고 탄소 크레딧의 관리 및 조정을 투명하게 수행하기 위해 설계된 메커니즘입니다. <Br/>이 메커니즘은 블록체인 기술을 활용하여 탄소 크레딧(배출권 및 상쇄 크레딧), 감축 활동, 소각 과정 등을 신뢰성 있게 검증하고 기록합니다."
+];
 let lang38 = ["<b>Carbon Credit Burning Consensus</b>", "<b>탄소 크레딧 소각 컨센서스</b>"];
-let lang39 = ["<B>Permanent carbon credit burning mechanism for carbon emission offsetting.</b>", "<b>탄소 배출 상쇄를 위한 <br/>영구적인 탄소 크레딧 소각 메커니즘.</b>"];
-let lang40 = ["1. Carbon emission offset and carbon credit burning<br/>2. Carbon emission verification through burn request<br/>3. Thorough verification process via rollup<br/>4. Permanently recorded net-zero status on the blockchain", "1. 탄소 배출 상쇄 및 탄소 크레딧 소각<br/>2. 소각 요청을 통한 탄소 배출 검증<br/>3. 롤업을 통한 철저한 검증 프로세스<br/>4. 블록체인에 영구적으로 기록된 넷제로 상태"];
+let lang39 = [
+    "<B>Permanent carbon credit burning mechanism for carbon emission offsetting.</b>",
+    "<b>탄소 배출 상쇄를 위한 영구적인 탄소 크레딧 소각 메커니즘.</b>"
+];
+let lang40 = [
+    "1. Carbon emission offset and carbon credit burning<br/>2. Carbon emission verification through burn request<br/>3. Thorough verification process via rollup<br/>4. Permanently recorded net-zero status on the blockchain",
+    "1. 탄소 배출 상쇄 및 탄소 크레딧 소각<br/>2. 소각 요청을 통한 탄소 배출 검증<br/>3. 롤업을 통한 철저한 검증 프로세스<br/>4. 블록체인에 영구적으로 기록된 넷제로 상태"
+];
 let lang41 = ["<b>Carbon Reduction Consensus</b>", "<b>탄소 감축 컨센서스</b>"];
-let lang42 = ["<B>We design systematic reduction strategies and strengthen sustainability through performance-based carbon credit issuance.</b>", "<b>우리는 체계적인 감축 전략을 설계하고 성과 기반 탄소 크레딧 발행을 통해 지속 가능성을 강화합니다.</b>"];
-let lang43 = ["1. Accurate identification of emission sources<br/>2. Analysis and verification of reduction activities<br/>3. Carbon credit issuance upon achievement of reduction targets", "1. 배출원 정확히 식별<br/>2. 감축 활동 분석 및 검증<br/>3. 감축 목표 달성 시 탄소 크레딧 발행"];
+let lang42 = [
+    "<B>We design systematic reduction strategies and strengthen sustainability through performance-based carbon credit issuance.</b>",
+    "<b>체계적인 감축 전략을 설계하고 성과 기반 탄소 크레딧 발행을 통해 지속 가능성을 강화합니다.</b>"
+];
+let lang43 = [
+    "1. Accurate identification of emission sources<br/>2. Analysis and verification of reduction activities<br/>3. Carbon credit issuance upon achievement of reduction targets",
+    "1. 배출원 정확히 식별<br/>2. 감축 활동 분석 및 검증<br/>3. 감축 목표 달성 시 탄소 크레딧 발행"
+];
 let lang44 = ["<b>Carbon Emission Data Tokenization</b>", "<b>탄소 배출 데이터 토큰화</b>"];
-let lang45 = ["The Notary Oracle tokenizes external carbon emission data using calculators from certified institutions.", "노타리 오라클은 인증 기관의 계산기를 사용하여 외부 탄소 배출 데이터를 토큰화합니다."];
+let lang45 = [
+    "The Notary Oracle tokenizes external carbon emission data using calculators from certified institutions.",
+    "노터리 오라클은 인증 기관의 계산기를 활용해 외부 탄소 배출 데이터를 토큰화합니다."
+];
 let lang46 = ["<b>Carbon Offset Data Tokenization</b>", "<b>탄소 상쇄 데이터 토큰화</b>"];
-let lang47 = ["The Notary Oracle tokenizes external carbon absorption and reduction data authenticated by certified institutions.", "노타리 오라클은 인증 기관에서 인증한 외부 탄소 흡수 및 감축 데이터를 토큰화합니다."];
+let lang47 = [
+    "The Notary Oracle tokenizes external carbon absorption and reduction data authenticated by certified institutions.",
+    "노터리 오라클은 인증 기관에서 인증한 외부 탄소 흡수 및 감축 데이터를 토큰화합니다."
+];
 let lang48 = ["<B>Preventing Double Counting in Cross-Chain Token Transfers</b>", "<B>크로스체인 토큰 전송 시 이중 계산 방지</b>"];
 let lang49 = ["<b>Carbon Credit Products<b/>", "<B>탄소 크레딧 제품<b/>"];
-let lang50 = ["<b>ExoMad Green's Sustainable<br/>Biochar Project in Bolivia<b/>", "<b>ExoMad Green의 지속 가능한<br/>바이오차 프로젝트 (볼리비아)<b/>"];
-let lang51 = ["ExoMad Green's sustainable biochar project creates environmental and social value through a circular economy model.<br/> In March 2023, ExoMad Green established its first biochar facility in Concepción, Bolivia.<br/> We plan to significantly expand our operations during 2024.<br/> These facilities will collectively harness the power of biochar to sequester up to 200,000 tons of CO2 annually.", "ExoMad Green의 지속 가능한 바이오차 프로젝트는 순환 경제 모델을 통해 환경적 및 사회적 가치를 창출합니다.<br/> 2023년 3월, ExoMad Green은 볼리비아 콘셉시온에 첫 바이오차 시설을 설립했습니다.<br/> 2024년 동안 운영을 대대적으로 확장할 계획입니다.<br/> 이 시설들은 바이오차의 힘을 활용하여 연간 최대 200,000톤의 CO2를 격리할 것입니다."];
-let lang52 = ["<b>A Unique and Influential<br/>REDD+ Project Preserving<br/>the Tropical Rainforest<b/>", "<B>독특하고 영향력 있는<br/>REDD+ 프로젝트로 열대 우림 보존<b/>"];
-let lang53 = ["In collaboration with Netherlands-based Quadriz B.V., its local affiliate Quadriz Paraguay S.A., and Atenil S.A., a major landowner in Paraguay's Chaco, the project has implemented verified carbon standards along with climate, community, and biodiversity standards (VCS – CCBS) to avoid planned deforestation.", "네덜란드 기반 Quadriz B.V., 현지 계열사 Quadriz Paraguay S.A., 그리고 파라과이 차코 지역의 주요 지주인 Atenil S.A.와 협력하여 이 프로젝트는 기후, 커뮤니티 및 생물다양성 기준(VCS – CCBS)과 함께 검증된 탄소 기준을 구현하여 계획된 산림 벌채를 방지했습니다."];
+let lang50 = [
+    "<b>ExoMad Green's Sustainable<br/>Biochar Project in Bolivia<b/>",
+    "<b>ExoMad Green의 지속 가능한<br/>바이오차 프로젝트 (볼리비아)<b/>"
+];
+let lang51 = [
+    "ExoMad Green's sustainable biochar project creates environmental and social value through a circular economy model.<br/> In March 2023, ExoMad Green established its first biochar facility in Concepción, Bolivia.<br/> We plan to significantly expand our operations during 2024.<br/> These facilities will collectively harness the power of biochar to sequester up to 200,000 tons of CO2 annually.",
+    "ExoMad Green의 지속 가능한 바이오차 프로젝트는 순환 경제 모델을 통해 환경적 및 사회적 가치를 창출합니다.<br/> 2023년 3월, ExoMad Green은 볼리비아 콘셉시온에 첫 바이오차 시설을 설립했습니다.<br/> 2024년 동안 운영을 대대적으로 확장할 계획입니다.<br/> 이 시설들은 바이오차를 활용하여 연간 최대 200,000톤의 CO2를 격리할 것입니다."
+];
+let lang52 = [
+    "<b>A Unique and Influential<br/>REDD+ Project Preserving<br/>the Tropical Rainforest<b/>",
+    "<B>독특하고 영향력 있는<br/>REDD+ 프로젝트로 열대 우림 보존<b/>"
+];
+let lang53 = [
+    "In collaboration with Netherlands-based Quadriz B.V., its local affiliate Quadriz Paraguay S.A., and Atenil S.A., a major landowner in Paraguay's Chaco, the project has implemented verified carbon standards along with climate, community, and biodiversity standards (VCS – CCBS) to avoid planned deforestation.",
+    "네덜란드 기반 Quadriz B.V., 현지 계열사 Quadriz Paraguay S.A., 그리고 파라과이 차코 지역의 주요 지주인 Atenil S.A.와 협력하여 이 프로젝트는 기후, 커뮤니티 및 생물다양성 기준(VCS – CCBS)과 함께 검증된 탄소 기준을 구현하여 계획된 산림 벌채를 방지했습니다."
+];
 let lang54 = ["<b>Delta Blue<br/>Carbon Project</b>", "<B>델타 블루<br/>탄소 프로젝트<b/>"];
-let lang55 = ["The Indus Delta Blue Carbon Project is working to restore one of the world's largest arid climate mangrove forests located within the Sindh Indus Delta region in Thatta and Sujawal areas of Southeastern Sindh province, Pakistan.", "인더스 델타 블루 탄소 프로젝트는 <br/>파키스탄 동남부 신드 주의 타타와 수자왈 지역에 위치한 세계에서 가장 큰 건조 기후 맹그로브 숲 중 하나를 복원하기 위해 노력하고 있습니다."];
+let lang55 = [
+    "The Indus Delta Blue Carbon Project is working to restore one of the world's largest arid climate mangrove forests located within the Sindh Indus Delta region in Thatta and Sujawal areas of Southeastern Sindh province, Pakistan.",
+    "인더스 델타 블루 탄소 프로젝트는 파키스탄 동남부 신드 주의 타타와 수자왈 지역에 위치한 세계에서 가장 큰 건조 기후 맹그로브 숲 중 하나를 복원하기 위해 노력하고 있습니다."
+];
 let lang56 = ["CAuth", "CAuth"];
 let lang57 = ["Carbon Authentication", "탄소 인증"];
 let lang58 = ["Transaction Authentication", "거래 인증"];
 let lang59 = ["Exchange Authentication", "교환 인증"];
-let lang60 = ["Trader Authentication", "트레이더 인증"];
+let lang60 = ["Trader Authentication", "거래자 인증"];
 let lang61 = ["Emission Authentication", "배출 인증"];
 let lang62 = ["Emission Data Provider Authentication", "배출 데이터 제공자 인증"];
 let lang63 = ["Emission Data Administrator Authentication", "배출 데이터 관리자 인증"];
@@ -187,11 +229,11 @@ let lang68 = ["Carbon Platform", "탄소 플랫폼"];
 let lang69 = ["Net-Zero Dashboard", "넷제로 대시보드"];
 let lang70 = ["Emission Dashboard", "배출 대시보드"];
 let lang71 = ["Offset Dashboard", "상쇄 대시보드"];
-let lang72 = ["Explore", "탐색"];
-let lang73 = ["Carbon Explore", "탄소 탐색"];
-let lang74 = ["Net-Zero Explore", "넷제로 탐색"];
-let lang75 = ["Emission Explore", "배출 탐색"];
-let lang76 = ["Offset Explore", "상쇄 탐색"];
+let lang72 = ["Explore", "탐색기"];
+let lang73 = ["Carbon Explore", "탄소 탐색기"];
+let lang74 = ["Net-Zero Explore", "넷제로 탐색기"];
+let lang75 = ["Emission Explore", "배출 탐색기"];
+let lang76 = ["Offset Explore", "상쇄 탐색기"];
 let lang77 = ["Community", "커뮤니티"];
 let lang78 = ["Developer", "개발자"];
 let lang79 = ["Github", "Github"];
@@ -207,7 +249,6 @@ let lang88 = ["Status", "상태"];
 let lang89 = ["Legal", "법적"];
 let lang90 = ["Privacy", "개인정보"];
 let lang91 = ["Terms", "이용 약관"];
-
 let lang92 = ["Net-Zero School", "넷제로 스쿨"];
 let lang93 = [
     "A project that aggregates carbon emissions from elementary, middle, and high schools to contribute to achieving Net-Zero goals. <br/>By analyzing energy usage data from each school, it assesses carbon emissions and suggests reduction strategies.",
@@ -226,12 +267,24 @@ let lang97 = [
 let lang98 = ["Net-Zero Wallet", "넷제로 월렛"];
 let lang99 = [
     "Net-Zero Wallet securely stores carbon credits issued <br/>by the Offset Chain and supports reliable carbon management and transactions through comprehensive authentication, including transaction, emission, and offset authentication.",
-    "넷제로 월렛은 Offset Chain에서 발행한 탄소 크레딧을 안전하게 저장하고, <br/>거래, 배출, 상쇄 인증을 포함한 종합 인증을 통해 신뢰할 수 있는 탄소 관리 및 거래를 지원합니다."
+    "넷제로 월렛(Net-Zero Wallet)은 오프셋 체인(Offset Chain)에서 발행된 탄소 크레딧을 안전하게 저장하며, 거래, 배출, 상쇄 인증을 포함한 종합적인 인증 과정을 통해 신뢰할 수 있는 탄소 관리와 거래를 지원합니다."
 ];
 let lang100 = ["What is GESIA", "GESIA란"];
 let lang101 = [
     "GESIA, a Net-Zero Layer 3 platform that transparently and efficiently manages <br/>carbon emission tracking, reduction, and offset activities, leverages innovative blockchain layer technology, IoT integration, and AI-based analysis to help businesses, individuals, and governments effectively achieve their carbon neutrality goals.",
     "GESIA는 탄소 배출 추적, 감축, 상쇄 활동을 투명하고 효율적으로 관리하는 넷제로 레이어 3 플랫폼으로, <br/>혁신적인 블록체인 레이어 기술, IoT 통합 및 AI 기반 분석을 활용하여 기업, 개인 및 정부가 탄소 중립 목표를 효과적으로 달성하도록 지원합니다."
+];
+let lang102 = [
+    "To tokenize centralized carbon offset data (carbon absorption and carbon reduction), the Notary Oracle verifies the data and certifies it through a multi-signature process between the data sender and receiver, ensuring the reliability of the external data.",
+    "중앙화된 탄소 상쇄 데이터(탄소 흡수 및 감축)를 토큰화하기 위해, 노터리 오라클은 데이터를 검증한 뒤, 데이터 송신자와 수신자 간의 다중 서명 프로세스를 통해 이를 인증하여 외부 데이터의 신뢰성을 보장합니다."
+];
+let lang103 = [
+    "An Integrated Framework for Achieving Net Zero by Aggregating Carbon Emission and Offset Data and Implementing a Consensus Algorithm for Carbon Credit Burning and Reduction through a Notarized Multi-Signature Process.",
+    "탄소 배출 및 상쇄 데이터를 통합 관리하고, 다중 서명 인증 프로세스를 통해 탄소 크레딧 소각과 감축을 위한 컨센서스 알고리즘을 구현하여 넷제로를 달성하는 통합 프레임워크"
+];
+let lang104 = [
+    "Implementing Net Zero by Certifying Carbon Data Tokens through Consensus Algorithms and Multi-Signature Validation",
+    "컨센서스 알고리즘과 다중 서명 검증을 활용한 탄소 데이터 토큰 인증으로 넷제로 구현"
 ];
 
 
@@ -245,7 +298,7 @@ function changeLang(target){
         
 
         
-        for (i = 0; i < 97; i++) {
+        for (i = 0; i < 104; i++) {
             var text = eval('lang'+(i+1));
             $('[data-lang="'+ (i+1) +'"]').html(text[(langNum - 1)]);
         }
