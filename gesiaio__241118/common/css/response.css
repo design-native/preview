@@ -98,6 +98,16 @@ body {
         }
     }
 
+    @media only screen and (max-height:700px) {
+    
+        .secItem[class*="sec-detail"],
+        .secItem[class*="sec-detail"] > .fp-tableCell
+        {
+            height: fit-content !important;     
+            max-height: unset !important;
+        }
+    }
+
     
 }
 @media (orientation: portrait )  {
@@ -145,17 +155,13 @@ body {
         display: none;
     }
 
-    header > .wrap,
-    .secItem[class*="sec-partners"] .contentBox{
+    header > .wrap
+    {
         padding: 20px;
     }
     header .logo {
         height: 28px;
         width: 200px;
-    }
-    header .category .cateItem > a{
-        opacity: .5;
-        padding: 0;
     }
     header .category .cateItem .cateSub{
         position: unset;
@@ -166,18 +172,27 @@ body {
         padding:0;
     }
     body.headerON header .category{
-        gap: 30px;
+        gap: 24px;
         padding-top: 66px;
     }
     header .category .cateItem .cateSub ul{
-        gap: 6px;
+        gap: 8px;
     }
-    header .category .cateItem .cateSub ul li .title + a{
-        margin-top: 6px;
+    header .category .cateItem{
+        text-align: left;
     }
-header .category .cateItem:nth-child(5) .cateSub ul{
-    flex-direction:row ;
-  }
+    header .category .cateItem > a{
+        padding: 0 0 2px;
+        font-weight: bold;
+        width: 100%;
+        border-bottom:1px solid #000
+    }
+    header .category .cateItem .label {
+            opacity: .6;
+            font-size: .8em;
+            font-weight: 500;
+
+    }
   .secItem[class*="sec-point"] .contentBox li{
     padding:20px 20px 40px !important;
     width: 100%;

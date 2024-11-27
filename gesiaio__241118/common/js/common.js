@@ -477,7 +477,7 @@ $(document).ready(function() {
 
         var scrolloverflowed;
 
-        if(window.innerWidth < 900 ){
+        if(window.innerWidth < 900 || window.innerHeight < 700 ){
             $('body').attr('data-fullpage','break');
             scrolloverflowed = false;
         } else {
@@ -501,6 +501,7 @@ $(document).ready(function() {
             autoScrolling : scrolloverflowed,      
             fitToSection : scrolloverflowed,      
             responsiveWidth: 900,
+            responsiveHeight: 700,
             verticalCentered: true,
             fixedElements: 'header',
             animateAnchor : false,

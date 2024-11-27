@@ -9,7 +9,8 @@
   body[data-lang="kr"] h2{ font-size: 3rem; line-height: 4rem;}
   body[data-lang="en"] h3{ font-size: 2.2rem; line-height: 2.6rem;}
   body[data-lang="kr"] h3{ font-size: 2.2rem; line-height: 3rem;}
-  h4{ font-size: 1.6rem; line-height: 2.4rem;}
+  body[data-lang="en"] h4{ font-size: 1.6rem; line-height: 2rem;}
+  body[data-lang="kr"] h4{ font-size: 1.6rem; line-height: 2.4rem;}
   h5{ font-size: 1.4rem; line-height: 1.6rem;}
   h6{ font-size: 1rem; line-height: 1.6rem;}
   p{ font-size: 1rem; line-height: 1.8rem;}
@@ -415,15 +416,21 @@ body.loading .secItem:not(.active){
   display: flex;
   flex-direction: column;
 }
-.secItem[class*="sec-partners"] .contentBox .partnerItem h3 {
+
+.secItem[class*="sec-partners"] .contentBox .partnerItem .titleBox{
   text-align: left;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   margin-top: 30px;
   width: 100%;
-  /* border-bottom: 1px solid #000; */
-  padding-bottom: 5px;
 }
-.secItem[class*="sec-partners"] .contentBox .partnerItem:first-child h3 {
+.secItem[class*="sec-partners"] .contentBox .partnerItem .titleBox h4{
+  padding-left: 20px;
+  border-left: 3px solid #000;
+}
+.secItem[class*="sec-partners"] .contentBox .partnerItem h3 {
+  padding-bottom: 10px;
+}
+.secItem[class*="sec-partners"] .contentBox .partnerItem:first-child .titleBox {
   margin-top: unset;
 }
 .secItem[class*="sec-partners"] .contentBox .logoItems{
@@ -431,10 +438,11 @@ body.loading .secItem:not(.active){
   align-items: center;
   flex: 1;
   display: flex;
-  gap: calc(10px*5/2);
+  gap: calc(10px*5/3);
 
   flex-wrap: wrap;  /* 여러 줄로 나누기 */
   justify-content: center;
+  min-height: 60px;
 }
 .secItem[class*="sec-partners"] .contentBox .logoItems .logoItem {
   display: inline-block;
@@ -443,7 +451,7 @@ body.loading .secItem:not(.active){
   background-size: contain;
   background-position: center;
   height: 50px;
-  width:calc(100% /4 - 10px);
+  width:calc(100% /3 - 10px);
   background-repeat: no-repeat;
 }
 .secItem[class*="sec-partners"] .contentBox .logoItems.logo-small .logoItem {
