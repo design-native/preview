@@ -420,7 +420,8 @@ body.loading .secItem:not(.active){
   margin-bottom: 40px;
   margin-top: 30px;
   width: 100%;
-  border-bottom: 3px solid #000;
+  border-bottom: 1px solid #000;
+  padding-bottom: 5px;
 }
 .secItem[class*="sec-partners"] .contentBox .partnerItem:first-child h3 {
   margin-top: unset;
