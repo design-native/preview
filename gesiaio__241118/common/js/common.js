@@ -493,7 +493,9 @@ $(document).ready(function() {
                 'offset',
                 'cross-chain',
                 'products',
-                'info'
+                'partner1',
+                'partner2',
+                'info',
             ],
             // scrollBar: true,
             autoScrolling : scrolloverflowed,      

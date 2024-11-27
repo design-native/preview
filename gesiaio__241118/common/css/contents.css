@@ -237,15 +237,16 @@ body.loading .secItem:not(.active){
 }
 .secItem[class*="sec-point"] > .fp-tableCell,
 .secItem[class*="sec-detail"] > .fp-tableCell,
-.secItem[class*="sec-product"] > .fp-tableCell{
-  padding: 30px 30px 0;
+.secItem[class*="sec-product"] > .fp-tableCell,
+  .secItem[class*="sec-partners"] > .fp-tableCell{
+  padding: 30px 30px;
   padding-top: calc(92px + 30px);
 }
 .secItem[class*="sec-point"] > .fp-tableCell > .wrap,
 .secItem[class*="sec-detail"] > .fp-tableCell > .wrap,
-.secItem[class*="sec-product"] > .fp-tableCell > .wrap{
+.secItem[class*="sec-product"] > .fp-tableCell > .wrap,
+  .secItem[class*="sec-partners"] > .fp-tableCell > .wrap{
   border-radius: 20px;
-  background-color: #f5f5f5;
   width: 100%;
   height: 100%;
   padding: 60px;
@@ -257,10 +258,6 @@ body.loading .secItem:not(.active){
   gap: 40px;
 }
 
-.secItem[class*="sec-detail"] > .fp-tableCell > .wrap {
-  background-color: unset;
-  padding: unset;
-}
 .secItem[class*="sec-detail"] .titleBox {
   max-width: 1260px;
   margin: 0 auto;
@@ -391,3 +388,59 @@ body.loading .secItem:not(.active){
 .ic-product2{background-image: url(../resources/glo-product2.png);}
 .ic-product3{background-image: url(../resources/glo-product3.png);}
 
+
+
+.secItem[class*="sec-partners"]{
+}
+.secItem[class*="sec-partners"] > .fp-tableCell > .wrap{
+  text-align: center;
+  padding: unset;
+}
+.secItem[class*="sec-partners"] .contentBox{
+  flex: 1;
+  justify-content: center;
+  width: 100%;
+  padding: 40px;
+  align-items: center;
+  max-width: 1260px;
+  margin: 0 auto;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+.secItem[class*="sec-partners"] .contentBox .partnerItem {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.secItem[class*="sec-partners"] .contentBox .partnerItem h3 {
+  text-align: left;
+  margin-bottom: 40px;
+  margin-top: 30px;
+  width: 100%;
+  border-bottom: 3px solid #000;
+}
+.secItem[class*="sec-partners"] .contentBox .partnerItem:first-child h3 {
+  margin-top: unset;
+}
+.secItem[class*="sec-partners"] .contentBox .logoItems{
+  width: 100%;
+  align-items: center;
+  flex: 1;
+  display: flex;
+  gap: calc(10px*5/4);
+
+  flex-wrap: wrap;  /* 여러 줄로 나누기 */
+  justify-content: center;
+}
+.secItem[class*="sec-partners"] .contentBox .logoItems .logoItem {
+  display: inline-block;
+
+  background-size: contain;
+  background-position: center;
+  height: 40px;
+  width:calc(100% /5 - 10px);
+  background-repeat: no-repeat;
+}

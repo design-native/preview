@@ -128,9 +128,10 @@ body {
 
 
 @media only screen and (max-width:900px) {
-    .secItem:not(.sec-point, .sec-product) .fp-tableCell > .wrap{
+    .secItem:not(.sec-point, .sec-product, .sec-partners) .fp-tableCell > .wrap{
         padding: 68px 20px 20px;
     }
+    
     .btnLang {
         
         position: absolute;
@@ -144,7 +145,8 @@ body {
         display: none;
     }
 
-    header > .wrap{
+    header > .wrap,
+    .secItem[class*="sec-partners"] .contentBox{
         padding: 20px;
     }
     header .logo {
@@ -270,6 +272,13 @@ header .category .cateItem:nth-child(5) .cateSub ul{
     }
     .secItem[class*="sec-detail"] .titleBox .desc{
         margin-top: 20px;
+    }
+    .secItem[class*="sec-partners"] .contentBox .logoItems{
+        gap: calc(10px* 2 / 1);
+    }
+    .secItem[class*="sec-partners"] .contentBox .logoItems .logoItem{
+        width: calc(100% / 2 - 10px); 
+        height: 26px;
     }
 }
 

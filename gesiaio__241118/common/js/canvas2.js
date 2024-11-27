@@ -1530,7 +1530,6 @@ function drawAggregation() {
             const nextCreation = pendingLineCreations.shift();
             createConsensusesAtPosition(nextCreation.position.x, nextCreation.position.y, nextCreation.position.radius, nextCreation.type, currentTime);
         }
-        console.log(pendingLineCreations);
     
         // 기존 선 업데이트
         updateConsensuses(currentTime);
