@@ -93,26 +93,6 @@ class ChainRollupVisualizer {
         };
 
 
-        // 이미지 로드 및 관리를 위한 속성 추가
-        this.images = {
-            oauth: new Image(),
-            perceptron: new Image(),
-            oauthC: new Image(),  // C 원용 OAuth3 이미지 추가
-            loaded: false
-        };
-        
-        this.images.oauth.src = 'https://oauth3.io/common/resources/OE-brand_logo_OAuth3_6.png';
-        this.images.perceptron.src = 'https://oauth3.io/common/resources/OE-brand_logo_PerceptronSync_5.png';
-        this.images.oauthC.src = 'https://oauth3.io/common/resources/OE-brand_logo_OAuth3_6.png';  // C 원용 이미지 경로
-        
-        // 이미지 로드 완료 체크 수정
-        Promise.all([
-            new Promise(resolve => this.images.oauth.onload = resolve),
-            new Promise(resolve => this.images.perceptron.onload = resolve),
-            new Promise(resolve => this.images.oauthC.onload = resolve)
-        ]).then(() => {
-            this.images.loaded = true;
-        });
         // 상태 텍스트 설정
         this.statusText = {
             nodes: '.',
@@ -490,8 +470,8 @@ selectRandomActiveNodes() {
             this.fixedNodes[`chain${chainName}`] = nodes;
         });
     }
-// drawNodeText 함수 수정
-drawNodeText() {
+// drawNodeLabel 함수 수정
+drawNodeLabel() {
     const ratio = this.getIntersectionRatio();
     const currentTime = performance.now();
 
@@ -959,13 +939,13 @@ drawIntersection() {
 }
 
 // 교집합 영역 그리기 함수 추가
-drawIntersectionArea(chain1, chain2) {
-    const d = Math.hypot(chain2.x - chain1.x, chain2.y - chain1.y);
+drawIntersectionArea(chainA, chainB) {
+    const d = Math.hypot(chainB.x - chainA.x, chainB.y - chainA.y);
     // 100% 교집합 상태일 때 처리 추가
     if (d <= 0.001) {  // 완전히 겹친 상태
         this.ctx.fillStyle = 'rgba(0, 193, 132, 0.1)';
         this.ctx.beginPath();
-        this.ctx.arc(chain1.x, chain1.y, this.chainRadius, 0, Math.PI * 2);
+        this.ctx.arc(chainA.x, chainA.y, this.chainRadius, 0, Math.PI * 2);
         this.ctx.fill();
         return;
     }
@@ -976,17 +956,17 @@ drawIntersectionArea(chain1, chain2) {
     const a = (this.chainRadius * this.chainRadius - this.chainRadius * this.chainRadius + d * d) / (2 * d);
     const h = Math.sqrt(this.chainRadius * this.chainRadius - a * a);
 
-    const px = chain1.x + a * (chain2.x - chain1.x) / d;
-    const py = chain1.y + a * (chain2.y - chain1.y) / d;
+    const px = chainA.x + a * (chainB.x - chainA.x) / d;
+    const py = chainA.y + a * (chainB.y - chainA.y) / d;
 
     const intersectionNodes = [
         {
-            x: px + h * (chain2.y - chain1.y) / d,
-            y: py - h * (chain2.x - chain1.x) / d
+            x: px + h * (chainB.y - chainA.y) / d,
+            y: py - h * (chainB.x - chainA.x) / d
         },
         {
-            x: px - h * (chain2.y - chain1.y) / d,
-            y: py + h * (chain2.x - chain1.x) / d
+            x: px - h * (chainB.y - chainA.y) / d,
+            y: py + h * (chainB.x - chainA.x) / d
         }
     ];
 
@@ -995,15 +975,15 @@ drawIntersectionArea(chain1, chain2) {
     this.ctx.beginPath();
     this.ctx.moveTo(intersectionNodes[0].x, intersectionNodes[0].y);
 
-    let angle1 = Math.atan2(intersectionNodes[0].y - chain1.y, intersectionNodes[0].x - chain1.x);
-    let angle2 = Math.atan2(intersectionNodes[1].y - chain1.y, intersectionNodes[1].x - chain1.x);
+    let angle1 = Math.atan2(intersectionNodes[0].y - chainA.y, intersectionNodes[0].x - chainA.x);
+    let angle2 = Math.atan2(intersectionNodes[1].y - chainA.y, intersectionNodes[1].x - chainA.x);
     if (angle2 < angle1) angle2 += 2 * Math.PI;
-    this.ctx.arc(chain1.x, chain1.y, this.chainRadius, angle1, angle2);
+    this.ctx.arc(chainA.x, chainA.y, this.chainRadius, angle1, angle2);
 
-    let angle3 = Math.atan2(intersectionNodes[1].y - chain2.y, intersectionNodes[1].x - chain2.x);
-    let angle4 = Math.atan2(intersectionNodes[0].y - chain2.y, intersectionNodes[0].x - chain2.x);
+    let angle3 = Math.atan2(intersectionNodes[1].y - chainB.y, intersectionNodes[1].x - chainB.x);
+    let angle4 = Math.atan2(intersectionNodes[0].y - chainB.y, intersectionNodes[0].x - chainB.x);
     if (angle4 < angle3) angle4 += 2 * Math.PI;
-    this.ctx.arc(chain2.x, chain2.y, this.chainRadius, angle3, angle4);
+    this.ctx.arc(chainB.x, chainB.y, this.chainRadius, angle3, angle4);
 
 
     this.ctx.closePath();
@@ -1171,37 +1151,37 @@ createConsensuses(state) {
 
 // 교집합 영역 처리 메서드
 // processIntersectionConsensuses 메서드 수정
-processIntersectionConsensuses(chain1, chain2, Consensuses) {
-    const chain1Obj = this.getCurrentChain(chain1);
-    const chain2Obj = this.getCurrentChain(chain2);
+processIntersectionConsensuses(chainA, chainB, Consensuses) {
+    const chainAObj = this.getCurrentChain(chainA);
+    const chainBObj = this.getCurrentChain(chainB);
     
     // 각 원의 교집합 노드 찾기
-    const intersectionNodesC1 = this.fixedNodes[`chain${chain1}`].filter(node => {
-        const pos = this.calculateFixedNodePosition(node, chain1Obj);
-        return this.isNodeInSingleChain(pos, chain2Obj);
+    const intersectionNodesC1 = this.fixedNodes[`chain${chainA}`].filter(node => {
+        const pos = this.calculateFixedNodePosition(node, chainAObj);
+        return this.isNodeInSingleChain(pos, chainBObj);
     });
 
-    const intersectionNodesC2 = this.fixedNodes[`chain${chain2}`].filter(node => {
-        const pos = this.calculateFixedNodePosition(node, chain2Obj);
-        return this.isNodeInSingleChain(pos, chain1Obj);
+    const intersectionNodesC2 = this.fixedNodes[`chain${chainB}`].filter(node => {
+        const pos = this.calculateFixedNodePosition(node, chainBObj);
+        return this.isNodeInSingleChain(pos, chainAObj);
     });
 
-    // chain1의 교집합 노드들에서 선 생성
+    // chainA의 교집합 노드들에서 선 생성
     intersectionNodesC1.forEach(startNode => {
         // 같은 원의 모든 노드들과 연결
-        this.fixedNodes[`chain${chain1}`].forEach(endNode => {
+        this.fixedNodes[`chain${chainA}`].forEach(endNode => {
             if (startNode !== endNode) {
-                Consensuses.push(this.createIntersectionConsensus(startNode, endNode, chain1, chain1));
+                Consensuses.push(this.createIntersectionConsensus(startNode, endNode, chainA, chainA));
             }
         });
     });
 
-    // chain2의 교집합 노드들에서 선 생성
+    // chainB의 교집합 노드들에서 선 생성
     intersectionNodesC2.forEach(startNode => {
         // 같은 원의 모든 노드들과 연결
-        this.fixedNodes[`chain${chain2}`].forEach(endNode => {
+        this.fixedNodes[`chain${chainB}`].forEach(endNode => {
             if (startNode !== endNode) {
-                Consensuses.push(this.createIntersectionConsensus(startNode, endNode, chain2, chain2));
+                Consensuses.push(this.createIntersectionConsensus(startNode, endNode, chainB, chainB));
             }
         });
     });
@@ -1485,7 +1465,7 @@ updateConsensuses(state) {
             });
         });
         
-        this.drawNodeText();
+        this.drawNodeLabel();
         
         if (this.Consensuses.length > 0) {
             this.Consensuses.forEach(consensus => {
