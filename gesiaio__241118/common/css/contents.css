@@ -52,60 +52,9 @@
   }
   
   
-  /* icon */
-  
-  .icon.ic-arrowR{
-    /* mask-image: url(../resources/icon-arrowR.png);
-    background-color: var(--color-primaryPink); */
-    background-image: url(../resources/icon-arrowR.png);
-
-  }
-  
-  .icon.ic-arrowB{
-    /* mask-image: url(../resources/icon-arrowR.png);
-    background-color: var(--color-primaryPink); */
-    background-image: url(../resources/icon-arrowB.png);
-
-  }
-  
   
 
 /* script */
-.fp-table, .fp-tableCell{
-  /* height: fit-content !important; */
-}
-
-/* [class*=flow_banner] {overflow: hidden;display: flex;width: 100%; position: relative;}
-[class*=flow_banner] .list {display: flex;}
-[class*=flow_banner].flowY,
-[class*=flow_banner].flowY .list {flex-direction: column;}
-[class*=flow_banner] .list > li {white-space: nowrap;padding: 20px;margin: 0 20px;}
-[class*=flow_banner] .list > li img {height: 60px;} */
-
-
-.flow_banner1{
-  width: 100%;
-}
-.box-flow-wrap{position:relative;height:140px;box-sizing:border-box;overflow:hidden;
-width: 100%;}
-.box-flow{position:absolute;}
-.box-flow > li{
-  float:left;margin-left:20px;width:140px;height:100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.box-flow > li a{display:block;width:100%;height:100%;}
-
-
-  .moreFrame .moreBtn + .moreBox{
-    display: none;
-  }
-  .moreFrame.ON .moreBtn + .moreBox{
-    display: block;
-  }
-
-
 
 /* custom */
 body {
