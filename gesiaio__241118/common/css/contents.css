@@ -431,7 +431,7 @@ body.loading .secItem:not(.active){
   align-items: center;
   flex: 1;
   display: flex;
-  gap: calc(10px*5/4);
+  gap: calc(10px*5/2);
 
   flex-wrap: wrap;  /* 여러 줄로 나누기 */
   justify-content: center;
@@ -441,7 +441,15 @@ body.loading .secItem:not(.active){
 
   background-size: contain;
   background-position: center;
-  height: 40px;
+  height: 60px;
   width:calc(100% /5 - 10px);
   background-repeat: no-repeat;
+}
+.secItem[class*="sec-partners"] .contentBox .logoItems.logo-small .logoItem {
+  max-height: 40px;
+}
+
+.secItem[class*="sec-partners"] .contentBox .logoItems.logo-small {
+
+  gap: calc(10px*5/4);
 }
