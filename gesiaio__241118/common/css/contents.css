@@ -400,12 +400,12 @@ body.loading .secItem:not(.active){
   flex: 1;
   justify-content: center;
   width: 100%;
-  padding: 40px;
+  /* padding: 40px; */
   align-items: center;
   max-width: 1260px;
   margin: 0 auto;
   border-radius: 12px;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   display: flex;
   flex-direction: column;
 }
@@ -420,7 +420,7 @@ body.loading .secItem:not(.active){
   margin-bottom: 40px;
   margin-top: 30px;
   width: 100%;
-  border-bottom: 1px solid #000;
+  /* border-bottom: 1px solid #000; */
   padding-bottom: 5px;
 }
 .secItem[class*="sec-partners"] .contentBox .partnerItem:first-child h3 {
@@ -439,13 +439,15 @@ body.loading .secItem:not(.active){
 .secItem[class*="sec-partners"] .contentBox .logoItems .logoItem {
   display: inline-block;
 
+  filter: grayscale(1);
   background-size: contain;
   background-position: center;
-  height: 60px;
-  width:calc(100% /5 - 10px);
+  height: 50px;
+  width:calc(100% /4 - 10px);
   background-repeat: no-repeat;
 }
 .secItem[class*="sec-partners"] .contentBox .logoItems.logo-small .logoItem {
+  width:calc(100% /5 - 10px);
   max-height: 40px;
 }
 

@@ -2798,7 +2798,7 @@ function createConsensusesAtPosition(x, y, radius, sourceType, chainNodes, curre
         drawText("Carbon Emission\nToken", chainAX, centerY , false, false,'emissionT');
     
         drawText("Carbon Offset Chain", chainBX,  canvas.height - nameMetrics.height/2, false, true);
-        drawText("Carbon Credit\nToken", chainBX, centerY, false, false,'emissionT');
+        drawText("Carbon Credit\nToken", chainBX, centerY, false, false,'creditT');
     
         // 중앙 텍스트들
         drawText("Notarized Multi-Signature Bridge", (chainAX + chainBX) / 2, centerY + radius - radius/2, false,true);
