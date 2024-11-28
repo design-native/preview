@@ -3526,7 +3526,7 @@ async function initializeCanvas3(canvasId){
 
         drawText("Notary Bridge", (chainAX + chainBX) / 2, centerY);
         drawText("Carbon Emission\nToken Aggregation", chainAX + radius, centerY);
-        drawText("Carbon Emission\nToken Aggregation", chainBX - radius, centerY);
+        drawText("Carbon Offset\nToken Aggregation", chainBX - radius, centerY);
         
         // 각 이동 선의 중앙점 계산
         const paths1 = calculateAnimationPath(0);
